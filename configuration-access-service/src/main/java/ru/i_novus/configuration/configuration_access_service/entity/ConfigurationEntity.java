@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.settings_access_service.entity;
+package ru.i_novus.configuration.configuration_access_service.entity;
 
 
 import lombok.Data;
@@ -13,8 +13,8 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "setting", schema = "scs")
-public class SettingEntity {
+@Table(name = "configuration", schema = "scs")
+public class ConfigurationEntity {
 
     /**
      * Идентификатор настройки
@@ -53,12 +53,12 @@ public class SettingEntity {
      */
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "id")
-    private SettingGroupEntity groupId;
+    private ConfigurationGroupEntity group;
 
     /**
      * Идентификатор прикладной системы, к которой относится настройка
      */
     @ManyToOne
     @JoinColumn(name = "system_id", referencedColumnName = "id")
-    private SettingSystemEntity systemId;
+    private ConfigurationSystemEntity system;
 }

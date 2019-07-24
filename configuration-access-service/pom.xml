@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>settings-access-service</artifactId>
+    <artifactId>configuration-access-service</artifactId>
 
     <parent>
         <groupId>ru.i-novus.configuration</groupId>
@@ -33,15 +33,27 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.5.21</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
 
     <build>
-        <finalName>settings-access-service</finalName>
+        <finalName>configuration-access-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

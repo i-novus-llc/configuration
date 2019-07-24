@@ -1,11 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <include file="db/changelog/V1_create_schema_scs.xml"/>
-    <include file="db/changelog/V2_create_setting_group.xml"/>
-    <include file="db/changelog/V3_create_setting_system.xml"/>
-    <include file="db/changelog/V4_create_setting.xml"/>
+    <changeSet id="create_configuration_system" author="ilebedenko" dbms="postgresql">
+        <sqlFile path="db/sql/V3_configuration_system.sql"/>
+    </changeSet>
 
 </databaseChangeLog>

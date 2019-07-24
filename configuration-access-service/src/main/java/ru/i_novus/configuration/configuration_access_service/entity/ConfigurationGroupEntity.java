@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.settings_access_service.entity;
+package ru.i_novus.configuration.configuration_access_service.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -6,16 +6,16 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 /**
- * Сущность Прикладная система настроек
+ * Сущность Группа настроек
  */
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "setting_system", schema = "scs")
-public class SettingSystemEntity {
+@Table(name = "configuration_group", schema = "scs")
+public class ConfigurationGroupEntity {
 
     /**
-     * Идентификатор системы
+     * Идентификатор группы
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +23,13 @@ public class SettingSystemEntity {
     private Integer id;
 
     /**
-     * Наименование системы
+     * Наименование группы
      */
     @Column(name = "name", nullable = false)
     private String name;
 
     /**
-     * Описание системы
+     * Описание группы
      */
     @Column(name = "description")
     private String description;
