@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "configuration_system", schema = "scs")
+@Table(name = "system", schema = "configuration")
 public class ConfigurationSystemEntity {
 
     /**
@@ -21,6 +21,12 @@ public class ConfigurationSystemEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
+
+    /**
+     * Код системы
+     */
+    @Column(name = "code", unique = true, nullable = false)
+    private String code;
 
     /**
      * Наименование системы

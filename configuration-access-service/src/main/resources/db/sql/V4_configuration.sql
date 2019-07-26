@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS scs.configuration (
+CREATE TABLE IF NOT EXISTS configuration.metadata (
   id SERIAL PRIMARY KEY,
   code VARCHAR(100) NOT NULL,
   name VARCHAR(100) NOT NULL,
@@ -6,14 +6,15 @@ CREATE TABLE IF NOT EXISTS scs.configuration (
   value_type VARCHAR(100) NOT NULL,
   group_id INTEGER,
   system_id INTEGER,
-  CONSTRAINT configuration_group_fk FOREIGN KEY (group_id) REFERENCES scs.configuration_group(id),
-  CONSTRAINT configuration_system_fk FOREIGN KEY (system_id) REFERENCES scs.configuration_system(id)
+  CONSTRAINT metadata_group_fk FOREIGN KEY (group_id) REFERENCES configuration.group(id),
+  CONSTRAINT metadata_system_fk FOREIGN KEY (system_id) REFERENCES configuration.system(id),
+  CONSTRAINT unique_metadata_code UNIQUE (code)
 );
 
-COMMENT ON TABLE scs.configuration IS 'Настройки';
-COMMENT ON COLUMN scs.configuration.code IS 'Код';
-COMMENT ON COLUMN scs.configuration.name IS 'Наименование';
-COMMENT ON COLUMN scs.configuration.description IS 'Описание';
-COMMENT ON COLUMN scs.configuration.value_type IS 'Тип значения';
-COMMENT ON COLUMN scs.configuration.group_id IS 'Идентификатор группы';
-COMMENT ON COLUMN scs.configuration.system_id IS 'Идентификатор системы';
+COMMENT ON TABLE configuration.metadata IS 'Настройки';
+COMMENT ON COLUMN configuration.metadata.code IS 'Код';
+COMMENT ON COLUMN configuration.metadata.name IS 'Наименование';
+COMMENT ON COLUMN configuration.metadata.description IS 'Описание';
+COMMENT ON COLUMN configuration.metadata.value_type IS 'Тип значения';
+COMMENT ON COLUMN configuration.metadata.group_id IS 'Идентификатор группы';
+COMMENT ON COLUMN configuration.metadata.system_id IS 'Идентификатор системы';

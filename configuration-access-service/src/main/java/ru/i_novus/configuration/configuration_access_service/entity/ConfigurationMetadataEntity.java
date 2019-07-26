@@ -8,13 +8,13 @@ import javax.persistence.*;
 
 
 /**
- * Сущность Настройка
+ * Сущность Метаданные настройки
  */
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "configuration", schema = "scs")
-public class ConfigurationEntity {
+@Table(name = "metadata", schema = "configuration")
+public class ConfigurationMetadataEntity {
 
     /**
      * Идентификатор настройки
@@ -27,7 +27,7 @@ public class ConfigurationEntity {
     /**
      * Код настройки
      */
-    @Column(name = "code", nullable = false)
+    @Column(name = "code", unique = true, nullable = false)
     private String code;
 
     /**
@@ -45,20 +45,21 @@ public class ConfigurationEntity {
     /**
      * Тип значения настройки
      */
+    @Enumerated(EnumType.STRING)
     @Column(name="value_type", nullable = false)
-    private String valueType;
+    private ConfigurationValueType valueType;
 
     /**
-     * Идентификатор группы, к которой принадлежит настройка
+     * Группа, к которой принадлежит настройка
      */
     @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)
     private ConfigurationGroupEntity group;
 
     /**
-     * Идентификатор прикладной системы, к которой относится настройка
+     * Прикладная система, к которой относится настройка
      */
     @ManyToOne
-    @JoinColumn(name = "system_id", referencedColumnName = "id")
+    @JoinColumn(name = "system_id", referencedColumnName = "id", nullable = false)
     private ConfigurationSystemEntity system;
 }

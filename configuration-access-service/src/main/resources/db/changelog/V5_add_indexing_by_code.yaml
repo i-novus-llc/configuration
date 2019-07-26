@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_indexing_by_code
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V5_add_indexing_by_code.sql

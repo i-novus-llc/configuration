@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "configuration_group", schema = "scs")
+@Table(name = "group", schema = "configuration")
 public class ConfigurationGroupEntity {
 
     /**
@@ -21,6 +21,12 @@ public class ConfigurationGroupEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
+
+    /**
+     * Код группы
+     */
+    @Column(name = "code", unique = true, nullable = false)
+    private String code;
 
     /**
      * Наименование группы
