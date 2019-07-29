@@ -39,4 +39,11 @@ public class ConfigurationGroupEntity {
      */
     @Column(name = "description")
     private String description;
+
+    /**
+     *  Родительская группа
+     */
+    @OneToOne
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    private ConfigurationGroupEntity parentGroup;
 }

@@ -11,7 +11,7 @@ import java.util.Map;
  */
 @AllArgsConstructor
 @Getter
-public enum ConfigurationValueType {
+public enum ConfigurationValueTypeEnum {
     NUMBER("Числовой"),
     STRING("Строковый"),
     DATE("Дата");
@@ -22,17 +22,17 @@ public enum ConfigurationValueType {
     private String title;
 
     /**
-     * Словарь для поиска ConfigurationValueType по его обозначению
+     * Словарь для поиска ConfigurationValueTypeEnum по его обозначению
      */
-    private static final Map<String, ConfigurationValueType> titles = new HashMap<>();
+    private static final Map<String, ConfigurationValueTypeEnum> titles = new HashMap<>();
 
     static {
-        for (ConfigurationValueType t : ConfigurationValueType.values()) {
+        for (ConfigurationValueTypeEnum t : ConfigurationValueTypeEnum.values()) {
             titles.put(t.getTitle(), t);
         }
     }
 
-    public static ConfigurationValueType getConfigurationValueType(String title) {
+    public static ConfigurationValueTypeEnum getConfigurationValueType(String title) {
         return titles.get(title);
     }
 }

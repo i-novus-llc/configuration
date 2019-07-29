@@ -47,7 +47,7 @@ public class ConfigurationMetadataEntity {
      */
     @Enumerated(EnumType.STRING)
     @Column(name="value_type", nullable = false)
-    private ConfigurationValueType valueType;
+    private ConfigurationValueTypeEnum valueType;
 
     /**
      * Группа, к которой принадлежит настройка

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS configuration.metadata (
   CONSTRAINT unique_metadata_code UNIQUE (code)
 );
 
-COMMENT ON TABLE configuration.metadata IS 'Настройки';
+COMMENT ON TABLE configuration.metadata IS 'Метаданные настроек';
 COMMENT ON COLUMN configuration.metadata.code IS 'Код';
 COMMENT ON COLUMN configuration.metadata.name IS 'Наименование';
 COMMENT ON COLUMN configuration.metadata.description IS 'Описание';
