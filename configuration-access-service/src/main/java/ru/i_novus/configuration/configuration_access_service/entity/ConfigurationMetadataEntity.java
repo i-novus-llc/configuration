@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Objects;
 
-
 /**
  * Сущность Метаданные настройки
  */
@@ -65,17 +64,20 @@ public class ConfigurationMetadataEntity {
     private ConfigurationSystemEntity system;
 
 
-    public void setAttributes(ConfigurationMetadataJsonItem configurationMetadataJsonItem,
+    /**
+     * Установка атрибутов текущего экземпляра метаданных
+     * @param configurationMetadataItem Полученные метаданные
+     * @param configurationGroupEntity Группа настройки
+     * @param configurationSystemEntity Прикладная система настройки
+     */
+    public void setAttributes(ConfigurationMetadataItem configurationMetadataItem,
                               ConfigurationGroupEntity configurationGroupEntity,
                               ConfigurationSystemEntity configurationSystemEntity) {
-        String code = configurationMetadataJsonItem.getCode();
-        if (code != null) this.code = code;
-        String name = configurationMetadataJsonItem.getName();
-        if (name != null) this.name = name;
-        String description = configurationMetadataJsonItem.getDescription();
-        if (description != null) this.description = description;
+        this.code = configurationMetadataItem.getCode();
+        this.name = configurationMetadataItem.getName();
+        this.description = configurationMetadataItem.getDescription();
 
-        String valueType = configurationMetadataJsonItem.getValueType();
+        String valueType = configurationMetadataItem.getValueType();
         ConfigurationValueTypeEnum configurationValueType = ConfigurationValueTypeEnum.getConfigurationValueType(valueType);
         this.valueType = Objects.requireNonNullElse(configurationValueType, ConfigurationValueTypeEnum.STRING);
 

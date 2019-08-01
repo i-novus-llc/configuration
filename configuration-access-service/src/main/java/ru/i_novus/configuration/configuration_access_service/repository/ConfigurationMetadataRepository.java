@@ -7,6 +7,7 @@ import ru.i_novus.configuration.configuration_access_service.entity.Configuratio
 
 @Repository
 public interface ConfigurationMetadataRepository extends JpaRepository<ConfigurationMetadataEntity, Integer> {
+
     ConfigurationMetadataEntity findByCode(String code);
 
     @Transactional

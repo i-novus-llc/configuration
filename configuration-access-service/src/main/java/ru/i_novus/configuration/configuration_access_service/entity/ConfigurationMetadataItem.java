@@ -1,49 +1,38 @@
 package ru.i_novus.configuration.configuration_access_service.entity;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Сущность Метаданные настройки, используемые при получении/отправки json
- */
 @NoArgsConstructor
 @Getter
 @Setter
-public class ConfigurationMetadataJsonItem {
-    /**
-     * Код настройки
-     */
+@ApiModel("Метаданные настройки, используемые при получении/отправки")
+public class ConfigurationMetadataItem {
+
+    @ApiModelProperty("Код настройки")
     private String code;
 
-    /**
-     * Имя настройки
-     */
+    @ApiModelProperty("Имя настройки")
     private String name;
 
-    /**
-     * Описание настройки
-     */
+    @ApiModelProperty("Описание настройки")
     private String description;
 
-    /**
-     * Тип значения настройки
-     */
+    @ApiModelProperty("Тип значения настройки")
     private String valueType;
 
-    /**
-     * Код группы, к которой принадлежит настройка
-     */
+    @ApiModelProperty("Код группы, к которой принадлежит настройка")
     private String groupCode;
 
-    /**
-     * Код прикладной системы, к которой относится настройка
-     */
+    @ApiModelProperty("Код прикладной системы, к которой относится настройка")
     private String systemCode;
 
 
-    public ConfigurationMetadataJsonItem(ConfigurationMetadataEntity configurationMetadataEntity) {
+    public ConfigurationMetadataItem(ConfigurationMetadataEntity configurationMetadataEntity) {
         this.setCode(configurationMetadataEntity.getCode());
         this.setName(configurationMetadataEntity.getName());
         this.setDescription(configurationMetadataEntity.getDescription());

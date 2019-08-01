@@ -1,15 +1,15 @@
 package ru.i_novus.configuration.configuration_access_service.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 /**
  * Сущность Группа настроек
  */
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "group", schema = "configuration")
 public class ConfigurationGroupEntity {
