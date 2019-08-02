@@ -3,19 +3,21 @@ package ru.i_novus.configuration.configuration_access_service.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @ApiModel("Метаданные настройки, используемые при получении/отправки")
 public class ConfigurationMetadataItem {
 
+    @NotBlank
     @ApiModelProperty("Код настройки")
     private String code;
 
+    @NotBlank
     @ApiModelProperty("Имя настройки")
     private String name;
 

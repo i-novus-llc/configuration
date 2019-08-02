@@ -1,15 +1,13 @@
 package ru.i_novus.configuration.configuration_access_service.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 
 /**
  * Сущность Прикладная система настроек
  */
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "system", schema = "configuration")
 public class ConfigurationSystemEntity {

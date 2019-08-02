@@ -1,15 +1,13 @@
 package ru.i_novus.configuration.configuration_access_service.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 
 /**
  * Сущность Группа настроек
  */
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "group", schema = "configuration")
 public class ConfigurationGroupEntity {
@@ -39,11 +37,4 @@ public class ConfigurationGroupEntity {
      */
     @Column(name = "description")
     private String description;
-
-    /**
-     *  Родительская группа
-     */
-    @OneToOne
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
-    private ConfigurationGroupEntity parentGroup;
 }

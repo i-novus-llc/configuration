@@ -70,12 +70,11 @@ public class ConfigurationAccessRestServiceImpl implements ConfigurationAccessRe
         try {
             configurationMetadataRepository.save(configurationMetadataEntity);
         } catch (Exception e) {
-            throw new BadRequestException("Метаданные некорректны или уже сохранены", e);
+            throw new BadRequestException("Метаданные настройки с кодом " + configurationMetadataItem.getCode() + " уже созданы", e);
         }
     }
 
 
-    ///TODO - Status 500 при name = null
     @Override
     public void updateConfigurationMetadata(String code, @Valid @NotNull ConfigurationMetadataItem configurationMetadataItem) {
         if (!code.equals(configurationMetadataItem.getCode())) {
