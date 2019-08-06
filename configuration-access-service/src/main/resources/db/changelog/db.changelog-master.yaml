@@ -9,3 +9,5 @@ databaseChangeLog:
     file: db/changelog/V4_create_configuration.yaml
 - include:
     file: db/changelog/V5_add_indexing_by_code.yaml
+- include:
+    file: db/changelog/V6_create_configuration_group_code.yaml

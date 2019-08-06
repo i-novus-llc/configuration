@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.configuration_access_service.entity;
+package ru.i_novus.configuration.configuration_access_service.entity.metadata;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

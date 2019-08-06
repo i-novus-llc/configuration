@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_configuration_group_code
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V6_configuration_group_code.sql

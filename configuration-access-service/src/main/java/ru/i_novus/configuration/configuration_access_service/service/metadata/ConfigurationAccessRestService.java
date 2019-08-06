@@ -1,9 +1,9 @@
-package ru.i_novus.configuration.configuration_access_service.service;
+package ru.i_novus.configuration.configuration_access_service.service.metadata;
 
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
-import ru.i_novus.configuration.configuration_access_service.entity.ConfigurationMetadataItem;
+import ru.i_novus.configuration.configuration_access_service.entity.metadata.ConfigurationMetadataResponseItem;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -22,18 +22,18 @@ public interface ConfigurationAccessRestService {
 
     @GET
     @Path("/")
-    @ApiOperation(value = "Список метаданных настроек", response = ConfigurationMetadataItem.class, responseContainer = "List")
+    @ApiOperation(value = "Список метаданных настроек", response = ConfigurationMetadataResponseItem.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка настроек")
-    Page<ConfigurationMetadataItem> getAllConfigurationsMetadata();
+    Page<ConfigurationMetadataResponseItem> getAllConfigurationsMetadata();
 
     @GET
     @Path("/{configurationCode}")
-    @ApiOperation(value = "Выборка метаданных настройки", response = ConfigurationMetadataItem.class)
+    @ApiOperation(value = "Получение метаданных настройки", response = ConfigurationMetadataResponseItem.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение метаданных конкретной настройки"),
             @ApiResponse(code = 404, message = "Метаданные не были найдены")
     })
-    ConfigurationMetadataItem getConfigurationMetadata(@PathParam("configurationCode") @ApiParam(name = "Код настройки") String code);
+    ConfigurationMetadataResponseItem getConfigurationMetadata(@PathParam("configurationCode") @ApiParam(name = "Код настройки") String code);
 
     @POST
     @Path("/")
@@ -43,7 +43,7 @@ public interface ConfigurationAccessRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос")
     })
     void saveConfigurationMetadata(@Valid @NotNull @ApiParam(name = "Метаданные новой настройки", required = true)
-                                           ConfigurationMetadataItem configurationMetadataItem);
+                                           ConfigurationMetadataResponseItem configurationMetadataResponseItem);
 
     @PUT
     @Path("/{configurationCode}")
@@ -56,7 +56,7 @@ public interface ConfigurationAccessRestService {
     @Transactional
     void updateConfigurationMetadata(@PathParam("configurationCode") @ApiParam(name = "Код настройки") String code,
                                      @Valid @NotNull @ApiParam(name = "Обновленные метаданные настройки", required = true)
-                                             ConfigurationMetadataItem configurationMetadataItem);
+                                             ConfigurationMetadataResponseItem configurationMetadataResponseItem);
 
     @DELETE
     @Path("/{configurationCode}")

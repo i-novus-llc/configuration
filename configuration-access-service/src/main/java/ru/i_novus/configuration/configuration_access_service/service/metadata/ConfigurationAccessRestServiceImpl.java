@@ -1,13 +1,12 @@
-package ru.i_novus.configuration.configuration_access_service.service;
+package ru.i_novus.configuration.configuration_access_service.service.metadata;
 
 import net.n2oapp.platform.jaxrs.RestPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import ru.i_novus.configuration.configuration_access_service.entity.ConfigurationGroupEntity;
-import ru.i_novus.configuration.configuration_access_service.entity.ConfigurationMetadataEntity;
-import ru.i_novus.configuration.configuration_access_service.entity.ConfigurationMetadataItem;
-import ru.i_novus.configuration.configuration_access_service.entity.ConfigurationSystemEntity;
+import ru.i_novus.configuration.configuration_access_service.entity.metadata.ConfigurationMetadataEntity;
+import ru.i_novus.configuration.configuration_access_service.entity.metadata.ConfigurationMetadataResponseItem;
+import ru.i_novus.configuration.configuration_access_service.entity.system.ConfigurationSystemEntity;
 import ru.i_novus.configuration.configuration_access_service.repository.ConfigurationGroupRepository;
 import ru.i_novus.configuration.configuration_access_service.repository.ConfigurationMetadataRepository;
 import ru.i_novus.configuration.configuration_access_service.repository.ConfigurationSystemRepository;
@@ -47,52 +46,49 @@ public class ConfigurationAccessRestServiceImpl implements ConfigurationAccessRe
 
 
     @Override
-    public Page<ConfigurationMetadataItem> getAllConfigurationsMetadata() {
-        List<ConfigurationMetadataItem> configurationMetadataItems = configurationMetadataRepository.findAll().stream()
-                .map(ConfigurationMetadataItem::new).collect(Collectors.toList());
-        return new RestPage<>(configurationMetadataItems);
+    public Page<ConfigurationMetadataResponseItem> getAllConfigurationsMetadata() {
+        List<ConfigurationMetadataResponseItem> configurationMetadataResponseItems = configurationMetadataRepository.findAll().stream()
+                .map(ConfigurationMetadataResponseItem::new).collect(Collectors.toList());
+        return new RestPage<>(configurationMetadataResponseItems);
     }
 
     @Override
-    public ConfigurationMetadataItem getConfigurationMetadata(String code) {
+    public ConfigurationMetadataResponseItem getConfigurationMetadata(String code) {
         ConfigurationMetadataEntity configurationMetadataEntity = Optional.ofNullable(configurationMetadataRepository.findByCode(code))
                 .orElseThrow(() -> new NotFoundException("Настройки с кодом " + code + " не существует."));
-        return new ConfigurationMetadataItem(configurationMetadataEntity);
+        return new ConfigurationMetadataResponseItem(configurationMetadataEntity);
     }
 
     @Override
-    public void saveConfigurationMetadata(@Valid @NotNull ConfigurationMetadataItem configurationMetadataItem) {
-        ConfigurationGroupEntity configurationGroupEntity = configurationGroupRepository.findByCode(configurationMetadataItem.getGroupCode());
-        ConfigurationSystemEntity configurationSystemEntity = configurationSystemRepository.findByCode(configurationMetadataItem.getSystemCode());
+    public void saveConfigurationMetadata(@Valid @NotNull ConfigurationMetadataResponseItem configurationMetadataResponseItem) {
+        ConfigurationSystemEntity configurationSystemEntity = configurationSystemRepository.findByCode(configurationMetadataResponseItem.getSystemCode());
 
         ConfigurationMetadataEntity configurationMetadataEntity = new ConfigurationMetadataEntity();
-        configurationMetadataEntity.setAttributes(configurationMetadataItem, configurationGroupEntity, configurationSystemEntity);
+        configurationMetadataEntity.setAttributes(configurationMetadataResponseItem, configurationSystemEntity);
         try {
             configurationMetadataRepository.save(configurationMetadataEntity);
         } catch (Exception e) {
-            throw new BadRequestException("Метаданные настройки с кодом " + configurationMetadataItem.getCode() + " уже созданы", e);
+            throw new BadRequestException("Метаданные настройки с кодом " + configurationMetadataResponseItem.getCode() + " уже созданы", e);
         }
     }
 
-
     @Override
-    public void updateConfigurationMetadata(String code, @Valid @NotNull ConfigurationMetadataItem configurationMetadataItem) {
-        if (!code.equals(configurationMetadataItem.getCode())) {
+    public void updateConfigurationMetadata(String code, @Valid @NotNull ConfigurationMetadataResponseItem configurationMetadataResponseItem) {
+        if (!code.equals(configurationMetadataResponseItem.getCode())) {
             throw new BadRequestException("Код настройки в пути и теле json различны");
         }
 
         ConfigurationMetadataEntity configurationMetadataEntity = Optional.ofNullable(configurationMetadataRepository.findByCode(code))
                 .orElseThrow(() -> new NotFoundException("Настройки с кодом " + code + " не существует."));
-        ConfigurationGroupEntity configurationGroupEntity = configurationGroupRepository.findByCode(configurationMetadataItem.getGroupCode());
-        ConfigurationSystemEntity configurationSystemEntity = configurationSystemRepository.findByCode(configurationMetadataItem.getSystemCode());
+        ConfigurationSystemEntity configurationSystemEntity = configurationSystemRepository.findByCode(configurationMetadataResponseItem.getSystemCode());
 
-        configurationMetadataEntity.setAttributes(configurationMetadataItem, configurationGroupEntity, configurationSystemEntity);
+        configurationMetadataEntity.setAttributes(configurationMetadataResponseItem, configurationSystemEntity);
         configurationMetadataRepository.save(configurationMetadataEntity);
     }
 
     @Override
     public void deleteConfigurationMetadata(String code) {
-        if (configurationMetadataRepository.deleteByCode(code) == 0) {
+        if (configurationMetadataRepository.removeByCode(code) == 0) {
             throw new NotFoundException("Настройки с кодом " + code + " не существует.");
         }
     }

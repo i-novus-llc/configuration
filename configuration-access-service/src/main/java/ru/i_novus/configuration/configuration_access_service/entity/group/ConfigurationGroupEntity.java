@@ -1,6 +1,7 @@
-package ru.i_novus.configuration.configuration_access_service.entity;
+package ru.i_novus.configuration.configuration_access_service.entity.group;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
  * Сущность Группа настроек
  */
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name = "group", schema = "configuration")
 public class ConfigurationGroupEntity {
@@ -21,15 +23,9 @@ public class ConfigurationGroupEntity {
     private Integer id;
 
     /**
-     * Код группы
-     */
-    @Column(name = "code", unique = true, nullable = false)
-    private String code;
-
-    /**
      * Наименование группы
      */
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     /**
@@ -37,4 +33,10 @@ public class ConfigurationGroupEntity {
      */
     @Column(name = "description")
     private String description;
+
+
+    public ConfigurationGroupEntity(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

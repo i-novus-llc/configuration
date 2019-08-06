@@ -3,7 +3,7 @@ package ru.i_novus.configuration.configuration_access_service.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.i_novus.configuration.configuration_access_service.entity.ConfigurationMetadataEntity;
+import ru.i_novus.configuration.configuration_access_service.entity.metadata.ConfigurationMetadataEntity;
 
 @Repository
 public interface ConfigurationMetadataRepository extends JpaRepository<ConfigurationMetadataEntity, Integer> {
@@ -11,5 +11,5 @@ public interface ConfigurationMetadataRepository extends JpaRepository<Configura
     ConfigurationMetadataEntity findByCode(String code);
 
     @Transactional
-    Integer deleteByCode(String code);
+    Integer removeByCode(String code);
 }
