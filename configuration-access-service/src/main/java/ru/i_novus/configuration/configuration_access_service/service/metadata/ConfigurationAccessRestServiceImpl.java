@@ -1,33 +1,43 @@
 package ru.i_novus.configuration.configuration_access_service.service.metadata;
 
-import net.n2oapp.platform.jaxrs.RestPage;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
-import ru.i_novus.configuration.configuration_access_service.entity.metadata.ConfigurationMetadataEntity;
-import ru.i_novus.configuration.configuration_access_service.entity.metadata.ConfigurationMetadataResponseItem;
-import ru.i_novus.configuration.configuration_access_service.entity.system.ConfigurationSystemEntity;
+import ru.i_novus.configuration.configuration_access_service.criteria.FindConfigurationCriteria;
+import ru.i_novus.configuration.configuration_access_service.entity.ConfigurationMetadataEntity;
+import ru.i_novus.configuration.configuration_access_service.entity.QConfigurationMetadataEntity;
+import ru.i_novus.configuration.configuration_access_service.items.ConfigurationResponseItem;
+import ru.i_novus.configuration.configuration_access_service.repository.ConfigurationGroupCodeRepository;
 import ru.i_novus.configuration.configuration_access_service.repository.ConfigurationGroupRepository;
 import ru.i_novus.configuration.configuration_access_service.repository.ConfigurationMetadataRepository;
-import ru.i_novus.configuration.configuration_access_service.repository.ConfigurationSystemRepository;
+import ru.i_novus.configuration.configuration_access_service.service.value_receiving.ConfigurationValueService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
- * Реализация REST сервиса для работы с метаданными настроек
+ * Реализация REST сервиса для работы с настройками
  */
 @Controller
 public class ConfigurationAccessRestServiceImpl implements ConfigurationAccessRestService {
 
+    private ConfigurationValueService configurationValueService;
+
     private ConfigurationMetadataRepository configurationMetadataRepository;
     private ConfigurationGroupRepository configurationGroupRepository;
-    private ConfigurationSystemRepository configurationSystemRepository;
+    private ConfigurationGroupCodeRepository configurationGroupCodeRepository;
+
+    @Autowired
+    public void setConfigurationValueService(ConfigurationValueService configurationValueService) {
+        this.configurationValueService = configurationValueService;
+    }
 
     @Autowired
     public void setConfigurationMetadataRepository(ConfigurationMetadataRepository configurationMetadataRepository) {
@@ -40,56 +50,111 @@ public class ConfigurationAccessRestServiceImpl implements ConfigurationAccessRe
     }
 
     @Autowired
-    public void setConfigurationSystemRepository(ConfigurationSystemRepository configurationSystemRepository) {
-        this.configurationSystemRepository = configurationSystemRepository;
+    public void setConfigurationGroupCodeRepository(ConfigurationGroupCodeRepository configurationGroupCodeRepository) {
+        this.configurationGroupCodeRepository = configurationGroupCodeRepository;
     }
 
 
     @Override
-    public Page<ConfigurationMetadataResponseItem> getAllConfigurationsMetadata() {
-        List<ConfigurationMetadataResponseItem> configurationMetadataResponseItems = configurationMetadataRepository.findAll().stream()
-                .map(ConfigurationMetadataResponseItem::new).collect(Collectors.toList());
-        return new RestPage<>(configurationMetadataResponseItems);
+    public Page<ConfigurationResponseItem> getAllConfigurations(FindConfigurationCriteria criteria) {
+        Predicate predicate = buildFindConfigurationPredicate(criteria);
+        Iterable<ConfigurationMetadataEntity> configurationMetadataEntities = configurationMetadataRepository.findAll(predicate);
+
+        List<ConfigurationResponseItem> configurationResponseItems = new ArrayList<>();
+        for (ConfigurationMetadataEntity entity : configurationMetadataEntities) {
+            String value = configurationValueService.getConfigurationValue(getServiceCode(entity), entity.getCode());
+            /// TODO - вытащить system_name по service_code из виртуальной таблицы
+            String systemName = "application";
+            String groupName = configurationGroupRepository.findGroupsNameByConfigurationCode(entity.getCode(), new PageRequest(0, 1)).get(0);
+            configurationResponseItems.add(new ConfigurationResponseItem(entity, value, systemName, groupName));
+        }
+
+        Collections.sort(configurationResponseItems, Comparator.comparing(ConfigurationResponseItem::getSystemName));
+        return new PageImpl<>(configurationResponseItems, criteria, criteria.getPageSize());
     }
 
     @Override
-    public ConfigurationMetadataResponseItem getConfigurationMetadata(String code) {
+    public ConfigurationResponseItem getConfiguration(String code) {
         ConfigurationMetadataEntity configurationMetadataEntity = Optional.ofNullable(configurationMetadataRepository.findByCode(code))
                 .orElseThrow(() -> new NotFoundException("Настройки с кодом " + code + " не существует."));
-        return new ConfigurationMetadataResponseItem(configurationMetadataEntity);
+
+        String value = configurationValueService.getConfigurationValue(getServiceCode(configurationMetadataEntity), configurationMetadataEntity.getCode());
+        /// TODO - вытащить system_name по service_code из виртуальной таблицы
+        String systemName = "application";
+        String groupName = configurationGroupRepository.findGroupsNameByConfigurationCode(configurationMetadataEntity.getCode(), new PageRequest(0, 1)).get(0);
+
+
+        return new ConfigurationResponseItem(configurationMetadataEntity, value, systemName, groupName);
     }
 
-    @Override
-    public void saveConfigurationMetadata(@Valid @NotNull ConfigurationMetadataResponseItem configurationMetadataResponseItem) {
-        ConfigurationSystemEntity configurationSystemEntity = configurationSystemRepository.findByCode(configurationMetadataResponseItem.getSystemCode());
 
-        ConfigurationMetadataEntity configurationMetadataEntity = new ConfigurationMetadataEntity();
-        configurationMetadataEntity.setAttributes(configurationMetadataResponseItem, configurationSystemEntity);
+    @Override
+    public void saveConfiguration(@Valid @NotNull ConfigurationResponseItem configurationResponseItem) {
+        if (configurationResponseItem.getServiceCode() != null)
+        {
+            /// TODO - проверяем есть ли такой serviceCode в виртуальной таблице
+        }
+
+        ConfigurationMetadataEntity configurationMetadataEntity = new ConfigurationMetadataEntity(configurationResponseItem);
         try {
             configurationMetadataRepository.save(configurationMetadataEntity);
         } catch (Exception e) {
-            throw new BadRequestException("Метаданные настройки с кодом " + configurationMetadataResponseItem.getCode() + " уже созданы", e);
+            throw new BadRequestException("Настройка с кодом " + configurationResponseItem.getCode() + " уже существует", e);
         }
+
+        configurationValueService.saveConfigurationValue(getServiceCode(configurationMetadataEntity), configurationResponseItem.getCode(), configurationResponseItem.getValue());
     }
 
     @Override
-    public void updateConfigurationMetadata(String code, @Valid @NotNull ConfigurationMetadataResponseItem configurationMetadataResponseItem) {
-        if (!code.equals(configurationMetadataResponseItem.getCode())) {
-            throw new BadRequestException("Код настройки в пути и теле json различны");
-        }
+    public void updateConfiguration(String code, @Valid @NotNull ConfigurationResponseItem configurationResponseItem) {
+        ConfigurationMetadataEntity configurationMetadataEntity = Optional.ofNullable(
+                configurationMetadataRepository.findByCode(code))
+                .orElseThrow(() -> new NotFoundException("Настройки с кодом " + code + " не существует"));
 
+        configurationMetadataEntity.setServiceCode(configurationResponseItem.getServiceCode());
+        configurationMetadataEntity.setDescription(configurationResponseItem.getDescription());
+        configurationMetadataRepository.save(configurationMetadataEntity);
+
+        configurationValueService.saveConfigurationValue(getServiceCode(configurationMetadataEntity),
+                configurationResponseItem.getCode(),
+                configurationResponseItem.getValue());
+    }
+
+    @Override
+    public void deleteConfiguration(String code) {
         ConfigurationMetadataEntity configurationMetadataEntity = Optional.ofNullable(configurationMetadataRepository.findByCode(code))
                 .orElseThrow(() -> new NotFoundException("Настройки с кодом " + code + " не существует."));
-        ConfigurationSystemEntity configurationSystemEntity = configurationSystemRepository.findByCode(configurationMetadataResponseItem.getSystemCode());
+        configurationMetadataRepository.removeByCode(code);
 
-        configurationMetadataEntity.setAttributes(configurationMetadataResponseItem, configurationSystemEntity);
-        configurationMetadataRepository.save(configurationMetadataEntity);
+        configurationValueService.deleteConfigurationValue(getServiceCode(configurationMetadataEntity), code);
     }
 
-    @Override
-    public void deleteConfigurationMetadata(String code) {
-        if (configurationMetadataRepository.removeByCode(code) == 0) {
-            throw new NotFoundException("Настройки с кодом " + code + " не существует.");
+    private Predicate buildFindConfigurationPredicate(FindConfigurationCriteria criteria) {
+        QConfigurationMetadataEntity qConfigurationMetadataEntity = QConfigurationMetadataEntity.configurationMetadataEntity;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (criteria.getCode() != null) {
+            booleanBuilder.and(qConfigurationMetadataEntity.code.containsIgnoreCase(criteria.getCode()));
         }
+
+        if (criteria.getName() != null) {
+            booleanBuilder.and(qConfigurationMetadataEntity.name.containsIgnoreCase(criteria.getName()));
+        }
+
+        List<String> groups = criteria.getGroupNames();
+        if (groups != null && !groups.isEmpty()) {
+            /// TODO
+        }
+
+        List<String> systems = criteria.getSystemNames();
+        if (systems != null && !systems.isEmpty()) {
+            /// TODO
+        }
+
+        return booleanBuilder.getValue();
+    }
+
+    private String getServiceCode(ConfigurationMetadataEntity configurationMetadataEntity) {
+        return Objects.requireNonNullElse(configurationMetadataEntity.getServiceCode(), "application");
     }
 }

@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS configuration.group (
 );
 
 COMMENT ON TABLE configuration.group IS 'Группы настроек';
-COMMENT ON COLUMN configuration.group.name IS 'Наименование';
+COMMENT ON COLUMN configuration.group.name IS 'Наименование группы';
 COMMENT ON COLUMN configuration.group.description IS 'Описание';

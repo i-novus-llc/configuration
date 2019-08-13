@@ -5,4 +5,4 @@ databaseChangeLog:
       dbms: postgresql
       changes:
         - sqlFile:
-            path: db/sql/V4_configuration.sql
+            path: db/sql/V3_configuration.sql

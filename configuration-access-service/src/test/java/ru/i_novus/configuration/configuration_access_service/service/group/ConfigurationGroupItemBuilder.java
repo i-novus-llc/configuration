@@ -1,6 +1,6 @@
 package ru.i_novus.configuration.configuration_access_service.service.group;
 
-import ru.i_novus.configuration.configuration_access_service.entity.group.ConfigurationGroupResponseItem;
+import ru.i_novus.configuration.configuration_access_service.items.ConfigurationGroupResponseItem;
 
 import java.util.Arrays;
 
@@ -8,25 +8,22 @@ public class ConfigurationGroupItemBuilder {
 
     public static ConfigurationGroupResponseItem buildConfigurationGroupItem1() {
         ConfigurationGroupResponseItem configurationGroupResponseItem = new ConfigurationGroupResponseItem();
-        configurationGroupResponseItem.setName("group name");
-        configurationGroupResponseItem.setDescription("group desc");
-        configurationGroupResponseItem.setCodes(Arrays.asList("a", "b", "c"));
+        configurationGroupResponseItem.setName("Security settings");
+        configurationGroupResponseItem.setCodes(Arrays.asList("sec", "security"));
         return configurationGroupResponseItem;
     }
 
     public static ConfigurationGroupResponseItem buildConfigurationGroupItem2() {
         ConfigurationGroupResponseItem configurationGroupResponseItem = new ConfigurationGroupResponseItem();
-        configurationGroupResponseItem.setName("group name 2");
-        configurationGroupResponseItem.setDescription("group desc 2");
-        configurationGroupResponseItem.setCodes(Arrays.asList("x", "y", "z"));
+        configurationGroupResponseItem.setName("Base security settings");
+        configurationGroupResponseItem.setCodes(Arrays.asList("base-sec"));
         return configurationGroupResponseItem;
     }
 
     public static ConfigurationGroupResponseItem buildConfigurationGroupItem3() {
         ConfigurationGroupResponseItem configurationGroupResponseItem = new ConfigurationGroupResponseItem();
-        configurationGroupResponseItem.setName("some name");
-        configurationGroupResponseItem.setDescription("some desc");
-        configurationGroupResponseItem.setCodes(Arrays.asList("abc.xyz", "efg", "hij"));
+        configurationGroupResponseItem.setName("Authentication settings");
+        configurationGroupResponseItem.setCodes(Arrays.asList("auth"));
         return configurationGroupResponseItem;
     }
 }

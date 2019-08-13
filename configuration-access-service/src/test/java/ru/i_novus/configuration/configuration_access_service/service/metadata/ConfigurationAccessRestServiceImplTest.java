@@ -1,9 +1,9 @@
 package ru.i_novus.configuration.configuration_access_service.service.metadata;
 
-import net.n2oapp.platform.jaxrs.RestException;
 import net.n2oapp.platform.jaxrs.autoconfigure.EnableJaxRsProxyClient;
 import net.n2oapp.platform.test.autoconfigure.DefinePort;
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.configuration.configuration_access_service.ConfigurationAccessServiceApplication;
-import ru.i_novus.configuration.configuration_access_service.entity.metadata.ConfigurationMetadataResponseItem;
+import ru.i_novus.configuration.configuration_access_service.criteria.FindConfigurationCriteria;
+import ru.i_novus.configuration.configuration_access_service.items.ConfigurationGroupResponseItem;
+import ru.i_novus.configuration.configuration_access_service.items.ConfigurationResponseItem;
+import ru.i_novus.configuration.configuration_access_service.service.group.ConfigurationGroupAccessRestService;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -26,175 +30,236 @@ import static org.junit.Assert.assertTrue;
         classes = ConfigurationAccessServiceApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableJaxRsProxyClient(
-        classes = ConfigurationAccessRestService.class,
+        classes = {
+                ConfigurationAccessRestService.class,
+                ConfigurationGroupAccessRestService.class
+        },
         address = "http://localhost:${server.port}/api"
 )
 @DefinePort
 @EnableEmbeddedPg
 public class ConfigurationAccessRestServiceImplTest {
 
-    /** @noinspection SpringJavaInjectionPointsAutowiringInspection*/
+    /**
+     * @noinspection SpringJavaInjectionPointsAutowiringInspection
+     */
     @Autowired
     @Qualifier("configurationAccessRestServiceJaxRsProxyClient")
     private ConfigurationAccessRestService configurationAccessRestService;
 
+    @Autowired
+    @Qualifier("configurationGroupAccessRestServiceJaxRsProxyClient")
+    private ConfigurationGroupAccessRestService configurationGroupAccessRestService;
+
+    /// TODO - добавить мок на консул
 
     /**
-     * Проверка, что список метаданных настроек возвращается корректно
+     * Проверка, что список настроек возвращается корректно
      */
     @Test
-    public void getAllConfigurationsMetadataTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem2 = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem2();
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem2);
+    public void getAllConfigurationsTest() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem);
+        ConfigurationResponseItem configurationResponseItem2 = ConfigurationItemBuilder.buildConfigurationItem2();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem2);
+        ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem3);
+        ConfigurationGroupResponseItem configurationGroupResponseItem = ConfigurationItemBuilder.buildConfigurationGroupItem();
+        Integer groupId = configurationGroupAccessRestService.saveConfigurationGroup(configurationGroupResponseItem);
 
-        List<ConfigurationMetadataResponseItem> configurationsMetadata = configurationAccessRestService.getAllConfigurationsMetadata().getContent();
+        List<ConfigurationResponseItem> configurationResponseItems =
+                configurationAccessRestService.getAllConfigurations(new FindConfigurationCriteria()).getContent();
 
-        assertEquals(2, configurationsMetadata.size());
-        assertEquals(configurationMetadataResponseItem, configurationsMetadata.get(0));
-        assertEquals(configurationMetadataResponseItem2, configurationsMetadata.get(1));
-
-        configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
-        configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem2.getCode());
+        try {
+            assertEquals(3, configurationResponseItems.size());
+            assertEquals(configurationResponseItem, configurationResponseItems.get(0));
+            assertEquals(configurationResponseItem2, configurationResponseItems.get(1));
+            assertEquals(configurationResponseItem3, configurationResponseItems.get(2));
+        } finally {
+            configurationGroupAccessRestService.deleteConfigurationGroup(groupId);
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem2.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem3.getCode());
+        }
     }
 
     /**
-     * Проверка, что по коду настройки должны возвращаться все метаданные этой настройки
+     * Проверка, что фильтрация настроек по коду работает корректно
      */
     @Test
-    public void getConfigurationMetadataTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
+    public void getAllConfigurationsByCode() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem);
+        ConfigurationResponseItem configurationResponseItem2 = ConfigurationItemBuilder.buildConfigurationItem2();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem2);
+        ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem3);
+        ConfigurationGroupResponseItem configurationGroupResponseItem = ConfigurationItemBuilder.buildConfigurationGroupItem();
+        Integer groupId = configurationGroupAccessRestService.saveConfigurationGroup(configurationGroupResponseItem);
 
-        assertEquals(configurationMetadataResponseItem,
-                configurationAccessRestService.getConfigurationMetadata(configurationMetadataResponseItem.getCode()));
+        FindConfigurationCriteria criteria = new FindConfigurationCriteria();
+        criteria.setCode("sec");
 
-        configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
+        List<ConfigurationResponseItem> allConfigurationsMetadata =
+                configurationAccessRestService.getAllConfigurations(criteria).getContent();
+        try {
+            assertEquals(2, allConfigurationsMetadata.size());
+            assertEquals(configurationResponseItem, allConfigurationsMetadata.get(0));
+            assertEquals(configurationResponseItem2, allConfigurationsMetadata.get(1));
+        } finally {
+            configurationGroupAccessRestService.deleteConfigurationGroup(groupId);
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem2.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem3.getCode());
+        }
     }
 
     /**
-     * Проверка, что чтение метаданных по несуществующему коду приводит к NotFoundException
-     */
-    @Test(expected = NotFoundException.class)
-    public void getConfigurationMetadataIfNotExistsTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-
-        configurationAccessRestService.getConfigurationMetadata(configurationMetadataResponseItem.getCode());
-    }
-
-    /**
-     * Проверка, что корректные метаданные настройки успешно сохраняются
+     * Проверка, что фильтрация настроек по имени работает корректно
      */
     @Test
-    public void saveConfigurationMetadataTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
+    public void getAllConfigurationsByName() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem);
+        ConfigurationResponseItem configurationResponseItem2 = ConfigurationItemBuilder.buildConfigurationItem2();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem2);
+        ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem3);
+        ConfigurationGroupResponseItem configurationGroupResponseItem = ConfigurationItemBuilder.buildConfigurationGroupItem();
+        Integer groupId = configurationGroupAccessRestService.saveConfigurationGroup(configurationGroupResponseItem);
 
-        List<ConfigurationMetadataResponseItem> configurationsMetadata = configurationAccessRestService.getAllConfigurationsMetadata().getContent();
+        FindConfigurationCriteria criteria = new FindConfigurationCriteria();
+        criteria.setName("test");
 
-        assertEquals(1, configurationsMetadata.size());
-        assertEquals(configurationMetadataResponseItem, configurationsMetadata.get(0));
+        List<ConfigurationResponseItem> allConfigurationsMetadata =
+                configurationAccessRestService.getAllConfigurations(criteria).getContent();
 
-        configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
+        try {
+            assertEquals(2, allConfigurationsMetadata.size());
+            assertEquals(configurationResponseItem, allConfigurationsMetadata.get(0));
+            assertEquals(configurationResponseItem2, allConfigurationsMetadata.get(1));
+        } finally {
+            configurationGroupAccessRestService.deleteConfigurationGroup(groupId);
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem2.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem3.getCode());
+        }
     }
 
     /**
-     * Проверка, что повторное сохранение метаданных настройки приводит к BadRequestException
+     * Проверка, что фильтрация настроек по именам групп работает корректно
+     */
+    @Test
+    @Ignore
+    public void getAllConfigurationsByGroupName() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem);
+        ConfigurationResponseItem configurationResponseItem2 = ConfigurationItemBuilder.buildConfigurationItem2();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem2);
+        ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem3);
+        ConfigurationGroupResponseItem configurationGroupResponseItem = ConfigurationItemBuilder.buildConfigurationGroupItem();
+        Integer groupId = configurationGroupAccessRestService.saveConfigurationGroup(configurationGroupResponseItem);
+
+        FindConfigurationCriteria criteria = new FindConfigurationCriteria();
+        criteria.setGroupNames(Arrays.asList("test"));
+
+        List<ConfigurationResponseItem> allConfigurationsMetadata =
+                configurationAccessRestService.getAllConfigurations(criteria).getContent();
+
+        try {
+            assertEquals(2, allConfigurationsMetadata.size());
+            assertEquals(configurationResponseItem, allConfigurationsMetadata.get(0));
+            assertEquals(configurationResponseItem2, allConfigurationsMetadata.get(1));
+        } finally {
+            configurationGroupAccessRestService.deleteConfigurationGroup(groupId);
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem2.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem3.getCode());
+        }
+    }
+
+    /**
+     * Проверка, что настройка успешно сохраняется
+     */
+    @Test
+    public void saveConfigurationTest() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem);
+        ConfigurationGroupResponseItem configurationGroupResponseItem = ConfigurationItemBuilder.buildConfigurationGroupItem();
+        Integer groupId = configurationGroupAccessRestService.saveConfigurationGroup(configurationGroupResponseItem);
+
+        List<ConfigurationResponseItem> configurationsMetadata =
+                configurationAccessRestService.getAllConfigurations(new FindConfigurationCriteria()).getContent();
+
+        try {
+            assertEquals(1, configurationsMetadata.size());
+            assertEquals(configurationResponseItem, configurationsMetadata.get(0));
+        } finally {
+            configurationGroupAccessRestService.deleteConfigurationGroup(groupId);
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
+        }
+    }
+
+    /**
+     * Проверка, что сохранение настройки с уже существующим кодом приводит к BadRequestException
      */
     @Test(expected = BadRequestException.class)
-    public void saveAlreadyExistsConfigurationMetadataTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
+    public void saveAlreadyExistsConfigurationTest() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem);
 
         try {
-            configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
+            configurationAccessRestService.saveConfiguration(configurationResponseItem);
         } finally {
-            configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
         }
     }
 
     /**
-     * Проверка, что сохранение метаданных настройки c пустым значением имени приводит к RestException
-     */
-    @Test(expected = RestException.class)
-    public void saveConfigurationMetadataWithBlankNameTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-        configurationMetadataResponseItem.setName("");
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
-
-        try {
-            configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
-        } finally {
-            configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
-        }
-    }
-
-    /**
-     * Проверка, что корректные метаданные успешно обновляются
+     * Проверка, что настройка успешно обновляется
      */
     @Test
     public void updateConfigurationMetadataTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
+        configurationAccessRestService.saveConfiguration(configurationResponseItem);
+        ConfigurationGroupResponseItem configurationGroupResponseItem = ConfigurationItemBuilder.buildConfigurationGroupItem();
+        Integer groupId = configurationGroupAccessRestService.saveConfigurationGroup(configurationGroupResponseItem);
 
-        ConfigurationMetadataResponseItem newConfigurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem2();
-        newConfigurationMetadataResponseItem.setCode(configurationMetadataResponseItem.getCode());
+        configurationResponseItem.setServiceCode("test");
+        configurationResponseItem.setDescription("test");
+        configurationResponseItem.setValue("test");
 
-        configurationAccessRestService.updateConfigurationMetadata(newConfigurationMetadataResponseItem.getCode(), newConfigurationMetadataResponseItem);
-
-        assertEquals(newConfigurationMetadataResponseItem, configurationAccessRestService.getConfigurationMetadata(newConfigurationMetadataResponseItem.getCode()));
-
-        configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
-    }
-
-    /**
-     * Проверка, что обновлении метаданных настройки с несовпадающим кодом в пути и теле приводит к BadRequestException
-     */
-    @Test(expected = BadRequestException.class)
-    public void updateConfigurationMetadataWithDifferentCodeTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
-
-        ConfigurationMetadataResponseItem newConfigurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem2();
+        configurationAccessRestService.updateConfiguration(configurationResponseItem.getCode(), configurationResponseItem);
 
         try {
-            configurationAccessRestService.updateConfigurationMetadata(configurationMetadataResponseItem.getCode(), newConfigurationMetadataResponseItem);
+            assertEquals(configurationResponseItem, configurationAccessRestService.getConfiguration(configurationResponseItem.getCode()));
         } finally {
-            configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
+            configurationGroupAccessRestService.deleteConfigurationGroup(groupId);
+            configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
         }
     }
 
     /**
-     * Проверка, что обновление метаданных по несуществующему коду приводит к NotFoundException
-     */
-    @Test(expected = NotFoundException.class)
-    public void updateNotExistsConfigurationMetadataTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
-
-        configurationAccessRestService.updateConfigurationMetadata(configurationMetadataResponseItem.getCode(), configurationMetadataResponseItem);
-    }
-
-    /**
-     * Проверка, что удаление метаданных настройки по коду происходит корректно
+     * Проверка, что удаление настройки по коду происходит корректно
      */
     @Test
-    public void deleteConfigurationMetadataTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
+    public void deleteConfigurationTest() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
 
-        configurationAccessRestService.saveConfigurationMetadata(configurationMetadataResponseItem);
-        configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
+        configurationAccessRestService.saveConfiguration(configurationResponseItem);
+        configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
 
-        assertTrue(configurationAccessRestService.getAllConfigurationsMetadata().isEmpty());
+        assertTrue(configurationAccessRestService.getAllConfigurations(new FindConfigurationCriteria()).isEmpty());
     }
 
     /**
-     * Проверка, что удаление метаданных настройки по несуществующему коду приводит к NotFoundException
+     * Проверка, что удаление настройки по несуществующему коду приводит к NotFoundException
      */
     @Test(expected = NotFoundException.class)
-    public void deleteAlreadyDeletedConfigurationMetadataTest() {
-        ConfigurationMetadataResponseItem configurationMetadataResponseItem = ConfigurationMetadataItemBuilder.buildConfigurationMetadataItem1();
+    public void deleteAlreadyDeletedConfigurationTest() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
 
-        configurationAccessRestService.deleteConfigurationMetadata(configurationMetadataResponseItem.getCode());
+        configurationAccessRestService.deleteConfiguration(configurationResponseItem.getCode());
     }
 }

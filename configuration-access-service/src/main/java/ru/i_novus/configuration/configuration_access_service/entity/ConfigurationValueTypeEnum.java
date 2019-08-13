@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.configuration_access_service.entity.metadata;
+package ru.i_novus.configuration.configuration_access_service.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,17 +12,17 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public enum ConfigurationValueTypeEnum {
-    NUMBER("Числовой"),
-    STRING("Строковый"),
-    DATE("Дата");
+    NUMBER("Число"),
+    STRING("Строка"),
+    BOOLEAN("Чекбокс");
 
     /**
-     * Конкретное обозначение для каждого типа
+     * Конкретное наименование для каждого типа
      */
     private String title;
 
     /**
-     * Словарь для поиска ConfigurationValueTypeEnum по его обозначению
+     * Словарь для поиска ConfigurationValueTypeEnum по его наименованию
      */
     private static final Map<String, ConfigurationValueTypeEnum> titles = new HashMap<>();
 

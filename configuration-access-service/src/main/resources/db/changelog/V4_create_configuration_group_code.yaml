@@ -1,8 +1,8 @@
 databaseChangeLog:
   - changeSet:
-      id: add_indexing_by_code
+      id: create_configuration_group_code
       author: ilebedenko
       dbms: postgresql
       changes:
         - sqlFile:
-            path: db/sql/V5_add_indexing_by_code.sql
+            path: db/sql/V4_configuration_group_code.sql

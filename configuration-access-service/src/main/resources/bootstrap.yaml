@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: configuration-access-service
+  cloud:
+    consul:
+      host: consul-agent.local
+      port: 8500
+      config:
+        enabled: ${config.server.enable}

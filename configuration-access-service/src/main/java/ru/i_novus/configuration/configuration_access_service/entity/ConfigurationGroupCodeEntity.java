@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.configuration_access_service.entity.group_code;
+package ru.i_novus.configuration.configuration_access_service.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,8 +27,6 @@ public class ConfigurationGroupCodeEntity {
     /**
      * Идентификатор группы
      */
-//    @OneToOne(cascade = CascadeType.REMOVE)
-//    @JoinColumn(name = "group_id", referencedColumnName = "id")
     @Column(name = "group_id", nullable = false)
     private Integer groupId;
 }

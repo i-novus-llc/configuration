@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.i_novus.configuration.configuration_access_service.entity.group_code.ConfigurationGroupCodeEntity;
+import ru.i_novus.configuration.configuration_access_service.entity.ConfigurationGroupCodeEntity;
 
 import java.util.List;
 

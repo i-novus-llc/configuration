@@ -2,9 +2,8 @@ package ru.i_novus.configuration.configuration_access_service.service.group;
 
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
-import ru.i_novus.configuration.configuration_access_service.criteria.FindConfigurationGroupsCriteria;
-import ru.i_novus.configuration.configuration_access_service.entity.group.ConfigurationGroupEntity;
-import ru.i_novus.configuration.configuration_access_service.entity.group.ConfigurationGroupResponseItem;
+import ru.i_novus.configuration.configuration_access_service.criteria.FindConfigurationGroupCriteria;
+import ru.i_novus.configuration.configuration_access_service.items.ConfigurationGroupResponseItem;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -19,12 +18,22 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api("REST сервис для работы с группами настроек")
-public interface GroupAccessRestService {
+public interface ConfigurationGroupAccessRestService {
+
+    @GET
+    @Path("/{groupId}")
+    @ApiOperation(value = "Получение группы настроек", response = ConfigurationGroupResponseItem.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение группы настроек"),
+            @ApiResponse(code = 404, message = "Группа настроек не найдена")
+    })
+    ConfigurationGroupResponseItem getConfigurationGroup(@PathParam("groupId") @ApiParam(name = "Идентификатор группы") Integer groupId);
+
     @GET
     @Path("/")
     @ApiOperation(value = "Получение групп настроек", response = ConfigurationGroupResponseItem.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение групп настроек")
-    Page<ConfigurationGroupEntity> getConfigurationsGroup(@BeanParam FindConfigurationGroupsCriteria criteria);
+    Page<ConfigurationGroupResponseItem> getAllConfigurationsGroup(@BeanParam FindConfigurationGroupCriteria criteria);
 
     @POST
     @Path("/")
@@ -34,7 +43,7 @@ public interface GroupAccessRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос")
     })
     Integer saveConfigurationGroup(@Valid @NotNull @ApiParam(name = "Новая группа настроек", required = true)
-                                           ConfigurationGroupResponseItem configurationGroupResponseItem);
+                                           ConfigurationGroupResponseItem configurationGroupItem);
 
     @PUT
     @Path("/{groupId}")
@@ -46,7 +55,7 @@ public interface GroupAccessRestService {
     })
     void updateConfigurationGroup(@PathParam("groupId") @ApiParam(name = "Идентификатор группы") Integer groupId,
                                      @Valid @NotNull @ApiParam(name = "Обновленная группа настроек", required = true)
-                                             ConfigurationGroupResponseItem configurationGroupResponseItem);
+                                             ConfigurationGroupResponseItem configurationGroupItem);
 
     @DELETE
     @Path("/{groupId}")

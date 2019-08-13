@@ -1,7 +1,8 @@
-package ru.i_novus.configuration.configuration_access_service.entity.group;
+package ru.i_novus.configuration.configuration_access_service.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.i_novus.configuration.configuration_access_service.items.ConfigurationGroupResponseItem;
 
 import javax.persistence.*;
 
@@ -35,8 +36,8 @@ public class ConfigurationGroupEntity {
     private String description;
 
 
-    public ConfigurationGroupEntity(String name, String description) {
-        this.name = name;
-        this.description = description;
+    public ConfigurationGroupEntity(ConfigurationGroupResponseItem responseItem) {
+        this.name = responseItem.getName();
+        this.description = responseItem.getDescription();
     }
 }
