@@ -20,7 +20,8 @@
     </properties>
 
     <modules>
-        <module>configuration-access-service</module>
+        <module>configuration-api</module>
+        <module>configuration-service</module>
     </modules>
 
     <profiles>
