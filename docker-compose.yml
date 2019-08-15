@@ -22,10 +22,10 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/configuration
       - JAVA_OPTS=-Xmx200m
-      - SERVER_PORT=8081
+      - SERVER_PORT=8080
       - SERVER_SERVLET_CONTEXT_PATH=/config/service
     ports:
-      - 8961:8081
+      - 8961:8080
     deploy:
       resources:
         limits:
