@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.web;
+package ru.i_novus.configuration_web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
