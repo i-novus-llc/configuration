@@ -1,6 +1,5 @@
 package ru.i_novus.configuration_service.service;
 
-import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,9 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -66,11 +63,14 @@ public class ConfigurationGroupRestServiceImpl implements ConfigurationGroupRest
         return new PageImpl<>(findGroups(criteria), criteria, criteria.getPageSize());
     }
 
-    ///TODO - сохранение новой группы с уже существующими кодами работает (не должно)
     @Override
     @Transactional
     public Integer saveGroup(@Valid @NotNull GroupResponseItem groupResponseItem) {
         GroupEntity groupEntity = new GroupEntity(groupResponseItem);
+
+        if (groupCodeRepository.existsAtLeastOneCode(groupResponseItem.getCodes(), -1)) {
+            throw new BadRequestException("Один или более кодов принадлежат другой группе");
+        }
 
         final GroupEntity savedGroupEntity;
         try {
@@ -89,6 +89,10 @@ public class ConfigurationGroupRestServiceImpl implements ConfigurationGroupRest
     public void updateGroup(Integer groupId, @Valid @NotNull GroupResponseItem groupResponseItem) {
         GroupEntity groupEntity = groupRepository.findById(groupId)
                 .orElseThrow(() -> new NotFoundException("Группы с идентификатором " + groupId + " не существует"));
+
+        if (groupCodeRepository.existsAtLeastOneCode(groupResponseItem.getCodes(), groupEntity.getId())) {
+            throw new BadRequestException("Один или более кодов принадлежат другой группе");
+        }
 
         groupEntity.setName(groupResponseItem.getName());
         groupEntity.setDescription(groupResponseItem.getDescription());
@@ -113,9 +117,9 @@ public class ConfigurationGroupRestServiceImpl implements ConfigurationGroupRest
         QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
 
-        JPAQuery<GroupResponseItem> query = new JPAQuery(entityManager);
-        query.select(qGroupEntity).from(qGroupEntity).leftJoin(qGroupCodeEntity)
-                .on(qGroupEntity.id.eq(qGroupCodeEntity.groupId));
+        JPAQuery<String> query = new JPAQuery(entityManager);
+        query.select(qGroupEntity)
+                .from(qGroupEntity).leftJoin(qGroupCodeEntity).on(qGroupEntity.id.eq(qGroupCodeEntity.groupId));
 
         if (criteria.getCode() != null) {
             query.where(qGroupCodeEntity.code.containsIgnoreCase(criteria.getCode()));
@@ -125,24 +129,23 @@ public class ConfigurationGroupRestServiceImpl implements ConfigurationGroupRest
             query.where(qGroupEntity.name.containsIgnoreCase(criteria.getName()));
         }
 
+//        select(qGroupEntity.name, qGroupEntity.description, SQLExpressions.groupConcat(qGroupCodeEntity.code, " "))
         /// TODO - есть вероятность, что из-за лимита\офсетта не все коды будут включены в запись группы
         /// TODO - пока так, но вероятно нужно использовать group_concat без использования внешнего преобразования
-        Map<List<?>, List<String>> results =
-                query.limit(criteria.getPageSize()).offset(criteria.getOffset())
-                        .transform(GroupBy.groupBy(qGroupEntity.name, qGroupEntity.description)
-                                .as(GroupBy.list(qGroupCodeEntity.code))
-                        );
-
-        List<GroupResponseItem> groupResponseItems = new ArrayList<>();
-        for (Map.Entry<List<?>, List<String>> entry : results.entrySet()) {
-            String name = (String) entry.getKey().get(0);
-            String description = entry.getKey().size() > 1 ? (String) entry.getKey().get(1) : null;
-            groupResponseItems.add(new GroupResponseItem(name, description, entry.getValue()));
-        }
-
-        return groupResponseItems;
+        List<String> results =
+                query.groupBy(qGroupEntity.id).fetch();
+//
+//                        .limit(criteria.getPageSize()).offset(criteria.getOffset())
+        return null;
     }
 
+    /**
+     * Конструирует экземпляры кодов конкретной группы
+     *
+     * @param codes   Коды групп
+     * @param groupId Идентификатор группы
+     * @return Список экземпляров кодов группы
+     */
     private List<GroupCodeEntity> getGroupCodeEntities(List<String> codes, Integer groupId) {
         return codes.stream()
                 .map(i -> new GroupCodeEntity(i, groupId))

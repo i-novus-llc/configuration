@@ -4,7 +4,6 @@ import net.n2oapp.platform.jaxrs.autoconfigure.EnableJaxRsProxyClient;
 import net.n2oapp.platform.test.autoconfigure.DefinePort;
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import ru.i_novus.configuration_service.service.builders.ConfigurationItemBuilde
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -79,120 +78,164 @@ public class ConfigurationRestServiceImplTest {
         configurationRestService.saveConfiguration(configurationResponseItem2);
         ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
         configurationRestService.saveConfiguration(configurationResponseItem3);
-        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem();
+        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem1();
         Integer groupId = groupRestService.saveGroup(groupResponseItem);
+        GroupResponseItem groupResponseItem2 = ConfigurationItemBuilder.buildGroupItem2();
+        Integer groupId2 = groupRestService.saveGroup(groupResponseItem2);
 
         List<ConfigurationResponseItem> configurationResponseItems =
                 configurationRestService.getAllConfigurations(new FindConfigurationCriteria()).getContent();
 
-        try {
-            assertEquals(3, configurationResponseItems.size());
-            assertEquals(configurationResponseItem, configurationResponseItems.get(0));
-            assertEquals(configurationResponseItem2, configurationResponseItems.get(1));
-            assertEquals(configurationResponseItem3, configurationResponseItems.get(2));
-        } finally {
-            groupRestService.deleteGroup(groupId);
-            configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
-            configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
-            configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
-        }
+        assertEquals(3, configurationResponseItems.size());
+        assertEquals(configurationResponseItem, configurationResponseItems.get(0));
+        assertEquals(configurationResponseItem2, configurationResponseItems.get(1));
+        assertEquals(configurationResponseItem3, configurationResponseItems.get(2));
+
+        groupRestService.deleteGroup(groupId);
+        groupRestService.deleteGroup(groupId2);
+        configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
     }
 
     /**
      * Проверка, что фильтрация настроек по коду работает корректно
      */
     @Test
-    public void getAllConfigurationsByCode() {
+    public void getAllConfigurationsByCodeTest() {
         ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
         configurationRestService.saveConfiguration(configurationResponseItem);
         ConfigurationResponseItem configurationResponseItem2 = ConfigurationItemBuilder.buildConfigurationItem2();
         configurationRestService.saveConfiguration(configurationResponseItem2);
         ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
         configurationRestService.saveConfiguration(configurationResponseItem3);
-        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem();
+        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem1();
         Integer groupId = groupRestService.saveGroup(groupResponseItem);
+        GroupResponseItem groupResponseItem2 = ConfigurationItemBuilder.buildGroupItem2();
+        Integer groupId2 = groupRestService.saveGroup(groupResponseItem2);
 
         FindConfigurationCriteria criteria = new FindConfigurationCriteria();
         criteria.setCode("sec");
 
-        List<ConfigurationResponseItem> allConfigurationsMetadata =
+        List<ConfigurationResponseItem> configurationResponseItems =
                 configurationRestService.getAllConfigurations(criteria).getContent();
 
-        try {
-            assertEquals(2, allConfigurationsMetadata.size());
-            assertEquals(configurationResponseItem, allConfigurationsMetadata.get(0));
-            assertEquals(configurationResponseItem2, allConfigurationsMetadata.get(1));
-        } finally {
-            groupRestService.deleteGroup(groupId);
-            configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
-            configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
-            configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
-        }
+        assertEquals(2, configurationResponseItems.size());
+        assertEquals(configurationResponseItem, configurationResponseItems.get(0));
+        assertEquals(configurationResponseItem2, configurationResponseItems.get(1));
+
+        groupRestService.deleteGroup(groupId);
+        groupRestService.deleteGroup(groupId2);
+        configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
     }
 
     /**
      * Проверка, что фильтрация настроек по имени работает корректно
      */
     @Test
-    public void getAllConfigurationsByName() {
+    public void getAllConfigurationsByNameTest() {
         ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
         configurationRestService.saveConfiguration(configurationResponseItem);
         ConfigurationResponseItem configurationResponseItem2 = ConfigurationItemBuilder.buildConfigurationItem2();
         configurationRestService.saveConfiguration(configurationResponseItem2);
         ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
         configurationRestService.saveConfiguration(configurationResponseItem3);
-        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem();
+        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem1();
         Integer groupId = groupRestService.saveGroup(groupResponseItem);
+        GroupResponseItem groupResponseItem2 = ConfigurationItemBuilder.buildGroupItem2();
+        Integer groupId2 = groupRestService.saveGroup(groupResponseItem2);
 
         FindConfigurationCriteria criteria = new FindConfigurationCriteria();
         criteria.setName("test");
 
-        List<ConfigurationResponseItem> allConfigurationsMetadata =
+        List<ConfigurationResponseItem> configurationResponseItems =
                 configurationRestService.getAllConfigurations(criteria).getContent();
 
-        try {
-            assertEquals(2, allConfigurationsMetadata.size());
-            assertEquals(configurationResponseItem, allConfigurationsMetadata.get(0));
-            assertEquals(configurationResponseItem2, allConfigurationsMetadata.get(1));
-        } finally {
-            groupRestService.deleteGroup(groupId);
-            configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
-            configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
-            configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
-        }
+        assertEquals(2, configurationResponseItems.size());
+        assertEquals(configurationResponseItem, configurationResponseItems.get(0));
+        assertEquals(configurationResponseItem2, configurationResponseItems.get(1));
+
+        groupRestService.deleteGroup(groupId);
+        groupRestService.deleteGroup(groupId2);
+        configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
     }
 
     /**
      * Проверка, что фильтрация настроек по именам групп работает корректно
      */
     @Test
-    @Ignore
-    public void getAllConfigurationsByGroupName() {
+    public void getAllConfigurationsByGroupNameTest() {
         ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
         configurationRestService.saveConfiguration(configurationResponseItem);
         ConfigurationResponseItem configurationResponseItem2 = ConfigurationItemBuilder.buildConfigurationItem2();
         configurationRestService.saveConfiguration(configurationResponseItem2);
         ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
         configurationRestService.saveConfiguration(configurationResponseItem3);
-        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem();
+        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem1();
         Integer groupId = groupRestService.saveGroup(groupResponseItem);
+        GroupResponseItem groupResponseItem2 = ConfigurationItemBuilder.buildGroupItem2();
+        Integer groupId2 = groupRestService.saveGroup(groupResponseItem2);
+
 
         FindConfigurationCriteria criteria = new FindConfigurationCriteria();
-        criteria.setGroupNames(Arrays.asList("test"));
+        criteria.setGroupNames(Collections.singletonList("Security settings"));
 
-        List<ConfigurationResponseItem> allConfigurationsMetadata =
+        List<ConfigurationResponseItem> configurationResponseItems =
                 configurationRestService.getAllConfigurations(criteria).getContent();
 
-        try {
-            assertEquals(2, allConfigurationsMetadata.size());
-            assertEquals(configurationResponseItem, allConfigurationsMetadata.get(0));
-            assertEquals(configurationResponseItem2, allConfigurationsMetadata.get(1));
-        } finally {
-            groupRestService.deleteGroup(groupId);
-            configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
-            configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
-            configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
-        }
+        assertEquals(2, configurationResponseItems.size());
+        assertEquals(configurationResponseItem, configurationResponseItems.get(0));
+        assertEquals(configurationResponseItem2, configurationResponseItems.get(1));
+
+        groupRestService.deleteGroup(groupId);
+        groupRestService.deleteGroup(groupId2);
+        configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
+    }
+
+    /**
+     * Проверка, что пагинация работает корректно
+     */
+    @Test
+    public void configurationPaginationTest() {
+        ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
+        configurationRestService.saveConfiguration(configurationResponseItem);
+        ConfigurationResponseItem configurationResponseItem2 = ConfigurationItemBuilder.buildConfigurationItem2();
+        configurationRestService.saveConfiguration(configurationResponseItem2);
+        ConfigurationResponseItem configurationResponseItem3 = ConfigurationItemBuilder.buildConfigurationItem3();
+        configurationRestService.saveConfiguration(configurationResponseItem3);
+        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem1();
+        Integer groupId = groupRestService.saveGroup(groupResponseItem);
+        GroupResponseItem groupResponseItem2 = ConfigurationItemBuilder.buildGroupItem2();
+        Integer groupId2 = groupRestService.saveGroup(groupResponseItem2);
+
+
+        FindConfigurationCriteria criteria = new FindConfigurationCriteria();
+        criteria.setPageSize(2);
+
+        List<ConfigurationResponseItem> configurationResponseItems =
+                configurationRestService.getAllConfigurations(criteria).getContent();
+
+        assertEquals(2, configurationResponseItems.size());
+        assertEquals(configurationResponseItem, configurationResponseItems.get(0));
+        assertEquals(configurationResponseItem2, configurationResponseItems.get(1));
+
+        criteria.setPageNumber(1);
+        configurationResponseItems = configurationRestService.getAllConfigurations(criteria).getContent();
+
+        assertEquals(1, configurationResponseItems.size());
+        assertEquals(configurationResponseItem3, configurationResponseItems.get(0));
+
+        groupRestService.deleteGroup(groupId);
+        groupRestService.deleteGroup(groupId2);
+        configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem2.getCode());
+        configurationRestService.deleteConfiguration(configurationResponseItem3.getCode());
     }
 
     /**
@@ -202,19 +245,17 @@ public class ConfigurationRestServiceImplTest {
     public void saveConfigurationTest() {
         ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
         configurationRestService.saveConfiguration(configurationResponseItem);
-        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem();
+        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem1();
         Integer groupId = groupRestService.saveGroup(groupResponseItem);
 
-        List<ConfigurationResponseItem> configurationsMetadata =
+        List<ConfigurationResponseItem> configurationResponseItems =
                 configurationRestService.getAllConfigurations(new FindConfigurationCriteria()).getContent();
 
-        try {
-            assertEquals(1, configurationsMetadata.size());
-            assertEquals(configurationResponseItem, configurationsMetadata.get(0));
-        } finally {
-            groupRestService.deleteGroup(groupId);
-            configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
-        }
+        assertEquals(1, configurationResponseItems.size());
+        assertEquals(configurationResponseItem, configurationResponseItems.get(0));
+
+        groupRestService.deleteGroup(groupId);
+        configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
     }
 
     /**
@@ -239,7 +280,7 @@ public class ConfigurationRestServiceImplTest {
     public void updateConfigurationMetadataTest() {
         ConfigurationResponseItem configurationResponseItem = ConfigurationItemBuilder.buildConfigurationItem1();
         configurationRestService.saveConfiguration(configurationResponseItem);
-        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem();
+        GroupResponseItem groupResponseItem = ConfigurationItemBuilder.buildGroupItem1();
         Integer groupId = groupRestService.saveGroup(groupResponseItem);
 
         configurationResponseItem.setServiceCode("test");
@@ -250,12 +291,10 @@ public class ConfigurationRestServiceImplTest {
 
         configurationRestService.updateConfiguration(configurationResponseItem.getCode(), configurationResponseItem);
 
-        try {
-            assertEquals(configurationResponseItem, configurationRestService.getConfiguration(configurationResponseItem.getCode()));
-        } finally {
-            groupRestService.deleteGroup(groupId);
-            configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
-        }
+        assertEquals(configurationResponseItem, configurationRestService.getConfiguration(configurationResponseItem.getCode()));
+
+        groupRestService.deleteGroup(groupId);
+        configurationRestService.deleteConfiguration(configurationResponseItem.getCode());
     }
 
     /**

@@ -1,13 +1,12 @@
 package ru.i_novus.configuration_service.service;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.configuration_api.criteria.FindConfigurationCriteria;
 import ru.i_novus.configuration_api.items.ConfigurationResponseItem;
 import ru.i_novus.configuration_api.service.ConfigurationRestService;
@@ -26,7 +25,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Реализация REST сервиса для работы с настройками
@@ -66,8 +68,7 @@ public class ConfigurationRestServiceImpl implements ConfigurationRestService {
 
     @Override
     public Page<ConfigurationResponseItem> getAllConfigurations(FindConfigurationCriteria criteria) {
-        Predicate predicate = buildFindConfigurationPredicate(criteria);
-        Iterable<MetadataEntity> metadataEntities = metadataRepository.findAll(predicate);
+        List<MetadataEntity> metadataEntities = findConfigurations(criteria);
 
         List<ConfigurationResponseItem> configurationResponseItems = new ArrayList<>();
         for (MetadataEntity entity : metadataEntities) {
@@ -78,7 +79,6 @@ public class ConfigurationRestServiceImpl implements ConfigurationRestService {
             configurationResponseItems.add(entity.toItem(value, systemName, groupName));
         }
 
-        Collections.sort(configurationResponseItems, Comparator.comparing(ConfigurationResponseItem::getSystemName));
         return new PageImpl<>(configurationResponseItems, criteria, criteria.getPageSize());
     }
 
@@ -113,6 +113,7 @@ public class ConfigurationRestServiceImpl implements ConfigurationRestService {
     }
 
     @Override
+    @Transactional
     public void updateConfiguration(String code, @Valid @NotNull ConfigurationResponseItem configurationResponseItem) {
         MetadataEntity metadataEntity = Optional.ofNullable(
                 metadataRepository.findByCode(code))
@@ -136,28 +137,27 @@ public class ConfigurationRestServiceImpl implements ConfigurationRestService {
         configurationValueService.deleteValue(getServiceCode(metadataEntity), code);
     }
 
-    private Predicate buildFindConfigurationPredicate(FindConfigurationCriteria criteria) {
+    private List<MetadataEntity> findConfigurations(FindConfigurationCriteria criteria) {
         QMetadataEntity qMetadataEntity = QMetadataEntity.metadataEntity;
         QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
 
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-
-        JPAQuery query = new JPAQuery(entityManager);
-        query.from(qMetadataEntity).join(qGroupEntity).leftJoin(qGroupCodeEntity)
-                .on(qGroupEntity.id.eq(qGroupCodeEntity.groupId));
-
-        if (criteria.getCode() != null) {
-            booleanBuilder.and(qMetadataEntity.code.containsIgnoreCase(criteria.getCode()));
-        }
-
-        if (criteria.getName() != null) {
-            booleanBuilder.and(qMetadataEntity.name.containsIgnoreCase(criteria.getName()));
-        }
+        JPAQuery<MetadataEntity> query = new JPAQuery(entityManager);
+        query.distinct().from(qMetadataEntity);
 
         List<String> groups = criteria.getGroupNames();
         if (groups != null && !groups.isEmpty()) {
+            query.innerJoin(qGroupCodeEntity).on(qMetadataEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code))
+                    .leftJoin(qGroupEntity).on(qGroupEntity.id.eq(qGroupCodeEntity.groupId))
+                    .where(qGroupEntity.name.in(groups));
+        }
 
+        if (criteria.getCode() != null) {
+            query.where(qMetadataEntity.code.containsIgnoreCase(criteria.getCode()));
+        }
+
+        if (criteria.getName() != null) {
+            query.where(qMetadataEntity.name.containsIgnoreCase(criteria.getName()));
         }
 
         List<String> systems = criteria.getSystemNames();
@@ -165,7 +165,8 @@ public class ConfigurationRestServiceImpl implements ConfigurationRestService {
             /// TODO
         }
 
-        return booleanBuilder.getValue();
+        /// TODO order by system_name
+        return query.orderBy(qMetadataEntity.id.asc()).limit(criteria.getPageSize()).offset(criteria.getOffset()).fetch();
     }
 
     private String getServiceCode(MetadataEntity metadataEntity) {

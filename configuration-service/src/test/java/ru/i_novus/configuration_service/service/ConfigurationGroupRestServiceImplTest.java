@@ -192,7 +192,6 @@ public class ConfigurationGroupRestServiceImplTest {
     /**
      * Проверка, что сохранение группы настроек с неуникальными кодами приводит к BadRequestException
      */
-    @Ignore
     @Test(expected = BadRequestException.class)
     public void saveGroupWithNotUniqueCodesTest() {
         GroupResponseItem groupResponseItem = GroupItemBuilder.buildGroupItem1();
@@ -257,7 +256,6 @@ public class ConfigurationGroupRestServiceImplTest {
     /**
      * Проверка, что обновление группы настроек с уже существующими кодами приводит к BadRequestException
      */
-    @Ignore
     @Test(expected = BadRequestException.class)
     public void updateGroupWithNotUniqueCodesTest() {
         GroupResponseItem groupResponseItem = GroupItemBuilder.buildGroupItem1();

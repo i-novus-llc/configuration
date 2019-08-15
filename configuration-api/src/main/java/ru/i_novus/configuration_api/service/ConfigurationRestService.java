@@ -2,7 +2,6 @@ package ru.i_novus.configuration_api.service;
 
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
-import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.configuration_api.criteria.FindConfigurationCriteria;
 import ru.i_novus.configuration_api.items.ConfigurationResponseItem;
 
@@ -55,7 +54,6 @@ public interface ConfigurationRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
-    @Transactional
     void updateConfiguration(@PathParam("configurationCode") @ApiParam(name = "Код настройки") String code,
                              @Valid @NotNull @ApiParam(name = "Обновленная настройка", required = true)
                                              ConfigurationResponseItem configurationResponseItem);
