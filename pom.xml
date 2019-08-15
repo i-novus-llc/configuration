@@ -22,6 +22,7 @@
     <modules>
         <module>configuration-api</module>
         <module>configuration-service</module>
+        <module>configuration-web</module>
     </modules>
 
     <profiles>
