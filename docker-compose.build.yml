@@ -1,0 +1,15 @@
+version: "3.6"
+
+services:
+
+  config-service:
+    build:
+      context: config-service
+      args:
+        JAR_FILE: target/config-service.jar
+
+  audit-web:
+    build:
+      context: config-web
+      args:
+        JAR_FILE: target/config-web.jar
