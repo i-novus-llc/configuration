@@ -12,17 +12,18 @@
     <parent>
         <groupId>net.n2oapp.platform</groupId>
         <artifactId>n2o-platform-parent</artifactId>
-        <version>2.10</version>
+        <version>2.12</version>
     </parent>
 
     <properties>
         <config.server.enable>false</config.server.enable>
+        <n2o.version>7.3.16</n2o.version>
     </properties>
 
     <modules>
-        <module>configuration-api</module>
-        <module>configuration-service</module>
-        <module>configuration-web</module>
+        <module>config-api</module>
+        <module>config-service</module>
+        <module>config-web</module>
     </modules>
 
     <profiles>
