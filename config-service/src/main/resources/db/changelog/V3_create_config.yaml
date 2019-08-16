@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_config
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V3_config.sql

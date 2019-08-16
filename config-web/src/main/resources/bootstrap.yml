@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: config-web
+  cloud:
+    consul:
+      config:
+        enabled: ${config.server.enable}
+
