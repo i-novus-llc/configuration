@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @ApiModel("Критерии поиска настроек")
-public class FindConfigCriteria extends AbstractCriteria {
+public class ConfigCriteria extends AbstractCriteria {
 
     @QueryParam("code")
     @ApiParam("Код настройки")

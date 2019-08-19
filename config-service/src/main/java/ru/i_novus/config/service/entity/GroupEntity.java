@@ -3,7 +3,7 @@ package ru.i_novus.config.service.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.i_novus.config.api.items.GroupForm;
+import ru.i_novus.config.api.model.GroupForm;
 
 import javax.persistence.*;
 import java.util.ArrayList;

@@ -4,10 +4,10 @@ import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.i_novus.config.api.criteria.FindGroupCriteria;
-import ru.i_novus.config.api.items.GroupForm;
+import ru.i_novus.config.api.criteria.GroupCriteria;
+import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.service.entity.GroupEntity;
 import ru.i_novus.config.service.entity.QGroupCodeEntity;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * Реализация REST сервиса для работы с группами настроек
  */
-@Controller
+@Service
 public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     private GroupRepository groupRepository;
@@ -56,7 +56,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     @Override
-    public Page<GroupForm> getAllGroup(FindGroupCriteria criteria) {
+    public Page<GroupForm> getAllGroup(GroupCriteria criteria) {
         return new PageImpl<>(findGroups(criteria), criteria, criteria.getPageSize());
     }
 
@@ -117,7 +117,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         }
     }
 
-    private List<GroupForm> findGroups(FindGroupCriteria criteria) {
+    private List<GroupForm> findGroups(GroupCriteria criteria) {
         QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
 

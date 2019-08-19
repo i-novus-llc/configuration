@@ -2,7 +2,7 @@ package ru.i_novus.config.api.criteria;
 
 import net.n2oapp.platform.jaxrs.RestCriteria;
 
-public class AbstractCriteria extends RestCriteria {
+public abstract class AbstractCriteria extends RestCriteria {
     private static final int DEFAULT_PAGE = 0;
     private static final int DEFAULT_PAGE_SIZE = 10;
     private static final int MAX_SIZE = Integer.MAX_VALUE;

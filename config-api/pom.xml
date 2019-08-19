@@ -7,8 +7,8 @@
     <artifactId>config-api</artifactId>
 
     <parent>
-        <groupId>ru.i-novus.configuration</groupId>
-        <artifactId>configuration</artifactId>
+        <groupId>ru.i-novus.config</groupId>
+        <artifactId>config</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 

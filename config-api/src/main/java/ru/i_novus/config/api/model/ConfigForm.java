@@ -1,4 +1,4 @@
-package ru.i_novus.config.api.items;
+package ru.i_novus.config.api.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

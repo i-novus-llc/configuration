@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.i_novus.config.api.criteria.FindConfigCriteria;
-import ru.i_novus.config.api.items.ConfigForm;
-import ru.i_novus.config.api.items.GroupForm;
+import ru.i_novus.config.api.criteria.ConfigCriteria;
+import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
@@ -84,7 +84,7 @@ public class ConfigRestServiceImplTest {
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
         List<ConfigForm> configForms =
-                configRestService.getAllConfig(new FindConfigCriteria()).getContent();
+                configRestService.getAllConfig(new ConfigCriteria()).getContent();
 
         assertEquals(3, configForms.size());
         assertEquals(configForm, configForms.get(0));
@@ -114,7 +114,7 @@ public class ConfigRestServiceImplTest {
         GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
-        FindConfigCriteria criteria = new FindConfigCriteria();
+        ConfigCriteria criteria = new ConfigCriteria();
         criteria.setCode("sec");
 
         List<ConfigForm> configForms =
@@ -147,7 +147,7 @@ public class ConfigRestServiceImplTest {
         GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
-        FindConfigCriteria criteria = new FindConfigCriteria();
+        ConfigCriteria criteria = new ConfigCriteria();
         criteria.setName("name");
 
         List<ConfigForm> configForms =
@@ -181,7 +181,7 @@ public class ConfigRestServiceImplTest {
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
 
-        FindConfigCriteria criteria = new FindConfigCriteria();
+        ConfigCriteria criteria = new ConfigCriteria();
         criteria.setGroupNames(Collections.singletonList("Security settings"));
 
         List<ConfigForm> configForms =
@@ -215,7 +215,7 @@ public class ConfigRestServiceImplTest {
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
 
-        FindConfigCriteria criteria = new FindConfigCriteria();
+        ConfigCriteria criteria = new ConfigCriteria();
         criteria.setPageSize(2);
 
         List<ConfigForm> configForms =
@@ -249,7 +249,7 @@ public class ConfigRestServiceImplTest {
         Integer groupId = groupRestService.saveGroup(groupForm);
 
         List<ConfigForm> configForms =
-                configRestService.getAllConfig(new FindConfigCriteria()).getContent();
+                configRestService.getAllConfig(new ConfigCriteria()).getContent();
 
         assertEquals(1, configForms.size());
         assertEquals(configForm, configForms.get(0));
@@ -307,7 +307,7 @@ public class ConfigRestServiceImplTest {
         configRestService.saveConfig(configForm);
         configRestService.deleteConfig(configForm.getCode());
 
-        assertTrue(configRestService.getAllConfig(new FindConfigCriteria()).isEmpty());
+        assertTrue(configRestService.getAllConfig(new ConfigCriteria()).isEmpty());
     }
 
     /**

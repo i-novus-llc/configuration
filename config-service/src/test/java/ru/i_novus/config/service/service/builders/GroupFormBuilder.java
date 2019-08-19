@@ -1,6 +1,6 @@
 package ru.i_novus.config.service.service.builders;
 
-import ru.i_novus.config.api.items.GroupForm;
+import ru.i_novus.config.api.model.GroupForm;
 
 import java.util.Arrays;
 
