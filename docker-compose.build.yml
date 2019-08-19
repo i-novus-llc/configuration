@@ -8,7 +8,7 @@ services:
       args:
         JAR_FILE: target/config-service.jar
 
-  audit-web:
+  config-web:
     build:
       context: config-web
       args:
