@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
  * Интерфейс REST API для работы с группами настроек
  */
 @Valid
-@Path("/configurations/group")
+@Path("/group")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api("REST сервис для работы с группами настроек")

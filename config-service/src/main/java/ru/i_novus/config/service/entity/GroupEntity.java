@@ -53,6 +53,7 @@ public class  GroupEntity {
 
     public GroupForm toGroupForm() {
         GroupForm groupForm = new GroupForm();
+        groupForm.setId(this.id);
         groupForm.setName(this.name);
         groupForm.setDescription(this.description);
         groupForm.setCodes(codes.stream().map(GroupCodeEntity::getCode).collect(Collectors.toList()));
