@@ -16,8 +16,6 @@ import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.service.ConfigServiceApplication;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -156,9 +154,9 @@ public class ConfigGroupRestServiceImplTest {
     }
 
     /**
-     * Проверка, что сохранение группы настроек с неуникальным именем приводит к BadRequestException
+     * Проверка, что сохранение группы настроек с неуникальным именем приводит к RestException
      */
-    @Test(expected = BadRequestException.class)
+    @Test(expected = RestException.class)
     public void saveGroupWithAlreadyExistsNameTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
@@ -182,9 +180,9 @@ public class ConfigGroupRestServiceImplTest {
     }
 
     /**
-     * Проверка, что сохранение группы настроек с неуникальными кодами приводит к BadRequestException
+     * Проверка, что сохранение группы настроек с неуникальными кодами приводит к RestException
      */
-    @Test(expected = BadRequestException.class)
+    @Test(expected = RestException.class)
     public void saveGroupWithNotUniqueCodesTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
@@ -216,18 +214,18 @@ public class ConfigGroupRestServiceImplTest {
     }
 
     /**
-     * Проверка, что обновление несуществующей группы настроек приводит к NotFoundException
+     * Проверка, что обновление несуществующей группы настроек приводит к RestException
      */
-    @Test(expected = NotFoundException.class)
+    @Test(expected = RestException.class)
     public void updateNotExistsGroupTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         groupRestService.updateGroup(0, groupForm);
     }
 
     /**
-     * Проверка, что обновление группы настроек с уже существующем именем приводит к BadRequestException
+     * Проверка, что обновление группы настроек с уже существующем именем приводит к RestException
      */
-    @Test(expected = BadRequestException.class)
+    @Test(expected = RestException.class)
     public void updateGroupWithNotUniqueNameTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
@@ -245,9 +243,9 @@ public class ConfigGroupRestServiceImplTest {
     }
 
     /**
-     * Проверка, что обновление группы настроек с уже существующими кодами приводит к BadRequestException
+     * Проверка, что обновление группы настроек с уже существующими кодами приводит к RestException
      */
-    @Test(expected = BadRequestException.class)
+    @Test(expected = RestException.class)
     public void updateGroupWithNotUniqueCodesTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
@@ -278,9 +276,9 @@ public class ConfigGroupRestServiceImplTest {
     }
 
     /**
-     * Проверка, что удаление группы настроек по несуществующему идентификатору приводит к NotFoundException
+     * Проверка, что удаление группы настроек по несуществующему идентификатору приводит к RestException
      */
-    @Test(expected = NotFoundException.class)
+    @Test(expected = RestException.class)
     public void deleteNotExistsGroupTest() {
         groupRestService.deleteGroup(0);
     }

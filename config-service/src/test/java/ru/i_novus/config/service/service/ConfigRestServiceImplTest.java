@@ -1,5 +1,6 @@
 package ru.i_novus.config.service.service;
 
+import net.n2oapp.platform.jaxrs.RestException;
 import net.n2oapp.platform.jaxrs.autoconfigure.EnableJaxRsProxyClient;
 import net.n2oapp.platform.test.autoconfigure.DefinePort;
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
@@ -20,8 +21,6 @@ import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.ConfigServiceApplication;
 import ru.i_novus.config.service.service.builders.ConfigFormBuilder;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
 import java.util.Collections;
 import java.util.List;
 
@@ -259,9 +258,9 @@ public class ConfigRestServiceImplTest {
     }
 
     /**
-     * Проверка, что сохранение настройки с уже существующим кодом приводит к BadRequestException
+     * Проверка, что сохранение настройки с уже существующим кодом приводит к RestException
      */
-    @Test(expected = BadRequestException.class)
+    @Test(expected = RestException.class)
     public void saveAlreadyExistsConfigTest() {
         ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
         configRestService.saveConfig(configForm);
@@ -311,9 +310,9 @@ public class ConfigRestServiceImplTest {
     }
 
     /**
-     * Проверка, что удаление настройки по несуществующему коду приводит к NotFoundException
+     * Проверка, что удаление настройки по несуществующему коду приводит к RestException
      */
-    @Test(expected = NotFoundException.class)
+    @Test(expected = RestException.class)
     public void deleteAlreadyDeletedConfigTest() {
         ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
 

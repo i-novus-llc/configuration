@@ -1,6 +1,7 @@
 package ru.i_novus.config.service.service;
 
 import com.querydsl.jpa.impl.JPAQuery;
+import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,8 +24,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -85,7 +84,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     public ConfigForm getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code))
-                .orElseThrow(() -> new NotFoundException("Настройки с кодом " + code + " не существует."));
+                .orElseThrow(() -> new UserException("Настройки с кодом " + code + " не существует."));
 
         String value = configValueService.getValue(getServiceCode(configEntity), configEntity.getCode());
         /// TODO - вытащить system_name по service_code из виртуальной таблицы
@@ -99,7 +98,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     public void saveConfig(@Valid @NotNull ConfigForm configForm) {
         if (configRepository.existsByCode(configForm.getCode())) {
-            throw new BadRequestException("Настройка с кодом " + configForm.getCode() + " уже существует");
+            throw new UserException("Настройка с кодом " + configForm.getCode() + " уже существует");
         }
 
         if (configForm.getServiceCode() != null) {
@@ -117,7 +116,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
         ConfigEntity configEntity = Optional.ofNullable(
                 configRepository.findByCode(code))
-                .orElseThrow(() -> new NotFoundException("Настройки с кодом " + code + " не существует"));
+                .orElseThrow(() -> new UserException("Настройки с кодом " + code + " не существует"));
 
         configEntity.setServiceCode(configForm.getServiceCode());
         configEntity.setDescription(configForm.getDescription());
@@ -131,7 +130,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     public void deleteConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code))
-                .orElseThrow(() -> new NotFoundException("Настройки с кодом " + code + " не существует."));
+                .orElseThrow(() -> new UserException("Настройки с кодом " + code + " не существует."));
         configRepository.removeByCode(code);
 
         configValueService.deleteValue(getServiceCode(configEntity), code);

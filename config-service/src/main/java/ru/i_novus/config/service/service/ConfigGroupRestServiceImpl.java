@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
+import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,8 +25,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +54,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Override
     public GroupForm getGroup(Integer groupId) {
         GroupEntity groupEntity = groupRepository.findById(groupId)
-                .orElseThrow(() -> new NotFoundException("Группы с идентификатором " + groupId + " не существует"));
+                .orElseThrow(() -> new UserException("Группы с идентификатором " + groupId + " не существует"));
 
         return groupEntity.toGroupForm();
     }
@@ -76,7 +75,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         GroupEntity groupEntity = new GroupEntity(groupForm);
 
         if (groupCodeRepository.existsAtLeastOneCode(groupForm.getCodes(), -1)) {
-            throw new BadRequestException("Один или более кодов принадлежат другой группе");
+            throw new UserException("Один или более кодов принадлежат другой группе");
         }
 
         groupForm.getCodes().forEach(groupEntity::setCode);
@@ -85,7 +84,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         try {
             savedGroupEntity = groupRepository.save(groupEntity);
         } catch (Exception e) {
-            throw new BadRequestException("Группа настроек с именем " + groupForm.getName() + " уже существует");
+            throw new UserException("Группа настроек с именем " + groupForm.getName() + " уже существует");
         }
         groupCodeRepository.saveAll(groupEntity.getCodes());
 
@@ -96,14 +95,14 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Transactional
     public void updateGroup(Integer groupId, @Valid @NotNull GroupForm groupForm) {
         GroupEntity groupEntity = groupRepository.findById(groupId)
-                .orElseThrow(() -> new NotFoundException("Группы с идентификатором " + groupId + " не существует"));
+                .orElseThrow(() -> new UserException("Группы с идентификатором " + groupId + " не существует"));
 
         if (groupCodeRepository.existsAtLeastOneCode(groupForm.getCodes(), groupEntity.getId())) {
-            throw new BadRequestException("Один или более кодов принадлежат другой группе");
+            throw new UserException("Один или более кодов принадлежат другой группе");
         }
 
         if (groupRepository.existsByName(groupForm.getName(), groupEntity.getId())) {
-            throw new BadRequestException("Имя " + groupForm.getName() + " уже используется другой группой");
+            throw new UserException("Имя " + groupForm.getName() + " уже используется другой группой");
         }
 
         groupEntity.setName(groupForm.getName());
@@ -123,7 +122,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Override
     public void deleteGroup(Integer groupId) {
         if (groupRepository.removeById(groupId) == 0) {
-            throw new NotFoundException("Группы с идентификатором " + groupId + " не существует.");
+            throw new UserException("Группы с идентификатором " + groupId + " не существует.");
         }
     }
 
