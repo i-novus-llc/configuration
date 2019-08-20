@@ -2,12 +2,28 @@
 <simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0">
     <form query-id="group" object-id="group">
         <fields>
-            <input-text id="codes" label="Код группы" domain="string[]">
-                <toolbar>
-
-                </toolbar>
+            <input-text id="codesStr" label="Коды группы"
+                        description="Введите коды группы через пробел">
+                <validations>
+                    <condition id="checkCodes" severity="danger"
+                               message="Должен присутствовать хотя бы один код" on="codes">
+                        codesStr &amp;&amp; codesStr.trim().length !== 0
+                    </condition>
+                </validations>
             </input-text>
-            <input-text id="name" label="Наименование группы" domain="string"/>
+            <output-text id="codes" visible="false">
+                <dependencies>
+                    <set-value on="codesStr">codesStr.trim().split(' ');</set-value>
+                </dependencies>
+            </output-text>
+            <input-text id="name" label="Наименование группы" domain="string">
+                <validations>
+                    <condition id="checkName" severity="danger"
+                               message="Имя не должно быть пустым" on="name">
+                        name &amp;&amp; name.trim().length !== 0
+                    </condition>
+                </validations>
+            </input-text>
             <input-text id="description" label="Описание" domain="string"/>
         </fields>
     </form>

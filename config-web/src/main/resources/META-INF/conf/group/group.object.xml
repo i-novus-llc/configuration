@@ -7,14 +7,10 @@
                 <rest method="POST">${config.service.url}/group/</rest>
             </invocation>
             <in-parameters>
-                <param id="codes" mapping="['codes']"/>
+                <param id="codes" mapping="['codes']" domain="string[]"/>
                 <param id="name" mapping="['name']"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
-
-            <out-parameters>
-                <param id="id" mapping="['id']"/>
-            </out-parameters>
         </operation>
 
         <operation id="update">
@@ -23,7 +19,7 @@
             </invocation>
             <in-parameters>
                 <param id="id" mapping="['id']"/>
-                <param id="codes" mapping="['codes']"/>
+                <param id="codes" mapping="['codes']" domain="string[]"/>
                 <param id="name" mapping="['name']"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>

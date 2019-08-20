@@ -1,9 +1,14 @@
 package ru.i_novus.config.service.service;
 
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.FindGroupCriteria;
@@ -57,7 +62,12 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public Page<GroupForm> getAllGroup(FindGroupCriteria criteria) {
-        return new PageImpl<>(findGroups(criteria), criteria, criteria.getPageSize());
+        Pageable pageable = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize());
+        Page<GroupEntity> groupEntities = groupRepository.findAll(toPredicate(criteria), pageable);
+
+        List<GroupForm> groupForms = groupEntities.getContent().stream()
+                .map(GroupEntity::toGroupForm).collect(Collectors.toList());
+        return new PageImpl<>(groupForms, pageable, groupEntities.getTotalElements());
     }
 
     @Override
@@ -117,23 +127,22 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         }
     }
 
-    private List<GroupForm> findGroups(FindGroupCriteria criteria) {
+    private Predicate toPredicate(FindGroupCriteria criteria) {
         QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
-
-        JPAQuery<GroupEntity> query = new JPAQuery<>(entityManager);
-        query.distinct().from(qGroupEntity).innerJoin(qGroupCodeEntity).on(qGroupEntity.id.eq(qGroupCodeEntity.group.id));
+        BooleanBuilder builder = new BooleanBuilder();
 
         if (criteria.getCode() != null) {
-            query.where(qGroupCodeEntity.code.containsIgnoreCase(criteria.getCode()));
+            BooleanExpression exists = JPAExpressions.selectOne().from(qGroupCodeEntity)
+                    .where(new BooleanBuilder().and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
+                    .and(qGroupCodeEntity.code.containsIgnoreCase(criteria.getCode()))).exists();
+            builder.and(exists);
         }
 
         if (criteria.getName() != null) {
-            query.where(qGroupEntity.name.containsIgnoreCase(criteria.getName()));
+            builder.and(qGroupEntity.name.containsIgnoreCase(criteria.getName()));
         }
 
-        List<GroupEntity> result = query.limit(criteria.getPageSize()).offset(criteria.getOffset()).fetch();
-
-        return result.stream().map(GroupEntity::toGroupForm).collect(Collectors.toList());
+        return builder.getValue();
     }
 }
