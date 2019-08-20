@@ -10,7 +10,7 @@ import javax.ws.rs.QueryParam;
 @Getter
 @Setter
 @ApiModel("Критерий поиска групп настроек")
-public class FindGroupCriteria extends AbstractCriteria {
+public class GroupCriteria extends AbstractCriteria {
 
     @QueryParam("name")
     @ApiParam("Имя группы")

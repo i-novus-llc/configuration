@@ -2,8 +2,8 @@ package ru.i_novus.config.api.service;
 
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
-import ru.i_novus.config.api.criteria.FindConfigCriteria;
-import ru.i_novus.config.api.items.ConfigForm;
+import ru.i_novus.config.api.criteria.ConfigCriteria;
+import ru.i_novus.config.api.model.ConfigForm;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -17,53 +17,53 @@ import javax.ws.rs.core.MediaType;
 @Path("/")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api("REST сервис для работы с настройками")
+@Api("Сервис для работы с настройками")
 public interface ConfigRestService {
 
     @GET
-    @Path("/{configCode}")
+    @Path("/{code}")
     @ApiOperation(value = "Получение настройки", response = ConfigForm.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение настройки"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
-    ConfigForm getConfig(@PathParam("configCode") @ApiParam(name = "Код настройки") String code);
+    ConfigForm getConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code);
 
     @GET
     @Path("/")
     @ApiOperation(value = "Получение всех настроек", response = ConfigForm.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка настроек")
     Page<ConfigForm> getAllConfig(@ApiParam(name = "Критерии поиска настроек")
-                                                         @BeanParam FindConfigCriteria criteria);
+                                  @BeanParam ConfigCriteria criteria);
 
     @POST
     @Path("/")
     @ApiOperation(value = "Добавление настройки")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Сохранение настройки успешно выполнено"),
+            @ApiResponse(code = 200, message = "Сохранение настройки успешно выполнено"),
             @ApiResponse(code = 400, message = "Некорректный запрос")
     })
-    void saveConfig(@Valid @NotNull @ApiParam(name = "Новая настройки", required = true)
-                                   ConfigForm configForm);
+    void saveConfig(@Valid @NotNull @ApiParam(name = "Новая настройка", required = true)
+                            ConfigForm configForm);
 
     @PUT
-    @Path("/{configCode}")
+    @Path("/{code}")
     @ApiOperation(value = "Изменение настройки")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Изменение настройки успешно выполнено"),
+            @ApiResponse(code = 200, message = "Изменение настройки успешно выполнено"),
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
-    void updateConfig(@PathParam("configCode") @ApiParam(name = "Код настройки") String code,
-                             @Valid @NotNull @ApiParam(name = "Обновленная настройка", required = true)
-                                     ConfigForm configForm);
+    void updateConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code,
+                      @Valid @NotNull @ApiParam(name = "Обновленная настройка", required = true)
+                              ConfigForm configForm);
 
     @DELETE
-    @Path("/{configCode}")
+    @Path("/{code}")
     @ApiOperation(value = "Удаление настройки")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Настройка успешно удалена"),
+            @ApiResponse(code = 200, message = "Настройка успешно удалена"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
-    void deleteConfig(@PathParam("configCode") @ApiParam(name = "Код настройки") String code);
+    void deleteConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code);
 }

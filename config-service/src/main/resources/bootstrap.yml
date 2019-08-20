@@ -6,4 +6,5 @@ spring:
       host: consul-agent.local
       port: 8500
       config:
+        prefix: config
         enabled: ${config.server.enable}

@@ -7,9 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.i_novus.config.api.criteria.FindConfigCriteria;
-import ru.i_novus.config.api.items.ConfigForm;
+import ru.i_novus.config.api.criteria.ConfigCriteria;
+import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.ConfigEntity;
@@ -32,7 +33,7 @@ import java.util.Optional;
 /**
  * Реализация REST сервиса для работы с настройками
  */
-@Controller
+@Service
 public class ConfigRestServiceImpl implements ConfigRestService {
 
     private ConfigValueService configValueService;
@@ -66,7 +67,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
 
     @Override
-    public Page<ConfigForm> getAllConfig(FindConfigCriteria criteria) {
+    public Page<ConfigForm> getAllConfig(ConfigCriteria criteria) {
         List<ConfigEntity> configEntities = findConfigs(criteria);
 
         List<ConfigForm> configForms = new ArrayList<>();
@@ -136,7 +137,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         configValueService.deleteValue(getServiceCode(configEntity), code);
     }
 
-    private List<ConfigEntity> findConfigs(FindConfigCriteria criteria) {
+    private List<ConfigEntity> findConfigs(ConfigCriteria criteria) {
         QConfigEntity qConfigEntity = QConfigEntity.configEntity;
         QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;

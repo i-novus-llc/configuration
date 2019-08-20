@@ -10,10 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.i_novus.config.api.criteria.FindGroupCriteria;
-import ru.i_novus.config.api.items.GroupForm;
+import ru.i_novus.config.api.criteria.GroupCriteria;
+import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.service.entity.GroupEntity;
 import ru.i_novus.config.service.entity.QGroupCodeEntity;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * Реализация REST сервиса для работы с группами настроек
  */
-@Controller
+@Service
 public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     private GroupRepository groupRepository;
@@ -60,7 +60,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     @Override
-    public Page<GroupForm> getAllGroup(FindGroupCriteria criteria) {
+    public Page<GroupForm> getAllGroup(GroupCriteria criteria) {
         Pageable pageable = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize());
         Page<GroupEntity> groupEntities = groupRepository.findAll(toPredicate(criteria), pageable);
 
@@ -109,7 +109,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         groupEntity.setDescription(groupForm.getDescription());
 
         if (groupForm.getCodes().size() != groupEntity.getCodes().size() ||
-        !groupEntity.getCodes().stream().allMatch(e -> groupForm.getCodes().contains(e.getCode()))) {
+                !groupEntity.getCodes().stream().allMatch(e -> groupForm.getCodes().contains(e.getCode()))) {
             groupCodeRepository.deleteByGroupId(groupEntity.getId());
             groupEntity.getCodes().clear();
             groupForm.getCodes().forEach(groupEntity::setCode);
@@ -126,7 +126,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         }
     }
 
-    private Predicate toPredicate(FindGroupCriteria criteria) {
+    private Predicate toPredicate(GroupCriteria criteria) {
         QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
         BooleanBuilder builder = new BooleanBuilder();
@@ -134,7 +134,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         if (criteria.getCode() != null) {
             BooleanExpression exists = JPAExpressions.selectOne().from(qGroupCodeEntity)
                     .where(new BooleanBuilder().and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
-                    .and(qGroupCodeEntity.code.containsIgnoreCase(criteria.getCode()))).exists();
+                            .and(qGroupCodeEntity.code.containsIgnoreCase(criteria.getCode()))).exists();
             builder.and(exists);
         }
 

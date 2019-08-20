@@ -3,7 +3,7 @@ package ru.i_novus.config.service.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.i_novus.config.api.items.ConfigForm;
+import ru.i_novus.config.api.model.ConfigForm;
 
 import javax.persistence.*;
 import java.util.Objects;

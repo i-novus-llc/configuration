@@ -2,8 +2,8 @@ package ru.i_novus.config.api.service;
 
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
-import ru.i_novus.config.api.criteria.FindGroupCriteria;
-import ru.i_novus.config.api.items.GroupForm;
+import ru.i_novus.config.api.criteria.GroupCriteria;
+import ru.i_novus.config.api.model.GroupForm;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -22,7 +22,7 @@ public interface ConfigGroupRestService {
 
     @GET
     @Path("/{groupId}")
-    @ApiOperation(value = "Получение группы настроек", response = GroupForm.class)
+    @ApiOperation(value = "Получение группы настроек по идентификатору", response = GroupForm.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение группы настроек"),
             @ApiResponse(code = 404, message = "Группа настроек не найдена")
@@ -33,7 +33,7 @@ public interface ConfigGroupRestService {
     @Path("/")
     @ApiOperation(value = "Получение групп настроек", response = GroupForm.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение групп настроек")
-    Page<GroupForm> getAllGroup(@BeanParam FindGroupCriteria criteria);
+    Page<GroupForm> getAllGroup(@BeanParam GroupCriteria criteria);
 
     @POST
     @Path("/")

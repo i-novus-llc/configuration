@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.i_novus.config.api.criteria.FindGroupCriteria;
-import ru.i_novus.config.api.items.GroupForm;
+import ru.i_novus.config.api.criteria.GroupCriteria;
+import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.service.ConfigServiceApplication;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
@@ -52,7 +52,7 @@ public class ConfigGroupRestServiceImplTest {
         GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
         Integer groupId3 = groupRestService.saveGroup(groupForm3);
 
-        List<GroupForm> groupForms = groupRestService.getAllGroup(new FindGroupCriteria()).getContent();
+        List<GroupForm> groupForms = groupRestService.getAllGroup(new GroupCriteria()).getContent();
 
         assertEquals(3, groupForms.size());
         assertTrue(groupForms.containsAll(Arrays.asList(groupForm, groupForm2, groupForm3)));
@@ -74,7 +74,7 @@ public class ConfigGroupRestServiceImplTest {
         GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
         Integer groupId3 = groupRestService.saveGroup(groupForm3);
 
-        FindGroupCriteria criteria = new FindGroupCriteria();
+        GroupCriteria criteria = new GroupCriteria();
         criteria.setName("security");
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
@@ -98,7 +98,7 @@ public class ConfigGroupRestServiceImplTest {
         GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
         Integer groupId3 = groupRestService.saveGroup(groupForm3);
 
-        FindGroupCriteria criteria = new FindGroupCriteria();
+        GroupCriteria criteria = new GroupCriteria();
         criteria.setCode("sec");
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
@@ -122,7 +122,7 @@ public class ConfigGroupRestServiceImplTest {
         GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
         Integer groupId3 = groupRestService.saveGroup(groupForm3);
 
-        FindGroupCriteria criteria = new FindGroupCriteria();
+        GroupCriteria criteria = new GroupCriteria();
         criteria.setPageSize(2);
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
@@ -146,7 +146,7 @@ public class ConfigGroupRestServiceImplTest {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
-        GroupForm savedGroupForm = groupRestService.getAllGroup(new FindGroupCriteria()).getContent().get(0);
+        GroupForm savedGroupForm = groupRestService.getAllGroup(new GroupCriteria()).getContent().get(0);
 
         assertEquals(groupForm, savedGroupForm);
 
@@ -207,7 +207,7 @@ public class ConfigGroupRestServiceImplTest {
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
         groupRestService.updateGroup(groupId, groupForm2);
 
-        GroupForm savedGroupForm = groupRestService.getAllGroup(new FindGroupCriteria()).getContent().get(0);
+        GroupForm savedGroupForm = groupRestService.getAllGroup(new GroupCriteria()).getContent().get(0);
         assertEquals(groupForm2, savedGroupForm);
 
         groupRestService.deleteGroup(groupId);
@@ -272,7 +272,7 @@ public class ConfigGroupRestServiceImplTest {
         Integer groupId = groupRestService.saveGroup(groupForm);
         groupRestService.deleteGroup(groupId);
 
-        assertTrue(groupRestService.getAllGroup(new FindGroupCriteria()).isEmpty());
+        assertTrue(groupRestService.getAllGroup(new GroupCriteria()).isEmpty());
     }
 
     /**
