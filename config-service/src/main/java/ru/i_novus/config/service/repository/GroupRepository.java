@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.service.entity.GroupEntity;
 
 import java.util.List;
@@ -21,7 +20,4 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, Qu
     @Query("SELECT CASE WHEN (COUNT(g) > 0) THEN true ELSE false END " +
             "FROM GroupEntity g WHERE g.name = :name AND g.id != :groupId")
     Boolean existsByName(@Param("name") String name, @Param("groupId") Integer groupId);
-
-    @Transactional
-    Integer removeById(Integer groupId);
 }

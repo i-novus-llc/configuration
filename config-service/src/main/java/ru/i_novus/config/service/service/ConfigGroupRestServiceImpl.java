@@ -7,9 +7,7 @@ import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.GroupCriteria;
@@ -25,8 +23,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Реализация REST сервиса для работы с группами настроек
@@ -53,20 +49,16 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public GroupForm getGroup(Integer groupId) {
-        GroupEntity groupEntity = groupRepository.findById(groupId)
-                .orElseThrow(() -> new UserException("Группы с идентификатором " + groupId + " не существует"));
-
+        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow();
         return groupEntity.toGroupForm();
     }
 
     @Override
     public Page<GroupForm> getAllGroup(GroupCriteria criteria) {
-        Pageable pageable = PageRequest.of(criteria.getPageNumber(), criteria.getPageSize());
-        Page<GroupEntity> groupEntities = groupRepository.findAll(toPredicate(criteria), pageable);
+        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC,"id"));
+        Page<GroupEntity> groupEntities = groupRepository.findAll(toPredicate(criteria), criteria);
 
-        List<GroupForm> groupForms = groupEntities.getContent().stream()
-                .map(GroupEntity::toGroupForm).collect(Collectors.toList());
-        return new PageImpl<>(groupForms, pageable, groupEntities.getTotalElements());
+        return groupEntities.map(GroupEntity::toGroupForm);
     }
 
     @Override
@@ -75,7 +67,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         GroupEntity groupEntity = new GroupEntity(groupForm);
 
         if (groupCodeRepository.existsAtLeastOneCode(groupForm.getCodes(), -1)) {
-            throw new UserException("Один или более кодов принадлежат другой группе");
+            throw new UserException("config.group.codes.not.unique");
         }
 
         groupForm.getCodes().forEach(groupEntity::setCode);
@@ -84,7 +76,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         try {
             savedGroupEntity = groupRepository.save(groupEntity);
         } catch (Exception e) {
-            throw new UserException("Группа настроек с именем " + groupForm.getName() + " уже существует");
+            throw new UserException("config.group.name.not.unique");
         }
         groupCodeRepository.saveAll(groupEntity.getCodes());
 
@@ -94,15 +86,14 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Override
     @Transactional
     public void updateGroup(Integer groupId, @Valid @NotNull GroupForm groupForm) {
-        GroupEntity groupEntity = groupRepository.findById(groupId)
-                .orElseThrow(() -> new UserException("Группы с идентификатором " + groupId + " не существует"));
+        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow();
 
         if (groupCodeRepository.existsAtLeastOneCode(groupForm.getCodes(), groupEntity.getId())) {
-            throw new UserException("Один или более кодов принадлежат другой группе");
+            throw new UserException("config.group.codes.not.unique");
         }
 
         if (groupRepository.existsByName(groupForm.getName(), groupEntity.getId())) {
-            throw new UserException("Имя " + groupForm.getName() + " уже используется другой группой");
+            throw new UserException("config.group.name.not.unique");
         }
 
         groupEntity.setName(groupForm.getName());
@@ -121,9 +112,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public void deleteGroup(Integer groupId) {
-        if (groupRepository.removeById(groupId) == 0) {
-            throw new UserException("Группы с идентификатором " + groupId + " не существует.");
-        }
+        groupRepository.deleteById(groupId);
     }
 
     private Predicate toPredicate(GroupCriteria criteria) {

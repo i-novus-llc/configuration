@@ -274,12 +274,4 @@ public class ConfigGroupRestServiceImplTest {
 
         assertTrue(groupRestService.getAllGroup(new GroupCriteria()).isEmpty());
     }
-
-    /**
-     * Проверка, что удаление группы настроек по несуществующему идентификатору приводит к RestException
-     */
-    @Test(expected = RestException.class)
-    public void deleteNotExistsGroupTest() {
-        groupRestService.deleteGroup(0);
-    }
 }
