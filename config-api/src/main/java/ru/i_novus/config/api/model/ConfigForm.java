@@ -30,14 +30,13 @@ public class ConfigForm {
     @ApiModelProperty("Значение настройки")
     private String value;
 
-    @ApiModelProperty("Наименование службы")
-    private String serviceCode;
+    @ApiModelProperty("Код приложения")
+    private String applicationCode;
 
     @NotBlank(message = "Отсутствует наименование прикладной системы настройки")
     @ApiModelProperty("Наименование прикладной системы, к которой относится настройка")
     private String systemName;
 
-    @NotBlank(message = "Отсутствует наименование группы настройки")
-    @ApiModelProperty("Наименование группы, к которой принадлежит настройка")
-    private String groupName;
+    @ApiModelProperty("Группа, к которой принадлежит настройка")
+    private GroupForm group;
 }

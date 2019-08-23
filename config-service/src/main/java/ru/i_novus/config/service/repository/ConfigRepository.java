@@ -7,13 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.service.entity.ConfigEntity;
 
 @Repository
-public interface ConfigRepository extends JpaRepository<ConfigEntity, Integer>,
-        QuerydslPredicateExecutor<ConfigEntity> {
+public interface ConfigRepository extends JpaRepository<ConfigEntity, Integer>, QuerydslPredicateExecutor<ConfigEntity> {
 
     ConfigEntity findByCode(String code);
 
     Boolean existsByCode(String code);
 
     @Transactional
-    Integer removeByCode(String code);
+    Integer deleteByCode(String code);
 }

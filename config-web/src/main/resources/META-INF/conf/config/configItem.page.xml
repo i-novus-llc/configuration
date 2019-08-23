@@ -1,6 +1,46 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0">
     <form query-id="config" object-id="config">
+        <fields>
+            <row>
+                <input-select id="system" label="Система" required="true">
+                    <options>
+                        <option id="application" name="application"/>
+                        <option name="application2"/>
+                    </options>
+                </input-select>
+                <input-text id="applicationCode" label="Приложение">
+                    <dependencies>
+                        <enabling on="system">system.id != 'application'</enabling>
+                    </dependencies>
+                </input-text>
+            </row>
+            <input-text id="code" label="Код настройки" required="true">
+                <dependencies>
+                    <enabling on="isCreateForm">isCreateForm</enabling>
+                </dependencies>
+            </input-text>
+            <input-text id="name" label="Наименование настройки"/>
+            <row>
+                <input-select id="group" label="Группа настроек" query-id="group" required="true">
+                    <pre-filters>
+                        <like field-id="codes" value="{code}" />
+                    </pre-filters>
+                    <dependencies>
+                        <set-value on="code">null</set-value>
+                    </dependencies>
+                </input-select>
 
+                <input-select id="valueType" label="Тип значения" required="true">
+                    <options>
+                        <option id="string" name="Строка"/>
+                        <option id="integer" name="Число"/>
+                        <option id="checkbox" name="Чекбокс"/>
+                    </options>
+                </input-select>
+            </row>
+            <input-text id="description" label="Описание"/>
+            <hidden id="isCreateForm" default-value="true"/>
+        </fields>
     </form>
 </simple-page>

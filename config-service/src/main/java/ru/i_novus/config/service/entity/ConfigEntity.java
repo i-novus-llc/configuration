@@ -4,6 +4,7 @@ package ru.i_novus.config.service.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.GroupForm;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -26,10 +27,10 @@ public class ConfigEntity {
     private String code;
 
     /**
-     * Код прикладной системы
+     * Код приложения
      */
-    @Column(name = "serviceCode", nullable = false)
-    private String serviceCode;
+    @Column(name = "application_code", nullable = false)
+    private String applicationCode;
 
     /**
      * Наименование настройки
@@ -53,7 +54,7 @@ public class ConfigEntity {
 
     public ConfigEntity(ConfigForm configForm) {
         this.code = configForm.getCode();
-        this.serviceCode = configForm.getServiceCode();
+        this.applicationCode = configForm.getApplicationCode();
         this.name = configForm.getName();
         this.description = configForm.getDescription();
 
@@ -62,16 +63,16 @@ public class ConfigEntity {
         this.valueType = Objects.requireNonNullElse(valueTypeEnum, ValueTypeEnum.STRING);
     }
 
-    public ConfigForm toConfigForm(String value, String systemName, String groupName) {
+    public ConfigForm toConfigForm(String value, String systemName, GroupForm group) {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode(this.code);
         configForm.setName(this.name);
         configForm.setDescription(this.description);
         configForm.setValueType(Objects.requireNonNullElse(this.valueType, ValueTypeEnum.STRING).getTitle());
         configForm.setValue(value);
-        configForm.setServiceCode(this.serviceCode);
+        configForm.setApplicationCode(this.applicationCode);
         configForm.setSystemName(systemName);
-        configForm.setGroupName(groupName);
+        configForm.setGroup(group);
         return configForm;
     }
 }

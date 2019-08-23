@@ -8,6 +8,9 @@
     <unique>
         <rest>${config.service.url}/group/{id}</rest>
     </unique>
+    <list filters="codeLike" result-mapping="#this">
+        <rest>${config.service.url}/group/byCode/{codeLike}</rest>
+    </list>
 
     <fields>
 
@@ -19,13 +22,14 @@
         </field>
 
         <field id="codesStr" domain="string">
-            <select mapping="['codes']" normalize="T(java.lang.String).join(' ', #this)"/>
+            <select mapping="[codes]" normalize="T(java.lang.String).join(' ', #this)"/>
         </field>
 
         <field id="codes" domain="string[]">
             <select/>
             <filters>
                 <eq filter-id="code">code={code}</eq>
+                <like filter-id="codeLike" normalize="#this.get(0)"/>
             </filters>
         </field>
 
@@ -37,6 +41,10 @@
         </field>
 
         <field id="description" domain="string">
+            <select/>
+        </field>
+
+        <field id="priority" domain="integer">
             <select/>
         </field>
 

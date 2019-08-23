@@ -41,6 +41,12 @@ public class  GroupEntity {
     private String description;
 
     /**
+     * Приоритет группы
+     */
+    @Column(name = "priority")
+    private Integer priority;
+
+    /**
      * Коды группы
      */
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
@@ -49,6 +55,7 @@ public class  GroupEntity {
     public GroupEntity(GroupForm groupForm) {
         this.name = groupForm.getName();
         this.description = groupForm.getDescription();
+        this.priority = groupForm.getPriority();
     }
 
     public GroupForm toGroupForm() {
@@ -56,6 +63,7 @@ public class  GroupEntity {
         groupForm.setId(this.id);
         groupForm.setName(this.name);
         groupForm.setDescription(this.description);
+        groupForm.setPriority(this.priority);
         groupForm.setCodes(codes.stream().map(GroupCodeEntity::getCode).collect(Collectors.toList()));
         return groupForm;
     }

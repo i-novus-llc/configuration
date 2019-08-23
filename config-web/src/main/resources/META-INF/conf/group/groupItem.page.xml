@@ -11,6 +11,7 @@
             </output-text>
             <input-text id="name" label="Наименование группы" required="true"/>
             <input-text id="description" label="Описание"/>
+            <input-text id="priority" label="Приоритет"/>
         </fields>
     </form>
 </simple-page>

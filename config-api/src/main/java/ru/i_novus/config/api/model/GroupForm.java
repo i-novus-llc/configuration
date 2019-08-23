@@ -28,6 +28,9 @@ public class GroupForm {
     @ApiModelProperty("Описание группы")
     private String description;
 
+    @ApiModelProperty("Приоритет группы")
+    private Integer priority;
+
     @NotEmpty(message = "Группа настройки должна иметь один или более кодов")
     @ApiModelProperty("Коды группы")
     private List<String> codes;

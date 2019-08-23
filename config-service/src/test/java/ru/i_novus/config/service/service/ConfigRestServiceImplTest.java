@@ -181,7 +181,7 @@ public class ConfigRestServiceImplTest {
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setGroupNames(Collections.singletonList("Security settings"));
+        criteria.setGroupIds(Collections.singletonList(groupId));
 
         List<ConfigForm> configForms =
                 configRestService.getAllConfig(criteria).getContent();
@@ -282,7 +282,7 @@ public class ConfigRestServiceImplTest {
         GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
-        configForm.setServiceCode("test");
+        configForm.setApplicationCode("test");
         configForm.setDescription("test");
         configForm.setValue("test");
 

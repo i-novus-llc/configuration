@@ -23,6 +23,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Реализация REST сервиса для работы с группами настроек
@@ -51,6 +53,13 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     public GroupForm getGroup(Integer groupId) {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow();
         return groupEntity.toGroupForm();
+    }
+
+    @Override
+    public List<GroupForm> getGroupByConfigCode(String code) {
+        return groupRepository.findGroupsByConfigCode(code).stream()
+                .map(GroupEntity::toGroupForm)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -122,8 +131,10 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
         if (criteria.getCode() != null) {
             BooleanExpression exists = JPAExpressions.selectOne().from(qGroupCodeEntity)
-                    .where(new BooleanBuilder().and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
-                            .and(qGroupCodeEntity.code.containsIgnoreCase(criteria.getCode()))).exists();
+                    .where(new BooleanBuilder()
+                            .and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
+                            .and(qGroupCodeEntity.code.containsIgnoreCase(criteria.getCode())))
+                    .exists();
             builder.and(exists);
         }
 

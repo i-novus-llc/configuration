@@ -13,7 +13,7 @@ public class ConfigFormBuilder {
         configForm.setCode("sec.url");
         configForm.setValueType("Строка");
         configForm.setValue("test-value");
-        configForm.setGroupName("Security settings");
+        configForm.setGroup(buildGroupForm1());
         configForm.setSystemName("application");
         return configForm;
     }
@@ -24,7 +24,7 @@ public class ConfigFormBuilder {
         configForm.setCode("sec2.spring.sec-token");
         configForm.setValueType("Строка");
         configForm.setValue("test-value");
-        configForm.setGroupName("Security settings");
+        configForm.setGroup(buildGroupForm1());
         configForm.setSystemName("application");
         return configForm;
     }
@@ -35,7 +35,7 @@ public class ConfigFormBuilder {
         configForm.setCode("auth.config");
         configForm.setValueType("Строка");
         configForm.setValue("test-value");
-        configForm.setGroupName("Authentication settings");
+        configForm.setGroup(buildGroupForm2());
         configForm.setSystemName("application");
         return configForm;
     }

@@ -10,6 +10,7 @@
                 <param id="codes" mapping="['codes']" domain="string[]"/>
                 <param id="name" mapping="['name']"/>
                 <param id="description" mapping="['description']"/>
+                <param id="priority" mapping="['priority']"/>
             </in-parameters>
         </operation>
 
@@ -22,6 +23,7 @@
                 <param id="codes" mapping="['codes']" domain="string[]"/>
                 <param id="name" mapping="['name']"/>
                 <param id="description" mapping="['description']"/>
+                <param id="priority" mapping="['priority']"/>
             </in-parameters>
         </operation>
 
