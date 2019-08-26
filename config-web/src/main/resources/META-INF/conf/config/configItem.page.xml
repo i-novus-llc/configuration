@@ -4,6 +4,7 @@
         <fields>
             <row>
                 <input-select id="system" label="Система" required="true">
+                    <default-value id="defaultApplicationCode" name="{applicationCode}"/>
                     <options>
                         <option id="application" name="application"/>
                         <option name="application2"/>
@@ -23,15 +24,17 @@
             <input-text id="name" label="Наименование настройки"/>
             <row>
                 <input-select id="group" label="Группа настроек" query-id="group" required="true">
+                    <default-value id="defaultGroup" name="{group.name}"/>
                     <pre-filters>
                         <like field-id="codes" value="{code}" />
                     </pre-filters>
                     <dependencies>
-                        <set-value on="code">null</set-value>
+                        <enabling on="isCreateForm">isCreateForm</enabling>
                     </dependencies>
                 </input-select>
 
                 <input-select id="valueType" label="Тип значения" required="true">
+                    <default-value id="defaultValueType" name="{valueType}"/>
                     <options>
                         <option id="string" name="Строка"/>
                         <option id="integer" name="Число"/>

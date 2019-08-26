@@ -22,18 +22,15 @@ public class ConfigForm {
     @ApiModelProperty("Описание настройки")
     private String description;
 
-    @NotBlank(message = "Отсутствует тип значения настройки")
     @ApiModelProperty("Тип значения настройки")
     private String valueType;
 
-    @NotBlank(message = "Отсутствует значение настройки")
     @ApiModelProperty("Значение настройки")
     private String value;
 
     @ApiModelProperty("Код приложения")
     private String applicationCode;
 
-    @NotBlank(message = "Отсутствует наименование прикладной системы настройки")
     @ApiModelProperty("Наименование прикладной системы, к которой относится настройка")
     private String systemName;
 

@@ -7,7 +7,6 @@ import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,7 +97,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         ConfigEntity configEntity = new ConfigEntity(configForm);
         configRepository.save(configEntity);
 
-        configValueService.saveValue(getServiceCode(configEntity), configForm.getCode(), configForm.getValue());
+        if (configForm.getValue() != null) {
+            configValueService.saveValue(getServiceCode(configEntity), configForm.getCode(), configForm.getValue());
+        }
     }
 
     @Override
@@ -107,12 +108,14 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
         configEntity.setApplicationCode(configForm.getApplicationCode());
+        configEntity.setName(configForm.getName());
+        configEntity.setValueType(configForm.getValueType());
         configEntity.setDescription(configForm.getDescription());
         configRepository.save(configEntity);
 
-        configValueService.saveValue(getServiceCode(configEntity),
-                configForm.getCode(),
-                configForm.getValue());
+        if (configForm.getValue() != null) {
+            configValueService.saveValue(getServiceCode(configEntity), configForm.getCode(), configForm.getValue());
+        }
     }
 
     @Override
@@ -120,7 +123,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
         configRepository.deleteByCode(code);
 
-        configValueService.deleteValue(getServiceCode(configEntity), code);
+//        configValueService.deleteValue(getServiceCode(configEntity), code);
     }
 
     private Predicate toPredicate(ConfigCriteria criteria) {

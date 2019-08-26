@@ -20,7 +20,7 @@
 
         <columns>
             <column text-field-id="system" label="Система"/>
-            <column text-field-id="serviceCode" label="Приложение"/>
+            <column text-field-id="applicationCode" label="Приложение"/>
             <column text-field-id="group.name" label="Группа настроек"/>
             <column text-field-id="code" label="Код"/>
             <column text-field-id="name" label="Наименование"/>

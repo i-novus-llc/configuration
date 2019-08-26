@@ -57,10 +57,11 @@ public class ConfigEntity {
         this.applicationCode = configForm.getApplicationCode();
         this.name = configForm.getName();
         this.description = configForm.getDescription();
+        setValueType(configForm.getValueType());
+    }
 
-        String valueType = configForm.getValueType();
-        ValueTypeEnum valueTypeEnum = ValueTypeEnum.getValueType(valueType);
-        this.valueType = Objects.requireNonNullElse(valueTypeEnum, ValueTypeEnum.STRING);
+    public void setValueType(String valueType) {
+        this.valueType = Objects.requireNonNullElse(ValueTypeEnum.getValueType(valueType), ValueTypeEnum.STRING);
     }
 
     public ConfigForm toConfigForm(String value, String systemName, GroupForm group) {
