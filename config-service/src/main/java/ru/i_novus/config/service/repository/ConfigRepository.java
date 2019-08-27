@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.service.entity.ConfigEntity;
 
 @Repository
-public interface ConfigRepository extends JpaRepository<ConfigEntity, Integer>, QuerydslPredicateExecutor<ConfigEntity> {
+public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, QuerydslPredicateExecutor<ConfigEntity> {
 
     ConfigEntity findByCode(String code);
 

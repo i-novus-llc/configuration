@@ -6,24 +6,24 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
+import ru.i_novus.config.service.model.Application;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -37,8 +37,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     private ConfigRepository configRepository;
     private GroupRepository groupRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private RestTemplate restTemplate;
+
+    @Value("${security.admin.url}")
+    private String url;
+
 
     @Autowired
     public void setConfigValueService(ConfigValueService configValueService) {
@@ -55,6 +58,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         this.groupRepository = groupRepository;
     }
 
+    @Autowired
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
 
     @Override
     public Page<ConfigForm> getAllConfig(ConfigCriteria criteria) {
@@ -63,25 +71,52 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         Page<ConfigEntity> configEntities = configRepository.findAll(toPredicate(criteria), criteria);
 
-        /// TODO - вытащить system_name по service_code из виртуальной таблицы
-        return configEntities.map(e -> e.toConfigForm(
-                configValueService.getValue(getServiceCode(e), e.getCode()),
-                "application",
-                groupRepository.findOneGroupByConfigCodeStarts(e.getCode()).toGroupForm()
-                )
+        return configEntities.map(e -> {
+                    Application application = getApplication(e.getApplicationCode());
+                    return e.toConfigForm(
+                            configValueService.getValue(getAppName(e, application), e.getCode()),
+                            getSystemName(application),
+                            groupRepository.findOneGroupByConfigCodeStarts(e.getCode()).toGroupForm()
+                    );
+                }
         );
     }
+
+//    @Override
+//    public Map<GroupForm, List<ConfigForm>> getAllConfigByAppCode(String appCode) {
+//        List<Object[]> objectList = configRepository.findByAppCode(appCode);
+//
+//        Map<GroupForm, List<ConfigForm>> result = new LinkedHashMap<>();
+//
+//        for (Object[] obj : objectList) {
+//            GroupForm groupForm = ((GroupEntity) obj[0]).toGroupForm();
+//            ConfigEntity configEntity = ((ConfigEntity) obj[1]);
+//            Application application = getApplication(configEntity.getApplicationCode());
+//            ConfigForm configForm = configEntity.toConfigForm(
+//                    configValueService.getValue(getAppName(configEntity, application), configEntity.getCode()),
+//                    getSystemName(application),
+//                    groupForm
+//            );
+//            if (!result.containsKey(groupForm)) {
+//                result.put(groupForm, new ArrayList<>(List.of(configForm)));
+//            } else {
+//                result.get(groupForm).add(configForm);
+//            }
+//        }
+//
+//        return result;
+//    }
 
     @Override
     public ConfigForm getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
-        String value = configValueService.getValue(getServiceCode(configEntity), configEntity.getCode());
-        /// TODO - вытащить system_name по service_code из виртуальной таблицы
-        String systemName = "application";
+        Application application = getApplication(configEntity.getApplicationCode());
+
+        String value = configValueService.getValue(getAppName(configEntity, application), configEntity.getCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
 
-        return configEntity.toConfigForm(value, systemName, groupEntity.toGroupForm());
+        return configEntity.toConfigForm(value, getSystemName(application), groupEntity.toGroupForm());
     }
 
     @Override
@@ -90,15 +125,12 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             throw new UserException("config.code.not.unique");
         }
 
-        if (configForm.getApplicationCode() != null) {
-            /// TODO - проверяем есть ли такой serviceCode в виртуальной таблице
-        }
-
         ConfigEntity configEntity = new ConfigEntity(configForm);
         configRepository.save(configEntity);
 
         if (configForm.getValue() != null) {
-            configValueService.saveValue(getServiceCode(configEntity), configForm.getCode(), configForm.getValue());
+            Application application = getApplication(configEntity.getApplicationCode());
+            configValueService.saveValue(getAppName(configEntity, application), configForm.getCode(), configForm.getValue());
         }
     }
 
@@ -114,16 +146,18 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         configRepository.save(configEntity);
 
         if (configForm.getValue() != null) {
-            configValueService.saveValue(getServiceCode(configEntity), configForm.getCode(), configForm.getValue());
+            Application application = getApplication(configEntity.getApplicationCode());
+            configValueService.saveValue(getAppName(configEntity, application), configForm.getCode(), configForm.getValue());
         }
     }
 
     @Override
     public void deleteConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
-        configRepository.deleteByCode(code);
+        Application application = getApplication(configEntity.getApplicationCode());
 
-//        configValueService.deleteValue(getServiceCode(configEntity), code);
+        configRepository.deleteByCode(code);
+//        configValueService.deleteValue(getAppName(configEntity, application), code);
     }
 
     private Predicate toPredicate(ConfigCriteria criteria) {
@@ -160,7 +194,15 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         return builder.getValue();
     }
 
-    private String getServiceCode(ConfigEntity configEntity) {
-        return Objects.requireNonNullElse(configEntity.getApplicationCode(), "application");
+    private String getAppName(ConfigEntity configEntity, Application application) {
+        return configEntity.getApplicationCode() != null ? application.getName() : "application";
+    }
+
+    private String getSystemName(Application application) {
+        return application != null ? application.getSystem().getName() : "Общесистемные";
+    }
+
+    private Application getApplication(String code) {
+        return code != null ? restTemplate.getForObject(url + "/applications/" + code, Application.class) : null;
     }
 }

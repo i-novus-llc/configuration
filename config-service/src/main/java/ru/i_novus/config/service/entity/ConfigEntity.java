@@ -22,7 +22,6 @@ public class ConfigEntity {
      * Код настройки
      */
     @Id
-    @Access(AccessType.PROPERTY)
     @Column(name = "code", nullable = false)
     private String code;
 
