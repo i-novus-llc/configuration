@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
@@ -22,9 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Реализация REST сервиса для работы с настройками
@@ -70,6 +69,29 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                 groupRepository.findOneGroupByConfigCodeStarts(e.getCode()).toGroupForm()
                 )
         );
+    }
+
+    @Override
+    public Map<GroupForm, List<ConfigForm>> getAllConfigByAppCode(String appCode) {
+        List<Object[]> objectList = configRepository.findByAppCode(appCode);
+
+        Map<GroupForm, List<ConfigForm>> result = new LinkedHashMap<>();
+
+        for (Object[] obj : objectList) {
+            GroupForm groupForm = ((GroupEntity) obj[0]).toGroupForm();
+            ConfigForm configForm = ((ConfigEntity) obj[1]).toConfigForm(
+                    "value",
+                    "application",
+                    groupForm
+            );
+            if (!result.containsKey(groupForm)) {
+                result.put(groupForm, new ArrayList<ConfigForm>(List.of(configForm)));
+            } else {
+                result.get(groupForm).add(configForm);
+            }
+        }
+
+        return result;
     }
 
     @Override

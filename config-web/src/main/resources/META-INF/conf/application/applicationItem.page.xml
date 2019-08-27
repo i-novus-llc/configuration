@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0">
+    <form>
+        <fields>
+            <line collapsible="true" label="asdfasdf">
+                <row>
+                    <text-area id="asd" default-value=";asdlfkj"/>
+                    <input-text id="configName" label="" default-value="lkb-app"/>
+                </row>
+            </line>
+        </fields>
+    </form>
+</simple-page>

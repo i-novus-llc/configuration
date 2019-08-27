@@ -4,11 +4,14 @@ import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.GroupForm;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Интерфейс REST API для работы с настройками
@@ -35,6 +38,10 @@ public interface ConfigRestService {
     @ApiResponse(code = 200, message = "Успешное получение списка настроек")
     Page<ConfigForm> getAllConfig(@ApiParam(name = "Критерии поиска настроек")
                                   @BeanParam ConfigCriteria criteria);
+
+    @GET
+    @Path("/byAppCode/{code}")
+    Map<GroupForm, List<ConfigForm>> getAllConfigByAppCode(@PathParam("code") String code);
 
     @POST
     @Path("/")

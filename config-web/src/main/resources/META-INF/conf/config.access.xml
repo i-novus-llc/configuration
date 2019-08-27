@@ -2,5 +2,6 @@
     <permit-all>
         <object-access object-id="config" operations="*"/>
         <object-access object-id="group" operations="*"/>
+        <object-access object-id="application" operations="*"/>
     </permit-all>
 </access>

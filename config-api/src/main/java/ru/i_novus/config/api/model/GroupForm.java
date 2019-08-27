@@ -43,7 +43,13 @@ public class GroupForm {
         GroupForm that = (GroupForm) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
+                Objects.equals(priority, that.priority) &&
                 codes.size() == that.codes.size() &&
                 new HashSet(codes).equals(new HashSet(that.codes));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, priority, codes);
     }
 }
