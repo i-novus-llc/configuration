@@ -107,6 +107,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
         groupEntity.setName(groupForm.getName());
         groupEntity.setDescription(groupForm.getDescription());
+        groupEntity.setPriority(groupForm.getPriority());
 
         if (groupForm.getCodes().size() != groupEntity.getCodes().size() ||
                 !groupEntity.getCodes().stream().allMatch(e -> groupForm.getCodes().contains(e.getCode()))) {

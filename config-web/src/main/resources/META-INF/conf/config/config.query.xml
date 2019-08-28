@@ -17,10 +17,10 @@
             </filters>
         </field>
 
-        <field id="system" domain="string">
-            <select mapping="[systemName]"/>
+        <field id="system" domain="object">
+            <select/>
             <filters>
-                <eq filter-id="system">systemName={system}</eq>
+                <eq filter-id="systems*.code">systemCodes={systems*.code}</eq>
             </filters>
         </field>
 

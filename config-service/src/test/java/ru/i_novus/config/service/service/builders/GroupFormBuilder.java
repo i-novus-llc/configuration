@@ -9,7 +9,7 @@ public class GroupFormBuilder {
     public static GroupForm buildGroupForm1() {
         GroupForm groupForm = new GroupForm();
         groupForm.setName("Security settings");
-        groupForm.setCodes(Arrays.asList("sec", "security"));
+        groupForm.setCodes(Arrays.asList("sec", "sec2"));
         return groupForm;
     }
 

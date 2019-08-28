@@ -31,8 +31,8 @@ public class ConfigForm {
     @ApiModelProperty("Код приложения")
     private String applicationCode;
 
-    @ApiModelProperty("Наименование прикладной системы, к которой относится настройка")
-    private String systemName;
+    @ApiModelProperty("Прикладная система, к которой относится настройка")
+    private SystemForm system;
 
     @ApiModelProperty("Группа, к которой принадлежит настройка")
     private GroupForm group;

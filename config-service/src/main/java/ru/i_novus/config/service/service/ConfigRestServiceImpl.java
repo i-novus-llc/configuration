@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.SystemForm;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
@@ -75,7 +76,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                     Application application = getApplication(e.getApplicationCode());
                     return e.toConfigForm(
                             configValueService.getValue(getAppName(e, application), e.getCode()),
-                            getSystemName(application),
+                            getSystemForm(application),
                             groupRepository.findOneGroupByConfigCodeStarts(e.getCode()).toGroupForm()
                     );
                 }
@@ -116,7 +117,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         String value = configValueService.getValue(getAppName(configEntity, application), configEntity.getCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
 
-        return configEntity.toConfigForm(value, getSystemName(application), groupEntity.toGroupForm());
+        return configEntity.toConfigForm(value, getSystemForm(application), groupEntity.toGroupForm());
     }
 
     @Override
@@ -186,8 +187,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             builder.and(qConfigEntity.name.containsIgnoreCase(criteria.getName()));
         }
 
-        List<String> systems = criteria.getSystemNames();
-        if (systems != null && !systems.isEmpty()) {
+        List<String> systemCodes = criteria.getSystemCodes();
+        if (systemCodes != null && !systemCodes.isEmpty()) {
             /// TODO
         }
 
@@ -198,8 +199,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         return configEntity.getApplicationCode() != null ? application.getName() : "application";
     }
 
-    private String getSystemName(Application application) {
-        return application != null ? application.getSystem().getName() : "Общесистемные";
+    private SystemForm getSystemForm(Application application) {
+        return application != null ? application.getSystem().toSystemForm() : null;
     }
 
     private Application getApplication(String code) {

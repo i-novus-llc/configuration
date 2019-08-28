@@ -13,8 +13,8 @@ public class ConfigFormBuilder {
         configForm.setCode("sec.url");
         configForm.setValueType("Строка");
         configForm.setValue("test-value");
-        configForm.setGroup(buildGroupForm1());
-        configForm.setSystemName("application");
+        configForm.setGroup(GroupFormBuilder.buildGroupForm1());
+        configForm.setApplicationCode("app-security");
         return configForm;
     }
 
@@ -24,8 +24,8 @@ public class ConfigFormBuilder {
         configForm.setCode("sec2.spring.sec-token");
         configForm.setValueType("Строка");
         configForm.setValue("test-value");
-        configForm.setGroup(buildGroupForm1());
-        configForm.setSystemName("application");
+        configForm.setGroup(GroupFormBuilder.buildGroupForm1());
+        configForm.setApplicationCode("app-security");
         return configForm;
     }
 
@@ -35,22 +35,8 @@ public class ConfigFormBuilder {
         configForm.setCode("auth.config");
         configForm.setValueType("Строка");
         configForm.setValue("test-value");
-        configForm.setGroup(buildGroupForm2());
-        configForm.setSystemName("application");
+        configForm.setGroup(GroupFormBuilder.buildGroupForm2());
+        configForm.setApplicationCode("app-auth");
         return configForm;
-    }
-
-    public static GroupForm buildGroupForm1() {
-        GroupForm groupForm = new GroupForm();
-        groupForm.setName("Security settings");
-        groupForm.setCodes(Arrays.asList("sec", "sec2"));
-        return groupForm;
-    }
-
-    public static GroupForm buildGroupForm2() {
-        GroupForm groupForm = new GroupForm();
-        groupForm.setName("Authentication settings");
-        groupForm.setCodes(Arrays.asList("auth"));
-        return groupForm;
     }
 }

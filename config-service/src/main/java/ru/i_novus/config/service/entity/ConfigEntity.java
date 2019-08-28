@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.SystemForm;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class ConfigEntity {
         this.valueType = Objects.requireNonNullElse(ValueTypeEnum.getValueType(valueType), ValueTypeEnum.STRING);
     }
 
-    public ConfigForm toConfigForm(String value, String systemName, GroupForm group) {
+    public ConfigForm toConfigForm(String value, SystemForm system, GroupForm group) {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode(this.code);
         configForm.setName(this.name);
@@ -71,7 +72,7 @@ public class ConfigEntity {
         configForm.setValueType(Objects.requireNonNullElse(this.valueType, ValueTypeEnum.STRING).getTitle());
         configForm.setValue(value);
         configForm.setApplicationCode(this.applicationCode);
-        configForm.setSystemName(systemName);
+        configForm.setSystem(system);
         configForm.setGroup(group);
         return configForm;
     }

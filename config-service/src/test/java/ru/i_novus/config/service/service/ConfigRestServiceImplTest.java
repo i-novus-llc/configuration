@@ -20,7 +20,9 @@ import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.ConfigServiceApplication;
 import ru.i_novus.config.service.service.builders.ConfigFormBuilder;
+import ru.i_novus.config.service.service.builders.GroupFormBuilder;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,9 +79,9 @@ public class ConfigRestServiceImplTest {
         configRestService.saveConfig(configForm2);
         ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
         configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
+        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
         List<ConfigForm> configForms =
@@ -108,9 +110,9 @@ public class ConfigRestServiceImplTest {
         configRestService.saveConfig(configForm2);
         ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
         configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
+        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
         ConfigCriteria criteria = new ConfigCriteria();
@@ -141,9 +143,9 @@ public class ConfigRestServiceImplTest {
         configRestService.saveConfig(configForm2);
         ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
         configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
+        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
         ConfigCriteria criteria = new ConfigCriteria();
@@ -174,14 +176,50 @@ public class ConfigRestServiceImplTest {
         configRestService.saveConfig(configForm2);
         ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
         configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
+        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setGroupIds(Collections.singletonList(groupId));
+
+        List<ConfigForm> configForms =
+                configRestService.getAllConfig(criteria).getContent();
+
+        assertEquals(2, configForms.size());
+        assertEquals(configForm, configForms.get(0));
+        assertEquals(configForm2, configForms.get(1));
+
+        groupRestService.deleteGroup(groupId);
+        groupRestService.deleteGroup(groupId2);
+        configRestService.deleteConfig(configForm.getCode());
+        configRestService.deleteConfig(configForm2.getCode());
+        configRestService.deleteConfig(configForm3.getCode());
+    }
+
+    /**
+     * Проверка, что фильтрация настроек по именам систем работает корректно
+     */
+    @Test
+    public void getAllConfigBySystemNameTest() {
+        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
+        configRestService.saveConfig(configForm);
+        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
+        configRestService.saveConfig(configForm2);
+        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
+        configRestService.saveConfig(configForm3);
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
+        Integer groupId = groupRestService.saveGroup(groupForm);
+        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
+        Integer groupId2 = groupRestService.saveGroup(groupForm2);
+
+
+        ConfigCriteria criteria = new ConfigCriteria();
+        criteria.setSystemCodes(Arrays.asList("system-security"));
+
+        // TODO mock
 
         List<ConfigForm> configForms =
                 configRestService.getAllConfig(criteria).getContent();
@@ -208,9 +246,9 @@ public class ConfigRestServiceImplTest {
         configRestService.saveConfig(configForm2);
         ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
         configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
+        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
 
@@ -244,7 +282,7 @@ public class ConfigRestServiceImplTest {
     public void saveConfigTest() {
         ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
         configRestService.saveConfig(configForm);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
         List<ConfigForm> configForms =
@@ -279,7 +317,7 @@ public class ConfigRestServiceImplTest {
     public void updateConfigMetadataTest() {
         ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
         configRestService.saveConfig(configForm);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
         configForm.setApplicationCode("test");

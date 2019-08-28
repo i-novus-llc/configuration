@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.i_novus.config.api.model.SystemForm;
 
 /**
  * Прикладная система
@@ -28,4 +29,9 @@ public class System {
      * Описание системы
      */
     private String description;
+
+
+    public SystemForm toSystemForm() {
+        return new SystemForm(code, name, description);
+    }
 }
