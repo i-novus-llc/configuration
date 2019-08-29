@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor
 @Data
-@ApiModel("Настройка")
-public class ConfigForm {
+@ApiModel("Входные данные настройки")
+public class ConfigRequest {
 
     @NotBlank(message = "Отсутствует код настройки")
     @ApiModelProperty("Код настройки")
@@ -30,10 +30,4 @@ public class ConfigForm {
 
     @ApiModelProperty("Код приложения")
     private String applicationCode;
-
-    @ApiModelProperty("Прикладная система, к которой относится настройка")
-    private SystemForm system;
-
-    @ApiModelProperty("Группа, к которой принадлежит настройка")
-    private GroupForm group;
 }

@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.SystemForm;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
@@ -66,7 +67,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
 
     @Override
-    public Page<ConfigForm> getAllConfig(ConfigCriteria criteria) {
+    public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
         /// TODO - отсортировать по system
         criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "code"));
 
@@ -74,7 +75,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         return configEntities.map(e -> {
                     Application application = getApplication(e.getApplicationCode());
-                    return e.toConfigForm(
+                    return e.toConfigResponse(
                             configValueService.getValue(getAppName(e, application), e.getCode()),
                             getSystemForm(application),
                             groupRepository.findOneGroupByConfigCodeStarts(e.getCode()).toGroupForm()
@@ -84,16 +85,16 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
 //    @Override
-//    public Map<GroupForm, List<ConfigForm>> getAllConfigByAppCode(String appCode) {
+//    public Map<GroupForm, List<ConfigResponse>> getAllConfigByAppCode(String appCode) {
 //        List<Object[]> objectList = configRepository.findByAppCode(appCode);
 //
-//        Map<GroupForm, List<ConfigForm>> result = new LinkedHashMap<>();
+//        Map<GroupForm, List<ConfigResponse>> result = new LinkedHashMap<>();
 //
 //        for (Object[] obj : objectList) {
 //            GroupForm groupForm = ((GroupEntity) obj[0]).toGroupForm();
 //            ConfigEntity configEntity = ((ConfigEntity) obj[1]);
 //            Application application = getApplication(configEntity.getApplicationCode());
-//            ConfigForm configForm = configEntity.toConfigForm(
+//            ConfigResponse configForm = configEntity.toConfigResponse(
 //                    configValueService.getValue(getAppName(configEntity, application), configEntity.getCode()),
 //                    getSystemName(application),
 //                    groupForm
@@ -109,7 +110,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 //    }
 
     @Override
-    public ConfigForm getConfig(String code) {
+    public ConfigResponse getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
         Application application = getApplication(configEntity.getApplicationCode());
@@ -117,38 +118,38 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         String value = configValueService.getValue(getAppName(configEntity, application), configEntity.getCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
 
-        return configEntity.toConfigForm(value, getSystemForm(application), groupEntity.toGroupForm());
+        return configEntity.toConfigResponse(value, getSystemForm(application), groupEntity.toGroupForm());
     }
 
     @Override
-    public void saveConfig(@Valid @NotNull ConfigForm configForm) {
-        if (configRepository.existsByCode(configForm.getCode())) {
+    public void saveConfig(@Valid @NotNull ConfigRequest configRequest) {
+        if (configRepository.existsByCode(configRequest.getCode())) {
             throw new UserException("config.code.not.unique");
         }
 
-        ConfigEntity configEntity = new ConfigEntity(configForm);
+        ConfigEntity configEntity = new ConfigEntity(configRequest);
         configRepository.save(configEntity);
 
-        if (configForm.getValue() != null) {
+        if (configRequest.getValue() != null) {
             Application application = getApplication(configEntity.getApplicationCode());
-            configValueService.saveValue(getAppName(configEntity, application), configForm.getCode(), configForm.getValue());
+            configValueService.saveValue(getAppName(configEntity, application), configRequest.getCode(), configRequest.getValue());
         }
     }
 
     @Override
     @Transactional
-    public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
+    public void updateConfig(String code, @Valid @NotNull ConfigRequest configRequest) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
-        configEntity.setApplicationCode(configForm.getApplicationCode());
-        configEntity.setName(configForm.getName());
-        configEntity.setValueType(configForm.getValueType());
-        configEntity.setDescription(configForm.getDescription());
+        configEntity.setApplicationCode(configRequest.getApplicationCode());
+        configEntity.setName(configRequest.getName());
+        configEntity.setValueType(configRequest.getValueType());
+        configEntity.setDescription(configRequest.getDescription());
         configRepository.save(configEntity);
 
-        if (configForm.getValue() != null) {
+        if (configRequest.getValue() != null) {
             Application application = getApplication(configEntity.getApplicationCode());
-            configValueService.saveValue(getAppName(configEntity, application), configForm.getCode(), configForm.getValue());
+            configValueService.saveValue(getAppName(configEntity, application), configRequest.getCode(), configRequest.getValue());
         }
     }
 

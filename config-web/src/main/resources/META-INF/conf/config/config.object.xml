@@ -7,11 +7,9 @@
                 <rest method="POST">${config.service.url}/</rest>
             </invocation>
             <in-parameters>
-                <param id="system" mapping="['system']" normalize="null"/>
                 <param id="applicationCode" mapping="['applicationCode']"/>
                 <param id="code" mapping="['code']"/>
                 <param id="name" mapping="['name']"/>
-                <param id="group" mapping="['group']" normalize="null"/>
                 <param id="valueType" mapping="['valueType']"
                        normalize="#this.get('name')"/>
                 <param id="description" mapping="['description']"/>
@@ -23,11 +21,9 @@
                 <rest method="PUT">${config.service.url}/{code}</rest>
             </invocation>
             <in-parameters>
-                <param id="system" mapping="['system']"/>
                 <param id="applicationCode" mapping="['applicationCode']"/>
                 <param id="code" mapping="['code']"/>
                 <param id="name" mapping="['name']"/>
-                <param id="group" mapping="['group']"/>
                 <param id="valueType" mapping="['valueType']"
                        normalize="#this instanceof T(java.lang.String) ? #this : #this.get('name')"/>
                 <param id="description" mapping="['description']"/>

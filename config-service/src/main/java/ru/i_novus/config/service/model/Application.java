@@ -25,7 +25,7 @@ public class Application {
     private String name;
 
     /**
-     * Прикладная система
+     * Прикладная система, к которой относится приложение
      */
     private System system;
 }

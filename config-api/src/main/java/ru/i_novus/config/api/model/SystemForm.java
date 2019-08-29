@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ApiModel("Система")
+@ApiModel("Прикладная система")
 public class SystemForm {
 
     @NotBlank(message = "Отсутствует код системы")

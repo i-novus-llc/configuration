@@ -13,13 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.ConfigServiceApplication;
-import ru.i_novus.config.service.service.builders.ConfigFormBuilder;
+import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
 
 import java.util.Arrays;
@@ -73,30 +74,30 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
+        configRestService.saveConfig(configRequest2);
+        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
+        configRestService.saveConfig(configRequest3);
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
         Integer groupId2 = groupRestService.saveGroup(groupForm2);
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(new ConfigCriteria()).getContent();
 
-        assertEquals(3, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
-        assertEquals(configForm3, configForms.get(2));
+        assertEquals(3, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest3, configResponses.get(2));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configRequest2.getCode());
+        configRestService.deleteConfig(configRequest3.getCode());
     }
 
     /**
@@ -104,12 +105,12 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByCodeTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
+        configRestService.saveConfig(configRequest2);
+        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
+        configRestService.saveConfig(configRequest3);
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
@@ -118,18 +119,18 @@ public class ConfigRestServiceImplTest {
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setCode("sec");
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configRequest2.getCode());
+        configRestService.deleteConfig(configRequest3.getCode());
     }
 
     /**
@@ -137,12 +138,12 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByNameTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
+        configRestService.saveConfig(configRequest2);
+        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
+        configRestService.saveConfig(configRequest3);
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
@@ -151,18 +152,18 @@ public class ConfigRestServiceImplTest {
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setName("name");
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configRequest2.getCode());
+        configRestService.deleteConfig(configRequest3.getCode());
     }
 
     /**
@@ -170,12 +171,12 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByGroupNameTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
+        configRestService.saveConfig(configRequest2);
+        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
+        configRestService.saveConfig(configRequest3);
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
@@ -185,18 +186,18 @@ public class ConfigRestServiceImplTest {
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setGroupIds(Collections.singletonList(groupId));
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configRequest2.getCode());
+        configRestService.deleteConfig(configRequest3.getCode());
     }
 
     /**
@@ -204,12 +205,12 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigBySystemNameTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
+        configRestService.saveConfig(configRequest2);
+        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
+        configRestService.saveConfig(configRequest3);
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
@@ -217,22 +218,22 @@ public class ConfigRestServiceImplTest {
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setSystemCodes(Arrays.asList("system-security"));
+        criteria.setSystemCodes(Collections.singletonList("system-security"));
 
         // TODO mock
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configRequest2.getCode());
+        configRestService.deleteConfig(configRequest3.getCode());
     }
 
     /**
@@ -240,12 +241,12 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void configPaginationTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
+        configRestService.saveConfig(configRequest2);
+        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
+        configRestService.saveConfig(configRequest3);
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
@@ -255,24 +256,24 @@ public class ConfigRestServiceImplTest {
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setPageSize(2);
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
 
         criteria.setPageNumber(1);
-        configForms = configRestService.getAllConfig(criteria).getContent();
+        configResponses = configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(1, configForms.size());
-        assertEquals(configForm3, configForms.get(0));
+        assertEquals(1, configResponses.size());
+        configAssertEquals(configRequest3, configResponses.get(0));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configRequest2.getCode());
+        configRestService.deleteConfig(configRequest3.getCode());
     }
 
     /**
@@ -280,19 +281,19 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void saveConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(new ConfigCriteria()).getContent();
 
-        assertEquals(1, configForms.size());
-        assertEquals(configForm, configForms.get(0));
+        assertEquals(1, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
 
         groupRestService.deleteGroup(groupId);
-        configRestService.deleteConfig(configForm.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
     }
 
     /**
@@ -300,13 +301,13 @@ public class ConfigRestServiceImplTest {
      */
     @Test(expected = RestException.class)
     public void saveAlreadyExistsConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
 
         try {
-            configRestService.saveConfig(configForm);
+            configRestService.saveConfig(configRequest);
         } finally {
-            configRestService.deleteConfig(configForm.getCode());
+            configRestService.deleteConfig(configRequest.getCode());
         }
     }
 
@@ -315,23 +316,23 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void updateConfigMetadataTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        configRestService.saveConfig(configRequest);
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
-        configForm.setApplicationCode("test");
-        configForm.setDescription("test");
-        configForm.setValue("test");
+        configRequest.setApplicationCode("test");
+        configRequest.setDescription("test");
+        configRequest.setValue("test");
 
-        when(configValueService.getValue(any(), any())).thenReturn(configForm.getValue());
+        when(configValueService.getValue(any(), any())).thenReturn(configRequest.getValue());
 
-        configRestService.updateConfig(configForm.getCode(), configForm);
+        configRestService.updateConfig(configRequest.getCode(), configRequest);
 
-        assertEquals(configForm, configRestService.getConfig(configForm.getCode()));
+        configAssertEquals(configRequest, configRestService.getConfig(configRequest.getCode()));
 
         groupRestService.deleteGroup(groupId);
-        configRestService.deleteConfig(configForm.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
     }
 
     /**
@@ -339,10 +340,10 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void deleteConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
 
-        configRestService.saveConfig(configForm);
-        configRestService.deleteConfig(configForm.getCode());
+        configRestService.saveConfig(configRequest);
+        configRestService.deleteConfig(configRequest.getCode());
 
         assertTrue(configRestService.getAllConfig(new ConfigCriteria()).isEmpty());
     }
@@ -352,8 +353,16 @@ public class ConfigRestServiceImplTest {
      */
     @Test(expected = RestException.class)
     public void deleteAlreadyDeletedConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
 
-        configRestService.deleteConfig(configForm.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
+    }
+
+    private void configAssertEquals(ConfigRequest configRequest, ConfigResponse configResponse) {
+        assertEquals(configRequest.getCode(), configResponse.getCode());
+        assertEquals(configRequest.getName(), configResponse.getName());
+        assertEquals(configRequest.getDescription(), configResponse.getName());
+        assertEquals(configRequest.getApplicationCode(), configResponse.getApplicationCode());
+        assertEquals(configRequest.getValueType(), configResponse.getValueType());
     }
 }

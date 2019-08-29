@@ -3,7 +3,8 @@ package ru.i_novus.config.service.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.model.SystemForm;
 
@@ -52,28 +53,28 @@ public class ConfigEntity {
     private ValueTypeEnum valueType;
 
 
-    public ConfigEntity(ConfigForm configForm) {
-        this.code = configForm.getCode();
-        this.applicationCode = configForm.getApplicationCode();
-        this.name = configForm.getName();
-        this.description = configForm.getDescription();
-        setValueType(configForm.getValueType());
+    public ConfigEntity(ConfigRequest configRequest) {
+        this.code = configRequest.getCode();
+        this.applicationCode = configRequest.getApplicationCode();
+        this.name = configRequest.getName();
+        this.description = configRequest.getDescription();
+        setValueType(configRequest.getValueType());
     }
 
     public void setValueType(String valueType) {
         this.valueType = Objects.requireNonNullElse(ValueTypeEnum.getValueType(valueType), ValueTypeEnum.STRING);
     }
 
-    public ConfigForm toConfigForm(String value, SystemForm system, GroupForm group) {
-        ConfigForm configForm = new ConfigForm();
-        configForm.setCode(this.code);
-        configForm.setName(this.name);
-        configForm.setDescription(this.description);
-        configForm.setValueType(Objects.requireNonNullElse(this.valueType, ValueTypeEnum.STRING).getTitle());
-        configForm.setValue(value);
-        configForm.setApplicationCode(this.applicationCode);
-        configForm.setSystem(system);
-        configForm.setGroup(group);
-        return configForm;
+    public ConfigResponse toConfigResponse(String value, SystemForm system, GroupForm group) {
+        ConfigResponse configResponse = new ConfigResponse();
+        configResponse.setCode(this.code);
+        configResponse.setName(this.name);
+        configResponse.setDescription(this.description);
+        configResponse.setValueType(Objects.requireNonNullElse(this.valueType, ValueTypeEnum.STRING).getTitle());
+        configResponse.setValue(value);
+        configResponse.setApplicationCode(this.applicationCode);
+        configResponse.setSystem(system);
+        configResponse.setGroup(group);
+        return configResponse;
     }
 }
