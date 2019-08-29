@@ -9,7 +9,7 @@ import ru.i_novus.config.service.entity.GroupCodeEntity;
 import java.util.List;
 
 @Repository
-public interface GroupCodeRepository extends JpaRepository<GroupCodeEntity, Integer> {
+public interface GroupCodeRepository extends JpaRepository<GroupCodeEntity, String> {
 
     @Query("SELECT CASE WHEN (COUNT(g) > 0) THEN true ELSE false END " +
             "FROM GroupCodeEntity g WHERE g.code IN (:codes) AND g.group.id != :groupId")

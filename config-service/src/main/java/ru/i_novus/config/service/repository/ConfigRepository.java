@@ -11,7 +11,7 @@ import ru.i_novus.config.service.entity.ConfigEntity;
 import java.util.List;
 
 @Repository
-public interface ConfigRepository extends JpaRepository<ConfigEntity, Integer>, QuerydslPredicateExecutor<ConfigEntity> {
+public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, QuerydslPredicateExecutor<ConfigEntity> {
 
     ConfigEntity findByCode(String code);
 

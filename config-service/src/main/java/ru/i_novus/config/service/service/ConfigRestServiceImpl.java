@@ -1,26 +1,27 @@
 package ru.i_novus.config.service.service;
 
+import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
+import ru.i_novus.config.service.model.Application;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -36,8 +37,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     private ConfigRepository configRepository;
     private GroupRepository groupRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private RestTemplate restTemplate;
+
+    @Value("${security.admin.url}")
+    private String url;
+
 
     @Autowired
     public void setConfigValueService(ConfigValueService configValueService) {
@@ -54,40 +58,57 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         this.groupRepository = groupRepository;
     }
 
+    @Autowired
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
 
     @Override
-    public Page<ConfigForm> getAllConfig(ConfigCriteria criteria) {
+    public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
         /// TODO - отсортировать по system
         criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "code"));
 
         Page<ConfigEntity> configEntities = configRepository.findAll(toPredicate(criteria), criteria);
 
-        /// TODO - вытащить system_name по service_code из виртуальной таблицы
-        return configEntities.map(e -> e.toConfigForm(
-                configValueService.getValue(getServiceCode(e), e.getCode()),
-                "application",
-                groupRepository.findOneGroupByConfigCodeStarts(e.getCode()).toGroupForm()
-                )
+        return configEntities.map(e -> {
+                    Application application = getApplication(e.getApplicationCode());
+                    return e.toConfigResponse(
+                            configValueService.getValue(getAppName(e, application), e.getCode()),
+                            getSystemForm(application),
+                            groupRepository.findOneGroupByConfigCodeStarts(e.getCode()).toGroupForm()
+                    );
+                }
         );
     }
 
     @Override
-    public Map<GroupForm, List<ConfigForm>> getAllConfigByAppCode(String appCode) {
+    public List<GroupedConfigForm> getGroupedConfigByAppCode(String appCode) {
         List<Object[]> objectList = configRepository.findByAppCode(appCode);
 
-        Map<GroupForm, List<ConfigForm>> result = new LinkedHashMap<>();
+        List<GroupedConfigForm> result = new ArrayList<>();
 
         for (Object[] obj : objectList) {
             GroupForm groupForm = ((GroupEntity) obj[0]).toGroupForm();
-            ConfigForm configForm = ((ConfigEntity) obj[1]).toConfigForm(
-                    "value",
-                    "application",
-                    groupForm
+            ConfigEntity configEntity = ((ConfigEntity) obj[1]);
+            Application application = getApplication(configEntity.getApplicationCode());
+
+            ConfigRequest configRequest = new ConfigRequest(
+                    configEntity.getCode(), configEntity.getName(), configEntity.getDescription(),
+                    configEntity.getValueType().getTitle(),
+                    configValueService.getValue(getAppName(configEntity, application), configEntity.getCode()),
+                    configEntity.getApplicationCode()
             );
-            if (!result.containsKey(groupForm)) {
-                result.put(groupForm, new ArrayList<ConfigForm>(List.of(configForm)));
+
+            GroupedConfigForm existingGroupedConfigForm =
+                    result.stream().filter(i -> i.getId().equals(groupForm.getId())).findFirst().orElse(null);
+            if (existingGroupedConfigForm != null) {
+                existingGroupedConfigForm.getConfigs().add(configRequest);
             } else {
-                result.get(groupForm).add(configForm);
+                result.add(new GroupedConfigForm(
+                        groupForm.getId(), groupForm.getName(), groupForm.getDescription(),
+                        groupForm.getPriority(), Lists.newArrayList(configRequest)
+                ));
             }
         }
 
@@ -95,53 +116,56 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     @Override
-    public ConfigForm getConfig(String code) {
+    public ConfigResponse getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
-        String value = configValueService.getValue(getServiceCode(configEntity), configEntity.getCode());
-        /// TODO - вытащить system_name по service_code из виртуальной таблицы
-        String systemName = "application";
+        Application application = getApplication(configEntity.getApplicationCode());
+
+        String value = configValueService.getValue(getAppName(configEntity, application), configEntity.getCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
 
-        return configEntity.toConfigForm(value, systemName, groupEntity.toGroupForm());
+        return configEntity.toConfigResponse(value, getSystemForm(application), groupEntity.toGroupForm());
     }
 
     @Override
-    public void saveConfig(@Valid @NotNull ConfigForm configForm) {
-        if (configRepository.existsByCode(configForm.getCode())) {
+    public void saveConfig(@Valid @NotNull ConfigRequest configRequest) {
+        if (configRepository.existsByCode(configRequest.getCode())) {
             throw new UserException("config.code.not.unique");
         }
 
-        if (configForm.getApplicationCode() != null) {
-            /// TODO - проверяем есть ли такой serviceCode в виртуальной таблице
-        }
-
-        ConfigEntity configEntity = new ConfigEntity(configForm);
+        ConfigEntity configEntity = new ConfigEntity(configRequest);
         configRepository.save(configEntity);
 
-        configValueService.saveValue(getServiceCode(configEntity), configForm.getCode(), configForm.getValue());
+        if (configRequest.getValue() != null) {
+            Application application = getApplication(configEntity.getApplicationCode());
+            configValueService.saveValue(getAppName(configEntity, application), configRequest.getCode(), configRequest.getValue());
+        }
     }
 
     @Override
     @Transactional
-    public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
+    public void updateConfig(String code, @Valid @NotNull ConfigRequest configRequest) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
-        configEntity.setApplicationCode(configForm.getApplicationCode());
-        configEntity.setDescription(configForm.getDescription());
+        configEntity.setApplicationCode(configRequest.getApplicationCode());
+        configEntity.setName(configRequest.getName());
+        configEntity.setValueType(configRequest.getValueType());
+        configEntity.setDescription(configRequest.getDescription());
         configRepository.save(configEntity);
 
-        configValueService.saveValue(getServiceCode(configEntity),
-                configForm.getCode(),
-                configForm.getValue());
+        if (configRequest.getValue() != null) {
+            Application application = getApplication(configEntity.getApplicationCode());
+            configValueService.saveValue(getAppName(configEntity, application), configRequest.getCode(), configRequest.getValue());
+        }
     }
 
     @Override
     public void deleteConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
-        configRepository.deleteByCode(code);
+        Application application = getApplication(configEntity.getApplicationCode());
 
-        configValueService.deleteValue(getServiceCode(configEntity), code);
+        configRepository.deleteByCode(code);
+//        configValueService.deleteValue(getAppName(configEntity, application), code);
     }
 
     private Predicate toPredicate(ConfigCriteria criteria) {
@@ -170,15 +194,23 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             builder.and(qConfigEntity.name.containsIgnoreCase(criteria.getName()));
         }
 
-        List<String> systems = criteria.getSystemNames();
-        if (systems != null && !systems.isEmpty()) {
+        List<String> systemCodes = criteria.getSystemCodes();
+        if (systemCodes != null && !systemCodes.isEmpty()) {
             /// TODO
         }
 
         return builder.getValue();
     }
 
-    private String getServiceCode(ConfigEntity configEntity) {
-        return Objects.requireNonNullElse(configEntity.getApplicationCode(), "application");
+    private String getAppName(ConfigEntity configEntity, Application application) {
+        return configEntity.getApplicationCode() != null ? application.getName() : "application";
+    }
+
+    private SystemForm getSystemForm(Application application) {
+        return application != null ? application.getSystem().toSystemForm() : null;
+    }
+
+    private Application getApplication(String code) {
+        return code != null ? restTemplate.getForObject(url + "/applications/" + code, Application.class) : null;
     }
 }

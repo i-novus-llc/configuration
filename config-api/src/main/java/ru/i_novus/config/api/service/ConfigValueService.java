@@ -4,13 +4,13 @@ import java.util.Map;
 
 public interface ConfigValueService {
 
-    String getValue(String appCode, String code);
+    String getValue(String appName, String code);
 
-    Map<String, String> getKeyValueListByApplicationCode(String appCode);
+    Map<String, String> getKeyValueListByApplicationCode(String appName);
 
-    void saveValue(String appCode, String code, String value);
+    void saveValue(String appName, String code, String value);
 
-    void saveAllValues(String appCode, Map<String, String> data);
+    void saveAllValues(String appName, Map<String, String> data);
 
-    void deleteValue(String appCode, String code);
+    void deleteValue(String appName, String code);
 }

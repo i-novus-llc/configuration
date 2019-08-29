@@ -3,15 +3,15 @@ package ru.i_novus.config.api.service;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigResponse;
+import ru.i_novus.config.api.model.GroupedConfigForm;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Интерфейс REST API для работы с настройками
@@ -25,23 +25,23 @@ public interface ConfigRestService {
 
     @GET
     @Path("/{code}")
-    @ApiOperation(value = "Получение настройки", response = ConfigForm.class)
+    @ApiOperation(value = "Получение настройки", response = ConfigResponse.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение настройки"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
-    ConfigForm getConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code);
+    ConfigResponse getConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code);
 
     @GET
     @Path("/")
-    @ApiOperation(value = "Получение всех настроек", response = ConfigForm.class, responseContainer = "List")
+    @ApiOperation(value = "Получение всех настроек", response = ConfigResponse.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка настроек")
-    Page<ConfigForm> getAllConfig(@ApiParam(name = "Критерии поиска настроек")
+    Page<ConfigResponse> getAllConfig(@ApiParam(name = "Критерии поиска настроек")
                                   @BeanParam ConfigCriteria criteria);
 
     @GET
     @Path("/byAppCode/{code}")
-    Map<GroupForm, List<ConfigForm>> getAllConfigByAppCode(@PathParam("code") String code);
+    List<GroupedConfigForm> getGroupedConfigByAppCode(@PathParam("code") String code);
 
     @POST
     @Path("/")
@@ -51,7 +51,7 @@ public interface ConfigRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос")
     })
     void saveConfig(@Valid @NotNull @ApiParam(name = "Новая настройка", required = true)
-                            ConfigForm configForm);
+                            ConfigRequest configRequest);
 
     @PUT
     @Path("/{code}")
@@ -63,7 +63,7 @@ public interface ConfigRestService {
     })
     void updateConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code,
                       @Valid @NotNull @ApiParam(name = "Обновленная настройка", required = true)
-                              ConfigForm configForm);
+                              ConfigRequest configRequest);
 
     @DELETE
     @Path("/{code}")

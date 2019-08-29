@@ -17,18 +17,18 @@
             </filters>
         </field>
 
-        <field id="system" domain="string">
-            <select mapping="[systemName]"/>
+        <field id="system" domain="object">
+            <select/>
             <filters>
-                <eq filter-id="system">systemName={system}</eq>
+                <eq filter-id="systems*.code">systemCodes={systems*.code}</eq>
             </filters>
         </field>
 
-        <field id="serviceCode" domain="string">
+        <field id="applicationCode" domain="string">
             <select/>
         </field>
         
-        <field id="group" domain="object">
+        <field id="group" domain="string[]">
             <select/>
             <filters>
                 <eq filter-id="groups*.id">groupIds={groups*.id}</eq>
@@ -50,6 +50,10 @@
         </field>
 
         <field id="valueType" domain="string">
+            <select/>
+        </field>
+
+        <field id="description" domain="string">
             <select/>
         </field>
 
