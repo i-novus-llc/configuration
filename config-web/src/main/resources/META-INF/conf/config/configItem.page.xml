@@ -10,7 +10,7 @@
                     </pre-filters>
                     <dependencies>
                         <enabling on="systemName">systemName.id != null</enabling>
-                        <set-value on="systemName">if(systemName.id == null) return null</set-value>
+                        <set-value on="systemName" apply-on-init="false">null</set-value>
                     </dependencies>
                 </input-select>
             </row>
