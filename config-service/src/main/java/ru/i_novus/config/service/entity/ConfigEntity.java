@@ -3,10 +3,7 @@ package ru.i_novus.config.service.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.i_novus.config.api.model.ConfigRequest;
-import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.GroupForm;
-import ru.i_novus.config.api.model.SystemForm;
+import ru.i_novus.config.api.model.*;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -65,15 +62,14 @@ public class ConfigEntity {
         this.valueType = Objects.requireNonNullElse(ValueTypeEnum.getValueType(valueType), ValueTypeEnum.STRING);
     }
 
-    public ConfigResponse toConfigResponse(String value, SystemForm system, GroupForm group) {
+    public ConfigResponse toConfigResponse(String value, ApplicationForm application, GroupForm group) {
         ConfigResponse configResponse = new ConfigResponse();
         configResponse.setCode(this.code);
         configResponse.setName(this.name);
         configResponse.setDescription(this.description);
         configResponse.setValueType(Objects.requireNonNullElse(this.valueType, ValueTypeEnum.STRING).getTitle());
         configResponse.setValue(value);
-        configResponse.setApplicationCode(this.applicationCode);
-        configResponse.setSystem(system);
+        configResponse.setApplication(application);
         configResponse.setGroup(group);
         return configResponse;
     }

@@ -7,11 +7,10 @@
                 <rest method="POST">${config.service.url}/</rest>
             </invocation>
             <in-parameters>
-                <param id="applicationCode" mapping="['applicationCode']"/>
+                <param id="applicationName.id" mapping="['applicationCode']"/>
                 <param id="code" mapping="['code']"/>
                 <param id="name" mapping="['name']"/>
-                <param id="valueType" mapping="['valueType']"
-                       normalize="#this.get('name')"/>
+                <param id="valueType.name" mapping="['valueType']"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>
@@ -21,11 +20,10 @@
                 <rest method="PUT">${config.service.url}/{code}</rest>
             </invocation>
             <in-parameters>
-                <param id="applicationCode" mapping="['applicationCode']"/>
+                <param id="applicationName.id" mapping="['applicationCode']"/>
                 <param id="code" mapping="['code']"/>
                 <param id="name" mapping="['name']"/>
-                <param id="valueType" mapping="['valueType']"
-                       normalize="#this instanceof T(java.lang.String) ? #this : #this.get('name')"/>
+                <param id="valueType.name" mapping="['valueType']"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>

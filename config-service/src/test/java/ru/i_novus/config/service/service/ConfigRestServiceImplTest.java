@@ -362,7 +362,7 @@ public class ConfigRestServiceImplTest {
         assertEquals(configRequest.getCode(), configResponse.getCode());
         assertEquals(configRequest.getName(), configResponse.getName());
         assertEquals(configRequest.getDescription(), configResponse.getName());
-        assertEquals(configRequest.getApplicationCode(), configResponse.getApplicationCode());
+        assertEquals(configRequest.getApplicationCode(), configResponse.getApplication().getCode());
         assertEquals(configRequest.getValueType(), configResponse.getValueType());
     }
 }

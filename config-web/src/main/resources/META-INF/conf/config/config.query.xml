@@ -17,21 +17,42 @@
             </filters>
         </field>
 
-        <field id="system" domain="object">
-            <select/>
+        <field id="application" domain="object">
+            <select mapping="[application]"/>
+        </field>
+
+        <field id="application.id" domain="string">
+            <select mapping="['application.code']"/>
             <filters>
-                <eq filter-id="systems*.code">systemCodes={systems*.code}</eq>
+                <eq filter-id="application.id">application.code={application.id}</eq>
             </filters>
         </field>
 
-        <field id="applicationCode" domain="string">
+        <field id="system.code" domain="string[]">
             <select/>
+            <filters>
+                <eq filter-id="systems*.code">systemCode={systems*.code}</eq>
+            </filters>
         </field>
-        
+
+        <field id="systemName.id" domain="string">
+            <select mapping="['application.system.code']"/>
+        </field>
+        <field id="systemName.name" domain="string">
+            <select mapping="['application.system.name']"/>
+        </field>
+
+        <field id="applicationName.id" domain="string">
+            <select mapping="['application.code']"/>
+        </field>
+        <field id="applicationName.name" domain="string">
+            <select mapping="['application.name']"/>
+        </field>
+
         <field id="group" domain="string[]">
             <select/>
             <filters>
-                <eq filter-id="groups*.id">groupIds={groups*.id}</eq>
+                <eq filter-id="groups*.id">groupId={groups*.id}</eq>
             </filters>
         </field>
 
@@ -49,8 +70,11 @@
             </filters>
         </field>
 
-        <field id="valueType" domain="string">
-            <select/>
+        <field id="valueType.name" domain="string">
+            <select mapping="[valueType]"/>
+        </field>
+        <field id="valueType.id" domain="string">
+            <select mapping="[valueTypeCode]"/>
         </field>
 
         <field id="description" domain="string">

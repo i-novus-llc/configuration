@@ -19,9 +19,8 @@
         </filters>
 
         <columns>
-            <column text-field-id="system.name" label="Система" >
-            </column>
-            <column text-field-id="applicationCode" label="Приложение"/>
+            <column text-field-id="systemName.name" label="Система"/>
+            <column text-field-id="application.name" label="Приложение"/>
             <column text-field-id="group.name" label="Группа настроек"/>
             <column text-field-id="code" label="Код"/>
             <column text-field-id="name" label="Наименование"/>

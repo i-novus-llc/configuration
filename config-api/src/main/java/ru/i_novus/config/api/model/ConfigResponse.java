@@ -28,11 +28,8 @@ public class ConfigResponse {
     @ApiModelProperty("Значение настройки")
     private String value;
 
-    @ApiModelProperty("Код приложения")
-    private String applicationCode;
-
-    @ApiModelProperty("Прикладная система, к которой относится настройка")
-    private SystemForm system;
+    @ApiModelProperty("Приложение")
+    private ApplicationForm application;
 
     @ApiModelProperty("Группа, к которой принадлежит настройка")
     private GroupForm group;
