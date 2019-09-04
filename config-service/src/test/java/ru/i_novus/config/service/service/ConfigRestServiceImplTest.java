@@ -9,9 +9,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.PagedResources;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.ConfigResponse;
@@ -20,8 +27,13 @@ import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.ConfigServiceApplication;
+import ru.i_novus.config.service.entity.ValueTypeEnum;
+import ru.i_novus.config.service.model.Application;
+import ru.i_novus.config.service.model.System;
+import ru.i_novus.config.service.service.builders.ApplicationBuilder;
 import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
+import ru.i_novus.config.service.service.builders.SystemBuilder;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +42,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -62,10 +75,32 @@ public class ConfigRestServiceImplTest {
     @MockBean
     private ConfigValueService configValueService;
 
+    @MockBean
+    private RestTemplate restTemplate;
+
+    @Value("${security.admin.url}")
+    private String url;
+
 
     @Before
     public void setUp() {
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
+        doNothing().when(configValueService).saveValue(any(), any(), any());
+
+        when(restTemplate.getForObject(url + "/applications/" + ApplicationBuilder.buildApplication1().getCode(), Application.class))
+                .thenReturn(ApplicationBuilder.buildApplication1());
+        when(restTemplate.getForObject(url + "/applications/" + ApplicationBuilder.buildApplication2().getCode(), Application.class))
+                .thenReturn(ApplicationBuilder.buildApplication2());
+
+        PagedResources body = new PagedResources(Arrays.asList(SystemBuilder.buildSystem()),
+                new PagedResources.PageMetadata(1, 1, 1, 1));
+        ResponseEntity<PagedResources<System>> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
+
+        when(restTemplate.exchange(
+                String.format("%s/systems/?size=%d&code=%s", url, Integer.MAX_VALUE, SystemBuilder.buildSystem().getCode()),
+                HttpMethod.GET, null,
+                new ParameterizedTypeReference<PagedResources<System>>() {
+                })).thenReturn(responseEntity);
     }
 
 
@@ -123,8 +158,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configRequest3, configResponses.get(1));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
@@ -156,8 +191,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configRequest3, configResponses.get(1));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
@@ -184,14 +219,14 @@ public class ConfigRestServiceImplTest {
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setGroupIds(Collections.singletonList(groupId));
+        criteria.setGroupIds(Collections.singletonList(groupId2));
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configRequest3, configResponses.get(1));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
@@ -218,16 +253,14 @@ public class ConfigRestServiceImplTest {
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setSystemCodes(Collections.singletonList("system-security"));
-
-        // TODO mock
+        criteria.setSystemCodes(Arrays.asList("system-security", "[]"));
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configRequest3, configResponses.get(1));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
@@ -321,9 +354,11 @@ public class ConfigRestServiceImplTest {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
-        configRequest.setApplicationCode("test");
+        configRequest.setApplicationCode(null);
         configRequest.setDescription("test");
-        configRequest.setValue("test");
+        configRequest.setName("test");
+        configRequest.setValue("1");
+        configRequest.setValueType(ValueTypeEnum.NUMBER.getTitle());
 
         when(configValueService.getValue(any(), any())).thenReturn(configRequest.getValue());
 
@@ -361,7 +396,7 @@ public class ConfigRestServiceImplTest {
     private void configAssertEquals(ConfigRequest configRequest, ConfigResponse configResponse) {
         assertEquals(configRequest.getCode(), configResponse.getCode());
         assertEquals(configRequest.getName(), configResponse.getName());
-        assertEquals(configRequest.getDescription(), configResponse.getName());
+        assertEquals(configRequest.getDescription(), configResponse.getDescription());
         assertEquals(configRequest.getApplicationCode(), configResponse.getApplication().getCode());
         assertEquals(configRequest.getValueType(), configResponse.getValueType());
     }
