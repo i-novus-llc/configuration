@@ -6,16 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.i_novus.config.api.model.SystemForm;
 
-import java.util.List;
-
-/**
- * Прикладная система
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class System {
+public class SimpleSystem {
 
     /**
      * Код системы
@@ -31,12 +26,6 @@ public class System {
      * Описание системы
      */
     private String description;
-
-    /**
-     * Приложения системы
-     */
-    private List<SimpleApplication> applications;
-
 
     public SystemForm toSystemForm() {
         return new SystemForm(code, name, description);

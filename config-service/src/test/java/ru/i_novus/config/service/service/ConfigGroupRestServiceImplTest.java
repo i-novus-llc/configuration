@@ -79,7 +79,7 @@ public class ConfigGroupRestServiceImplTest {
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
         assertEquals(2, groupForms.size());
-        assertTrue(groupForms.containsAll(Arrays.asList(groupForm, groupForm2)));
+        assertTrue(groupForms.containsAll(Arrays.asList(groupForm2, groupForm3)));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);
@@ -103,7 +103,7 @@ public class ConfigGroupRestServiceImplTest {
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
         assertEquals(2, groupForms.size());
-        assertTrue(groupForms.containsAll(Arrays.asList(groupForm, groupForm2)));
+        assertTrue(groupForms.containsAll(Arrays.asList(groupForm2, groupForm3)));
 
         groupRestService.deleteGroup(groupId);
         groupRestService.deleteGroup(groupId2);

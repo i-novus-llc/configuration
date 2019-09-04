@@ -3,15 +3,14 @@
     <form query-id="config" object-id="config">
         <fields>
             <row>
-                <input-select id="system" label="Система" required="true" query-id="system">
-                    <default-value id="defaultSystem" name="{system.name}"/>
-                </input-select>
-                <input-select id="applicationCode" label="Приложение" query-id="application">
-<!--                    <pre-filters>-->
-<!--                        <like field-id="systemCode" value="{system.code}" />-->
-<!--                    </pre-filters>-->
+                <input-select id="systemName" label="Система" required="true" query-id="system"/>
+                <input-select id="applicationName" label="Приложение" query-id="application">
+                    <pre-filters>
+                        <eq field-id="systemCode" value="{systemName.id}"/>
+                    </pre-filters>
                     <dependencies>
-                        <enabling on="system">system.name != 'application'</enabling>
+                        <enabling on="systemName">systemName.id != null</enabling>
+                        <set-value on="systemName" apply-on-init="false">null</set-value>
                     </dependencies>
                 </input-select>
             </row>
@@ -23,17 +22,17 @@
             <input-text id="name" label="Наименование настройки"/>
             <row>
                 <input-select id="group" label="Группа настроек" required="true" query-id="group">
-                    <default-value id="defaultGroup" name="{group.name}"/>
                     <pre-filters>
                         <like field-id="codes" value="{code}" />
                     </pre-filters>
                     <dependencies>
                         <enabling on="isCreateForm">isCreateForm</enabling>
+                        <set-value on="code">if (isCreateForm) return null</set-value>
                     </dependencies>
                 </input-select>
 
                 <input-select id="valueType" label="Тип значения" required="true">
-                    <default-value id="defaultValueType" name="{valueType}"/>
+                    <default-value id="1" name="Строка"/>
                     <options>
                         <option id="string" name="Строка"/>
                         <option id="integer" name="Число"/>

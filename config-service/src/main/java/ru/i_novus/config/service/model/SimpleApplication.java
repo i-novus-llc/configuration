@@ -4,16 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.i_novus.config.api.model.ApplicationForm;
 
 /**
- * Приложение прикладной системы
+ * Простая версия приложения прикладной системы
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Application {
+public class SimpleApplication {
 
     /**
      * Код приложения
@@ -26,12 +25,7 @@ public class Application {
     private String name;
 
     /**
-     * Прикладная система, к которой относится приложение
+     * Код прикладной системы, к которой относится приложение
      */
-    private SimpleSystem system;
-
-
-    public ApplicationForm toApplicationForm() {
-        return new ApplicationForm(code, name, system.toSystemForm());
-    }
+    private String systemCode;
 }
