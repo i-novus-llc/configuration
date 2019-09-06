@@ -8,6 +8,7 @@ import ru.i_novus.config.api.model.SystemForm;
  */
 @Getter
 public class CommonSystemForm extends SystemForm {
+    private String code = "common-system";
 
-    private String name = "Общесистемный";
+    private String name = "Общесистемные";
 }

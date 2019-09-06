@@ -215,7 +215,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
             String params = systemCodes.stream()
                     .filter(code -> {
-                        if (code.startsWith("[") && code.endsWith("]")) {
+                        if (code.equals(new CommonSystemForm().getCode())) {
                             isCommonSystemPresent.set(true);
                             return false;
                         }

@@ -253,7 +253,7 @@ public class ConfigRestServiceImplTest {
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setSystemCodes(Arrays.asList("system-security", "[]"));
+        criteria.setSystemCodes(Arrays.asList("system-security", "common-system"));
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();

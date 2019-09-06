@@ -15,20 +15,28 @@
 
         <field id="code" domain="string">
             <select/>
-            <filters>
-                <eq filter-id="id">code={id}</eq>
-            </filters>
         </field>
 
         <field id="name" domain="string">
             <select/>
             <filters>
-                <eq filter-id="name">name={name}</eq>
+                <eq filter-id="systems*.id">code={systems*.id}</eq>
             </filters>
         </field>
 
         <field id="description" domain="string">
             <select/>
+        </field>
+
+        <field id="children" domain="object[]">
+            <select mapping="[applications]"
+                    normalize="(#this == null || #this.isEmpty()) ? null : #this"/>
+        </field>
+
+        <field id="appCode" domain="string">
+            <filters>
+                <eq filter-id="appCode">appCode={appCode}</eq>
+            </filters>
         </field>
 
     </fields>
