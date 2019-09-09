@@ -9,14 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
@@ -28,12 +23,12 @@ import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.ConfigServiceApplication;
 import ru.i_novus.config.service.entity.ValueTypeEnum;
-import ru.i_novus.config.service.model.Application;
-import ru.i_novus.config.service.model.System;
-import ru.i_novus.config.service.service.builders.ApplicationBuilder;
+import ru.i_novus.config.service.service.builders.ApplicationResponseBuilder;
 import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
-import ru.i_novus.config.service.service.builders.SystemBuilder;
+import ru.i_novus.config.service.service.builders.SystemResponseBuilder;
+import ru.i_novus.system_application.api.service.ApplicationService;
+import ru.i_novus.system_application.api.service.SystemService;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -76,10 +71,13 @@ public class ConfigRestServiceImplTest {
     private ConfigValueService configValueService;
 
     @MockBean
-    private RestTemplate restTemplate;
+    private ApplicationService applicationService;
 
-    @Value("${security.admin.url}")
-    private String url;
+    @MockBean
+    private SystemService systemService;
+
+    @MockBean
+    private RestTemplate restTemplate;
 
 
     @Before
@@ -87,20 +85,12 @@ public class ConfigRestServiceImplTest {
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
         doNothing().when(configValueService).saveValue(any(), any(), any());
 
-        when(restTemplate.getForObject(url + "/applications/" + ApplicationBuilder.buildApplication1().getCode(), Application.class))
-                .thenReturn(ApplicationBuilder.buildApplication1());
-        when(restTemplate.getForObject(url + "/applications/" + ApplicationBuilder.buildApplication2().getCode(), Application.class))
-                .thenReturn(ApplicationBuilder.buildApplication2());
-
-        PagedResources body = new PagedResources(Arrays.asList(SystemBuilder.buildSystem()),
-                new PagedResources.PageMetadata(1, 1, 1, 1));
-        ResponseEntity<PagedResources<System>> responseEntity = new ResponseEntity<>(body, HttpStatus.OK);
-
-        when(restTemplate.exchange(
-                String.format("%s/systems/?size=%d&code=%s", url, Integer.MAX_VALUE, SystemBuilder.buildSystem().getCode()),
-                HttpMethod.GET, null,
-                new ParameterizedTypeReference<PagedResources<System>>() {
-                })).thenReturn(responseEntity);
+        when(applicationService.getApplication(ApplicationResponseBuilder.buildApplicationResponse1().getCode()))
+                .thenReturn(ApplicationResponseBuilder.buildApplicationResponse1());
+        when(applicationService.getApplication(ApplicationResponseBuilder.buildApplicationResponse1().getCode()))
+                .thenReturn(ApplicationResponseBuilder.buildApplicationResponse1());
+        when(systemService.getAllSystem(any()))
+                .thenReturn(new PageImpl<>(Arrays.asList(SystemResponseBuilder.buildSystem())));
     }
 
 

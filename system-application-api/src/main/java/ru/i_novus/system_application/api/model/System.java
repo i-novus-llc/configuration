@@ -1,4 +1,4 @@
-package ru.i_novus.config.api.model;
+package ru.i_novus.system_application.api.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,8 +11,8 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ApiModel("Прикладная система")
-public class SystemForm {
+@ApiModel("Простая версия прикладной системы")
+public class System {
 
     @NotBlank(message = "Отсутствует код системы")
     @ApiModelProperty("Код системы")

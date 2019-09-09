@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>config-service</artifactId>
+    <artifactId>system-application-service</artifactId>
 
     <parent>
         <groupId>ru.i-novus.config</groupId>
@@ -15,12 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>ru.i-novus.config</groupId>
-            <artifactId>config-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.i-novus.config</groupId>
-            <artifactId>system-application-service</artifactId>
+            <artifactId>system-application-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -48,22 +43,6 @@
 
 
         <dependency>
-            <groupId>net.n2oapp.platform</groupId>
-            <artifactId>n2o-platform-starter-ms</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.n2oapp.platform</groupId>
-            <artifactId>n2o-platform-starter-jaxrs-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.n2oapp.platform</groupId>
-            <artifactId>n2o-platform-starter-jaxrs-client</artifactId>
-        </dependency>
-
-
-        <dependency>
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
             <scope>provided</scope>
@@ -80,23 +59,10 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.hateoas</groupId>
-            <artifactId>spring-hateoas</artifactId>
-        </dependency>
-
-        <!-- Test -->
-        <dependency>
-            <groupId>net.n2oapp.platform</groupId>
-            <artifactId>n2o-platform-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
-
     <build>
-        <finalName>config-service</finalName>
+        <finalName>test-security-admin</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
