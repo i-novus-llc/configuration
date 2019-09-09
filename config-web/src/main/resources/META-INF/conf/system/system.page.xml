@@ -18,7 +18,14 @@
         </columns>
         <rows>
             <click>
-                <open-page page-id="applicationItem"/>
+                <open-page page-id="configDynamic?{code}"/>
+                <toolbar>
+                    <button id="update" label="Изменить" icon="fa fa-pencil" type="icon" model="filter">
+                    </button>
+                    <button id="delete" label="Удалить" icon="fa fa-trash" type="icon">
+
+                    </button>
+                </toolbar>
             </click>
         </rows>
     </table>

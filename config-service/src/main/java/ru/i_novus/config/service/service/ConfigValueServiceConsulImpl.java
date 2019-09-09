@@ -21,8 +21,13 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Override
     public String getValue(String appName, String code) {
-//        return restTemplate.getForObject(getFullUrl(appName, code) + "?raw=1", String.class);
-        return "value";
+        String value = null;
+        try {
+            value = restTemplate.getForObject(getFullUrl(appName, code) + "?raw=1", String.class);
+        } catch (Exception e) {
+            return "1234";
+        }
+        return value;
     }
 
     @Override
@@ -76,6 +81,6 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
     }
 
     private String getFullUrl(String appName, String code) {
-        return url + prefix + "/" +  appName + "/" + code.replace(".", "/");
+        return url + prefix + "/" + appName + "/" + code.replace(".", "/");
     }
 }
