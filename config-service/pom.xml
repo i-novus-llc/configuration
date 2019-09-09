@@ -18,11 +18,6 @@
             <artifactId>config-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>ru.i-novus.config</groupId>
-            <artifactId>system-application-service</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -19,9 +19,11 @@ import ru.i_novus.config.service.entity.*;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
+import ru.i_novus.system_application.api.model.System;
+import ru.i_novus.system_application.api.model.SystemResponse;
 import ru.i_novus.system_application.api.service.ApplicationService;
 import ru.i_novus.system_application.api.service.SystemService;
-import ru.i_novus.system_application.service.entity.CommonSystemResponse;
+import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 
 import javax.validation.Valid;
@@ -71,7 +73,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Override
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
-        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "systemCode"));
+        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "code"));
 
         Page<ConfigEntity> configEntities = configRepository.findAll(toPredicate(criteria), criteria);
 
@@ -217,11 +219,16 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private String getAppName(ApplicationResponse application) {
-        return application.getCode() != null ? application.getName() : "application";
+        return (application != null && application.getCode() != null) ? application.getName() : "application";
     }
 
     private ApplicationResponse getApplicationResponse(String code) {
-        return code != null ? applicationService.getApplication(code) :
-                new ApplicationResponse(null, null, new CommonSystemResponse());
+        if (code == null) {
+            CommonSystemResponse commonSystemResponse = new CommonSystemResponse();
+            return new ApplicationResponse(null, null,
+                    new System(commonSystemResponse.getCode(), commonSystemResponse.getName(), null)
+            );
+        }
+        return applicationService.getApplication(code);
     }
 }

@@ -21,7 +21,7 @@ import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.config.service.ConfigServiceApplication;
+import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.service.entity.ValueTypeEnum;
 import ru.i_novus.config.service.service.builders.ApplicationResponseBuilder;
 import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
@@ -87,8 +87,8 @@ public class ConfigRestServiceImplTest {
 
         when(applicationService.getApplication(ApplicationResponseBuilder.buildApplicationResponse1().getCode()))
                 .thenReturn(ApplicationResponseBuilder.buildApplicationResponse1());
-        when(applicationService.getApplication(ApplicationResponseBuilder.buildApplicationResponse1().getCode()))
-                .thenReturn(ApplicationResponseBuilder.buildApplicationResponse1());
+        when(applicationService.getApplication(ApplicationResponseBuilder.buildApplicationResponse2().getCode()))
+                .thenReturn(ApplicationResponseBuilder.buildApplicationResponse2());
         when(systemService.getAllSystem(any()))
                 .thenReturn(new PageImpl<>(Arrays.asList(SystemResponseBuilder.buildSystem())));
     }
@@ -243,7 +243,7 @@ public class ConfigRestServiceImplTest {
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setSystemCodes(Arrays.asList("system-security", "[]"));
+        criteria.setSystemCodes(Arrays.asList("system-security", null));
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();

@@ -7,21 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import ru.i_novus.system_application.api.criteria.SystemCriteria;
 import ru.i_novus.system_application.api.model.SystemResponse;
 import ru.i_novus.system_application.api.service.SystemService;
-import ru.i_novus.system_application.service.entity.CommonSystemResponse;
+import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.entity.QSystemEntity;
 import ru.i_novus.system_application.service.entity.SystemEntity;
 import ru.i_novus.system_application.service.repository.SystemRepository;
-import ru.i_novus.system_application.api.criteria.SystemCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class SystemServiceImpl implements SystemService {
+@Service
+public class SystemRestServiceImpl implements SystemService {
 
     private SystemRepository systemRepository;
 

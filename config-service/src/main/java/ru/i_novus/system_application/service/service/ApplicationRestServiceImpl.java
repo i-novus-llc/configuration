@@ -5,7 +5,7 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationService;
 import ru.i_novus.system_application.service.entity.ApplicationEntity;
@@ -13,8 +13,8 @@ import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.repository.ApplicationRepository;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 
-@Component
-public class ApplicationServiceImpl implements ApplicationService {
+@Service
+public class ApplicationRestServiceImpl implements ApplicationService {
 
     private ApplicationRepository applicationRepository;
 
@@ -34,7 +34,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public ApplicationResponse getApplication(String code) {
-        return applicationRepository.findByCode(code).toApplicationResponse();
+        ApplicationEntity applicationEntity = applicationRepository.findByCode(code);
+        return applicationEntity != null ? applicationEntity.toApplicationResponse() : null;
     }
 
     private Predicate toPredicate(ApplicationCriteria criteria) {

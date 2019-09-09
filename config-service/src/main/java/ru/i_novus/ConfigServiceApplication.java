@@ -1,4 +1,4 @@
-package ru.i_novus.config.service;
+package ru.i_novus;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

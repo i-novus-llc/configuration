@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
-import ru.i_novus.config.service.ConfigServiceApplication;
+import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
 
 import java.util.ArrayList;
