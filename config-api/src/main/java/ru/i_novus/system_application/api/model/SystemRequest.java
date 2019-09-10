@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @Data
 @ApiModel("Простая версия прикладной системы")
-public class System {
+public class SystemRequest {
 
     @NotBlank(message = "Отсутствует код системы")
     @ApiModelProperty("Код системы")

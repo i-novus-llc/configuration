@@ -27,8 +27,9 @@ import ru.i_novus.config.service.service.builders.ApplicationResponseBuilder;
 import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
 import ru.i_novus.config.service.service.builders.SystemResponseBuilder;
-import ru.i_novus.system_application.api.service.ApplicationService;
-import ru.i_novus.system_application.api.service.SystemService;
+import ru.i_novus.system_application.api.service.ApplicationRestService;
+import ru.i_novus.system_application.api.service.SystemRestService;
+import ru.i_novus.system_application.service.CommonSystemResponse;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,10 +72,10 @@ public class ConfigRestServiceImplTest {
     private ConfigValueService configValueService;
 
     @MockBean
-    private ApplicationService applicationService;
+    private ApplicationRestService applicationRestService;
 
     @MockBean
-    private SystemService systemService;
+    private SystemRestService systemRestService;
 
     @MockBean
     private RestTemplate restTemplate;
@@ -85,11 +86,11 @@ public class ConfigRestServiceImplTest {
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
         doNothing().when(configValueService).saveValue(any(), any(), any());
 
-        when(applicationService.getApplication(ApplicationResponseBuilder.buildApplicationResponse1().getCode()))
+        when(applicationRestService.getApplication(ApplicationResponseBuilder.buildApplicationResponse1().getCode()))
                 .thenReturn(ApplicationResponseBuilder.buildApplicationResponse1());
-        when(applicationService.getApplication(ApplicationResponseBuilder.buildApplicationResponse2().getCode()))
+        when(applicationRestService.getApplication(ApplicationResponseBuilder.buildApplicationResponse2().getCode()))
                 .thenReturn(ApplicationResponseBuilder.buildApplicationResponse2());
-        when(systemService.getAllSystem(any()))
+        when(systemRestService.getAllSystem(any()))
                 .thenReturn(new PageImpl<>(Arrays.asList(SystemResponseBuilder.buildSystem())));
     }
 
@@ -243,7 +244,8 @@ public class ConfigRestServiceImplTest {
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setSystemCodes(Arrays.asList("system-security", null));
+//        criteria.setSystemCodes(Arrays.asList("system-security", new CommonSystemResponse().getCode()));
+        criteria.setSystemCodes(Arrays.asList(new CommonSystemResponse().getCode()));
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();

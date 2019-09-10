@@ -2,7 +2,7 @@ package ru.i_novus.system_application.service.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.i_novus.system_application.api.model.Application;
+import ru.i_novus.system_application.api.model.ApplicationRequest;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 import javax.persistence.*;
@@ -37,11 +37,17 @@ public class ApplicationEntity {
     private SystemEntity system;
 
 
-    public ApplicationResponse toApplicationResponse() {
-        return new ApplicationResponse(code, name, system.toSystem());
+    public ApplicationEntity(ApplicationRequest application, SystemEntity system) {
+        this.code = application.getCode();
+        this.name = application.getName();
+        this.system = system;
     }
 
-    public Application toApplication() {
-        return new Application(code, name, system.getCode());
+    public ApplicationResponse toApplicationResponse() {
+        return new ApplicationResponse(code, name, system.toSystemRequest());
+    }
+
+    public ApplicationRequest toApplicationRequest() {
+        return new ApplicationRequest(code, name, system.getCode());
     }
 }

@@ -19,10 +19,9 @@ import ru.i_novus.config.service.entity.*;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
-import ru.i_novus.system_application.api.model.System;
-import ru.i_novus.system_application.api.model.SystemResponse;
-import ru.i_novus.system_application.api.service.ApplicationService;
-import ru.i_novus.system_application.api.service.SystemService;
+import ru.i_novus.system_application.api.model.SystemRequest;
+import ru.i_novus.system_application.api.service.ApplicationRestService;
+import ru.i_novus.system_application.api.service.SystemRestService;
 import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 
@@ -38,8 +37,8 @@ import java.util.Optional;
 public class ConfigRestServiceImpl implements ConfigRestService {
 
     private ConfigValueService configValueService;
-    private SystemService systemService;
-    private ApplicationService applicationService;
+    private SystemRestService systemRestService;
+    private ApplicationRestService applicationRestService;
 
     private ConfigRepository configRepository;
     private GroupRepository groupRepository;
@@ -51,13 +50,13 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     @Autowired
-    public void setSystemService(SystemService systemService) {
-        this.systemService = systemService;
+    public void setSystemRestService(SystemRestService systemRestService) {
+        this.systemRestService = systemRestService;
     }
 
     @Autowired
-    public void setApplicationService(ApplicationService applicationService) {
-        this.applicationService = applicationService;
+    public void setApplicationRestService(ApplicationRestService applicationRestService) {
+        this.applicationRestService = applicationRestService;
     }
 
     @Autowired
@@ -97,7 +96,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 //        for (Object[] obj : objectList) {
 //            GroupForm groupForm = ((GroupEntity) obj[0]).toGroupForm();
 //            ConfigEntity configEntity = ((ConfigEntity) obj[1]);
-//            Application application = getApplication(configEntity.getApplicationCode());
+//            ApplicationRequest application = getApplication(configEntity.getApplicationCode());
 //
 //            ConfigRequest configRequest = new ConfigRequest(
 //                    configEntity.getCode(), configEntity.getName(), configEntity.getDescription(),
@@ -184,6 +183,10 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
 
         BooleanBuilder builder = new BooleanBuilder();
+        builder.and(
+                JPAExpressions.selectOne().from(qApplicationEntity)
+                        .where(qConfigEntity.applicationCode.eq(qApplicationEntity.code)).exists()
+        );
 
         List<Integer> groupIds = criteria.getGroupIds();
         if (groupIds != null && !groupIds.isEmpty()) {
@@ -206,12 +209,14 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         List<String> systemCodes = criteria.getSystemCodes();
         if (systemCodes != null && !systemCodes.isEmpty()) {
-            BooleanExpression exists = JPAExpressions.selectOne().from(qApplicationEntity)
-                    .where(new BooleanBuilder()
-                            .and(qConfigEntity.code.eq(qApplicationEntity.system.code))
-                            .and(qApplicationEntity.system.code.in(systemCodes)))
-                    .exists();
-            builder.and(exists);
+            BooleanBuilder booleanBuilder = new BooleanBuilder();
+            booleanBuilder.and(qApplicationEntity.system.code.in(systemCodes));
+
+            if (systemCodes.contains(new CommonSystemResponse().getCode())) {
+                booleanBuilder.or(qConfigEntity.applicationCode.isNull());
+            }
+
+            builder.and(booleanBuilder);
         }
 
         // TODO отсортировать по systemCode
@@ -226,9 +231,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         if (code == null) {
             CommonSystemResponse commonSystemResponse = new CommonSystemResponse();
             return new ApplicationResponse(null, null,
-                    new System(commonSystemResponse.getCode(), commonSystemResponse.getName(), null)
+                    new SystemRequest(commonSystemResponse.getCode(), commonSystemResponse.getName(), null)
             );
         }
-        return applicationService.getApplication(code);
+        return applicationRestService.getApplication(code);
     }
 }

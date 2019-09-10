@@ -2,7 +2,7 @@ package ru.i_novus.config.service.service.builders;
 
 
 import ru.i_novus.system_application.api.model.ApplicationResponse;
-import ru.i_novus.system_application.api.model.System;
+import ru.i_novus.system_application.api.model.SystemRequest;
 
 public class ApplicationResponseBuilder {
 
@@ -10,7 +10,7 @@ public class ApplicationResponseBuilder {
         ApplicationResponse application = new ApplicationResponse();
         application.setCode("app-security");
         application.setName("security");
-        System system = new System();
+        SystemRequest system = new SystemRequest();
         system.setCode("system-security");
         system.setName("system security");
         application.setSystem(system);
@@ -21,7 +21,7 @@ public class ApplicationResponseBuilder {
         ApplicationResponse application = new ApplicationResponse();
         application.setCode("app-auth");
         application.setName("auth");
-        System system = new System();
+        SystemRequest system = new SystemRequest();
         system.setCode("system-auth");
         system.setName("system auth");
         application.setSystem(system);

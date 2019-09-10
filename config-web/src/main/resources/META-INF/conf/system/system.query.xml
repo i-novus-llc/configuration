@@ -2,10 +2,10 @@
 <query xmlns="http://n2oapp.net/framework/config/schema/query-4.0">
 
     <list count-mapping="[totalElements]" result-mapping="[content]">
-        <rest filters-separator="&amp;">${security.admin.url}/systems/?{filters}&amp;page={page}&amp;size={limit}</rest>
+        <rest filters-separator="&amp;">${config.service.url}/auth/systems/?{filters}&amp;page={page}&amp;size={limit}</rest>
     </list>
     <unique filters="id">
-        <rest>${security.admin.url}/systems/{id}</rest>
+        <rest>${config.service.url}/auth/systems/{id}</rest>
     </unique>
 
     <fields>

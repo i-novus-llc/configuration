@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @ApiModel("Простая версия приложения")
-public class Application {
+public class ApplicationRequest {
 
     @ApiModelProperty("Код приложения")
     private String code;
