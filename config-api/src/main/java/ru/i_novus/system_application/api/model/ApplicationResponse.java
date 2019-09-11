@@ -1,4 +1,4 @@
-package ru.i_novus.config.api.model;
+package ru.i_novus.system_application.api.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @ApiModel("Приложение")
-public class ApplicationForm {
+public class ApplicationResponse {
 
     @ApiModelProperty("Код приложения")
     private String code;
@@ -19,5 +19,5 @@ public class ApplicationForm {
     private String name;
 
     @ApiModelProperty("Прикладная система")
-    private SystemForm system;
+    private SystemRequest system;
 }

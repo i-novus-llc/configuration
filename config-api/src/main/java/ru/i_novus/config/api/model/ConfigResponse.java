@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 import javax.validation.constraints.NotBlank;
 
@@ -29,7 +30,7 @@ public class ConfigResponse {
     private String value;
 
     @ApiModelProperty("Приложение")
-    private ApplicationForm application;
+    private ApplicationResponse application;
 
     @ApiModelProperty("Группа, к которой принадлежит настройка")
     private GroupForm group;

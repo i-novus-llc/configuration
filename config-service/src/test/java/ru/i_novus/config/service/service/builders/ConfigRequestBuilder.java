@@ -33,4 +33,14 @@ public class ConfigRequestBuilder {
         configRequest.setApplicationCode(null);
         return configRequest;
     }
+
+    public static ConfigRequest buildTestConfigRequest() {
+        ConfigRequest configRequest = new ConfigRequest();
+        configRequest.setCode("sec.test");
+        configRequest.setName("test");
+        configRequest.setValueType("Строка");
+        configRequest.setValue("test-value");
+        configRequest.setApplicationCode("app-security");
+        return configRequest;
+    }
 }

@@ -9,14 +9,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
-import ru.i_novus.config.service.ConfigServiceApplication;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,9 +33,12 @@ import static org.junit.Assert.assertTrue;
 )
 @DefinePort
 @EnableEmbeddedPg
+@TestPropertySource(properties = "spring.liquibase.change-log=classpath:/db/db.changelog-master-test.yaml")
 public class ConfigGroupRestServiceImplTest {
 
-    /** @noinspection SpringJavaInjectionPointsAutowiringInspection*/
+    /**
+     * @noinspection SpringJavaInjectionPointsAutowiringInspection
+     */
     @Autowired
     @Qualifier("configGroupRestServiceJaxRsProxyClient")
     private ConfigGroupRestService groupRestService;
@@ -46,68 +49,49 @@ public class ConfigGroupRestServiceImplTest {
     @Test
     public void getAllGroupTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
         GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
-        Integer groupId3 = groupRestService.saveGroup(groupForm3);
 
         List<GroupForm> groupForms = groupRestService.getAllGroup(new GroupCriteria()).getContent();
 
         assertEquals(3, groupForms.size());
-        assertTrue(groupForms.containsAll(Arrays.asList(groupForm, groupForm2, groupForm3)));
-
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        groupRestService.deleteGroup(groupId3);
+        groupAssertEquals(groupForm, groupForms.get(0));
+        groupAssertEquals(groupForm2, groupForms.get(1));
+        groupAssertEquals(groupForm3, groupForms.get(2));
     }
 
     /**
-     * Проверка, что группа настроек по некоторому заданному имени возвращается корректно
+     * Проверка, что фильтрация групп настроек по имени работает корректно
      */
     @Test
-    public void getGroupsByNameTest() {
-        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
-        GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
-        Integer groupId3 = groupRestService.saveGroup(groupForm3);
+    public void getAllGroupByNameTest() {
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm2();
+        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm3();
 
         GroupCriteria criteria = new GroupCriteria();
         criteria.setName("security");
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
         assertEquals(2, groupForms.size());
-        assertTrue(groupForms.containsAll(Arrays.asList(groupForm2, groupForm3)));
-
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        groupRestService.deleteGroup(groupId3);
+        groupAssertEquals(groupForm, groupForms.get(0));
+        groupAssertEquals(groupForm2, groupForms.get(1));
     }
 
     /**
-     * Проверка, что группа настроек по некоторому заданному коду возвращается корректно
+     * Проверка, что фильтрация групп настроек по коду работает корректно
      */
     @Test
-    public void getGroupsByCodeTest() {
-        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
-        GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
-        Integer groupId3 = groupRestService.saveGroup(groupForm3);
+    public void getAllGroupByCodeTest() {
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm2();
+        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm3();
 
         GroupCriteria criteria = new GroupCriteria();
         criteria.setCode("sec");
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
         assertEquals(2, groupForms.size());
-        assertTrue(groupForms.containsAll(Arrays.asList(groupForm2, groupForm3)));
-
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        groupRestService.deleteGroup(groupId3);
+        groupAssertEquals(groupForm, groupForms.get(0));
+        groupAssertEquals(groupForm2, groupForms.get(1));
     }
 
     /**
@@ -116,26 +100,32 @@ public class ConfigGroupRestServiceImplTest {
     @Test
     public void groupPaginationTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
         GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
         GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
-        Integer groupId3 = groupRestService.saveGroup(groupForm3);
 
         GroupCriteria criteria = new GroupCriteria();
         criteria.setPageSize(2);
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
         assertEquals(2, groupForms.size());
+        groupAssertEquals(groupForm, groupForms.get(0));
+        groupAssertEquals(groupForm2, groupForms.get(1));
 
         criteria.setPageNumber(1);
         groupForms = groupRestService.getAllGroup(criteria).getContent();
 
         assertEquals(1, groupForms.size());
+        groupAssertEquals(groupForm3, groupForms.get(0));
+    }
 
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        groupRestService.deleteGroup(groupId3);
+    /**
+     * Проверка, что группа настроек по некоторому заданному коду возвращается корректно
+     */
+    @Test
+    public void getGroupTest() {
+        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
+
+        groupAssertEquals(groupForm, groupRestService.getGroup(101));
     }
 
     /**
@@ -143,12 +133,12 @@ public class ConfigGroupRestServiceImplTest {
      */
     @Test
     public void saveGroupTest() {
-        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildTestGroupForm();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
-        GroupForm savedGroupForm = groupRestService.getAllGroup(new GroupCriteria()).getContent().get(0);
+        GroupForm savedGroupForm = groupRestService.getGroup(groupId);
 
-        assertEquals(groupForm, savedGroupForm);
+        groupAssertEquals(groupForm, savedGroupForm);
 
         groupRestService.deleteGroup(groupId);
     }
@@ -159,13 +149,10 @@ public class ConfigGroupRestServiceImplTest {
     @Test(expected = RestException.class)
     public void saveGroupWithAlreadyExistsNameTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
+        GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
+        testGroupForm.setName(groupForm.getName());
 
-        try {
-            groupRestService.saveGroup(groupForm);
-        } finally {
-            groupRestService.deleteGroup(groupId);
-        }
+        groupRestService.saveGroup(testGroupForm);
     }
 
     /**
@@ -173,10 +160,10 @@ public class ConfigGroupRestServiceImplTest {
      */
     @Test(expected = RestException.class)
     public void saveGroupWithEmptyCodesTest() {
-        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        groupForm.setCodes(new ArrayList<>());
+        GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
+        testGroupForm.setCodes(Arrays.asList());
 
-        groupRestService.saveGroup(groupForm);
+        groupRestService.saveGroup(testGroupForm);
     }
 
     /**
@@ -185,15 +172,10 @@ public class ConfigGroupRestServiceImplTest {
     @Test(expected = RestException.class)
     public void saveGroupWithNotUniqueCodesTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
-        groupForm2.setCodes(groupForm.getCodes());
+        GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
+        testGroupForm.setCodes(groupForm.getCodes());
 
-        try {
-            groupRestService.saveGroup(groupForm2);
-        } finally {
-            groupRestService.deleteGroup(groupId);
-        }
+        groupRestService.saveGroup(testGroupForm);
     }
 
     /**
@@ -201,14 +183,16 @@ public class ConfigGroupRestServiceImplTest {
      */
     @Test
     public void updateGroupTest() {
-        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildTestGroupForm();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
-        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
-        groupRestService.updateGroup(groupId, groupForm2);
+        groupForm.setName("test-test");
+        groupForm.setCodes(Arrays.asList("test"));
 
-        GroupForm savedGroupForm = groupRestService.getAllGroup(new GroupCriteria()).getContent().get(0);
-        assertEquals(groupForm2, savedGroupForm);
+        groupRestService.updateGroup(groupId, groupForm);
+
+        GroupForm savedGroupForm = groupRestService.getGroup(groupId);
+        groupAssertEquals(groupForm, savedGroupForm);
 
         groupRestService.deleteGroup(groupId);
     }
@@ -218,7 +202,7 @@ public class ConfigGroupRestServiceImplTest {
      */
     @Test(expected = RestException.class)
     public void updateNotExistsGroupTest() {
-        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
+        GroupForm groupForm = GroupFormBuilder.buildTestGroupForm();
         groupRestService.updateGroup(0, groupForm);
     }
 
@@ -228,17 +212,15 @@ public class ConfigGroupRestServiceImplTest {
     @Test(expected = RestException.class)
     public void updateGroupWithNotUniqueNameTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
+        GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
+        Integer groupId = groupRestService.saveGroup(testGroupForm);
 
-        groupForm2.setName(groupForm.getName());
+        testGroupForm.setName(groupForm.getName());
 
         try {
-            groupRestService.updateGroup(groupId2, groupForm2);
+            groupRestService.updateGroup(groupId, testGroupForm);
         } finally {
             groupRestService.deleteGroup(groupId);
-            groupRestService.deleteGroup(groupId2);
         }
     }
 
@@ -248,30 +230,36 @@ public class ConfigGroupRestServiceImplTest {
     @Test(expected = RestException.class)
     public void updateGroupWithNotUniqueCodesTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = GroupFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
+        GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
+        Integer groupId = groupRestService.saveGroup(testGroupForm);
 
-        groupForm2.setCodes(groupForm.getCodes());
+        testGroupForm.setCodes(groupForm.getCodes());
 
         try {
-            groupRestService.updateGroup(groupId2, groupForm2);
+            groupRestService.updateGroup(groupId, testGroupForm);
         } finally {
             groupRestService.deleteGroup(groupId);
-            groupRestService.deleteGroup(groupId2);
         }
     }
 
     /**
      * Проверка, что удаление группы настроек по идентификатору происходит корректно
      */
-    @Test
+    @Test(expected = RestException.class)
     public void deleteGroupTest() {
-        GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
-
+        GroupForm groupForm = GroupFormBuilder.buildTestGroupForm();
         Integer groupId = groupRestService.saveGroup(groupForm);
+
         groupRestService.deleteGroup(groupId);
 
-        assertTrue(groupRestService.getAllGroup(new GroupCriteria()).isEmpty());
+        groupRestService.getGroup(groupId);
+    }
+
+    private void groupAssertEquals(GroupForm expected, GroupForm actual) {
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getPriority(), actual.getPriority());
+        assertEquals(expected.getCodes().size(), actual.getCodes().size());
+        assertTrue(expected.getCodes().containsAll(actual.getCodes()));
     }
 }

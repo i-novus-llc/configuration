@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert_test_data
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/insert_test_data.sql

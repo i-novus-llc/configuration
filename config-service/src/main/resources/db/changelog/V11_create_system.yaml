@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_system
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V11_system.sql

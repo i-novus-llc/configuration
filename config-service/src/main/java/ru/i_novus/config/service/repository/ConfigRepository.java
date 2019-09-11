@@ -26,5 +26,5 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
     Boolean existsByCode(String code);
 
     @Transactional
-    Integer deleteByCode(String code);
+    void deleteByCode(String code);
 }
