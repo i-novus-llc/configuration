@@ -26,4 +26,11 @@ public class GroupFormBuilder {
         groupForm.setCodes(Arrays.asList("base-sec"));
         return groupForm;
     }
+
+    public static GroupForm buildTestGroupForm() {
+        GroupForm groupForm = new GroupForm();
+        groupForm.setName("test");
+        groupForm.setCodes(Arrays.asList("test1", "test2", "test3"));
+        return groupForm;
+    }
 }

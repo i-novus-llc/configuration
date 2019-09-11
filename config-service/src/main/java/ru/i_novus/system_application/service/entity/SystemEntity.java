@@ -41,12 +41,6 @@ public class SystemEntity {
     private List<ApplicationEntity> applications;
 
 
-    public SystemEntity(SystemRequest systemRequest) {
-        this.code = systemRequest.getCode();
-        this.name = systemRequest.getName();
-        this.description = systemRequest.getDescription();
-    }
-
     public SystemResponse toSystemResponse() {
         return new SystemResponse(code, name, description,
                 applications.stream().map(ApplicationEntity::toApplicationRequest).collect(Collectors.toList()));

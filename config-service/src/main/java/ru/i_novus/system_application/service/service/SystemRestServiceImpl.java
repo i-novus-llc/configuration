@@ -3,14 +3,13 @@ package ru.i_novus.system_application.service.service;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPAExpressions;
-import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.i_novus.system_application.api.criteria.SystemCriteria;
-import ru.i_novus.system_application.api.model.SystemRequest;
 import ru.i_novus.system_application.api.model.SystemResponse;
 import ru.i_novus.system_application.api.service.SystemRestService;
 import ru.i_novus.system_application.service.CommonSystemResponse;
@@ -19,8 +18,6 @@ import ru.i_novus.system_application.service.entity.QSystemEntity;
 import ru.i_novus.system_application.service.entity.SystemEntity;
 import ru.i_novus.system_application.service.repository.SystemRepository;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +25,7 @@ import java.util.List;
  * Реализация REST сервиса для получения систем
  */
 @Service
+@Primary
 public class SystemRestServiceImpl implements SystemRestService {
 
     private SystemRepository systemRepository;
@@ -64,21 +62,6 @@ public class SystemRestServiceImpl implements SystemRestService {
     public SystemResponse getSystem(String code) {
         SystemEntity systemEntity = systemRepository.findByCode(code);
         return systemEntity != null ? systemEntity.toSystemResponse() : null;
-    }
-
-    @Override
-    public void saveSystem(@Valid @NotNull SystemRequest system) {
-        if (systemRepository.existsByCode(system.getCode())) {
-            throw new UserException("system.code.not.unique");
-        }
-
-        SystemEntity systemEntity = new SystemEntity(system);
-        systemRepository.save(systemEntity);
-    }
-
-    @Override
-    public void deleteSystem(String code) {
-        systemRepository.deleteByCode(code);
     }
 
     private Predicate toPredicate(SystemCriteria criteria) {

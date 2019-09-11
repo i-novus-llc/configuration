@@ -21,7 +21,6 @@ import ru.i_novus.config.service.repository.GroupRepository;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.model.SystemRequest;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
-import ru.i_novus.system_application.api.service.SystemRestService;
 import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 
@@ -37,7 +36,6 @@ import java.util.Optional;
 public class ConfigRestServiceImpl implements ConfigRestService {
 
     private ConfigValueService configValueService;
-    private SystemRestService systemRestService;
     private ApplicationRestService applicationRestService;
 
     private ConfigRepository configRepository;
@@ -47,11 +45,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Autowired
     public void setConfigValueService(ConfigValueService configValueService) {
         this.configValueService = configValueService;
-    }
-
-    @Autowired
-    public void setSystemRestService(SystemRestService systemRestService) {
-        this.systemRestService = systemRestService;
     }
 
     @Autowired
@@ -183,10 +176,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
 
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(
-                JPAExpressions.selectOne().from(qApplicationEntity)
-                        .where(qConfigEntity.applicationCode.eq(qApplicationEntity.code)).exists()
-        );
 
         List<Integer> groupIds = criteria.getGroupIds();
         if (groupIds != null && !groupIds.isEmpty()) {
@@ -209,14 +198,17 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         List<String> systemCodes = criteria.getSystemCodes();
         if (systemCodes != null && !systemCodes.isEmpty()) {
-            BooleanBuilder booleanBuilder = new BooleanBuilder();
-            booleanBuilder.and(qApplicationEntity.system.code.in(systemCodes));
+            BooleanBuilder exists = new BooleanBuilder().and(JPAExpressions.selectOne().from(qApplicationEntity)
+                    .where(new BooleanBuilder()
+                            .and(qConfigEntity.applicationCode.eq(qApplicationEntity.code))
+                            .and(qApplicationEntity.system.code.in(systemCodes)))
+                    .exists());
 
             if (systemCodes.contains(new CommonSystemResponse().getCode())) {
-                booleanBuilder.or(qConfigEntity.applicationCode.isNull());
+                exists.or(qConfigEntity.applicationCode.isNull());
             }
 
-            builder.and(booleanBuilder);
+            builder.and(exists);
         }
 
         // TODO отсортировать по systemCode

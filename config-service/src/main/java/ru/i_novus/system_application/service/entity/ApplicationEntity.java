@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.i_novus.system_application.api.model.ApplicationRequest;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
+import ru.i_novus.system_application.api.model.SystemRequest;
 
 import javax.persistence.*;
 
@@ -37,14 +38,9 @@ public class ApplicationEntity {
     private SystemEntity system;
 
 
-    public ApplicationEntity(ApplicationRequest application, SystemEntity system) {
-        this.code = application.getCode();
-        this.name = application.getName();
-        this.system = system;
-    }
-
     public ApplicationResponse toApplicationResponse() {
-        return new ApplicationResponse(code, name, system.toSystemRequest());
+        SystemRequest systemRequest = (system == null) ? null : system.toSystemRequest();
+        return new ApplicationResponse(code, name, systemRequest);
     }
 
     public ApplicationRequest toApplicationRequest() {

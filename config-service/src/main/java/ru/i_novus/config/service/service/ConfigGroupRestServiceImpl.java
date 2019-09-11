@@ -19,8 +19,6 @@ import ru.i_novus.config.service.entity.QGroupEntity;
 import ru.i_novus.config.service.repository.GroupCodeRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -34,9 +32,6 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     private GroupRepository groupRepository;
     private GroupCodeRepository groupCodeRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     public void setGroupRepository(GroupRepository groupRepository) {
@@ -79,14 +74,13 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
             throw new UserException("config.group.codes.not.unique");
         }
 
-        groupForm.getCodes().forEach(groupEntity::setCode);
-
-        final GroupEntity savedGroupEntity;
-        try {
-            savedGroupEntity = groupRepository.save(groupEntity);
-        } catch (Exception e) {
+        if (groupRepository.existsByName(groupForm.getName(), -1)) {
             throw new UserException("config.group.name.not.unique");
         }
+
+        groupForm.getCodes().forEach(groupEntity::setCode);
+
+        GroupEntity savedGroupEntity = groupRepository.save(groupEntity);
         groupCodeRepository.saveAll(groupEntity.getCodes());
 
         return savedGroupEntity.getId();

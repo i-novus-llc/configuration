@@ -10,8 +10,4 @@ public interface SystemRepository extends JpaRepository<SystemEntity, String>,
         QuerydslPredicateExecutor<SystemEntity> {
 
     SystemEntity findByCode(String code);
-
-    boolean existsByCode(String code);
-
-    void deleteByCode(String code);
 }

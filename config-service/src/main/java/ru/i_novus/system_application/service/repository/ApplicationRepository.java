@@ -10,8 +10,4 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
         QuerydslPredicateExecutor<ApplicationEntity> {
 
     ApplicationEntity findByCode(String code);
-
-    boolean existsByCode(String code);
-
-    void deleteByCode(String code);
 }

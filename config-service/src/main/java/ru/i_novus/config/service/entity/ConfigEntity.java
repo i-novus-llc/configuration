@@ -3,7 +3,9 @@ package ru.i_novus.config.service.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.i_novus.config.api.model.*;
+import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigResponse;
+import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 import javax.persistence.*;
