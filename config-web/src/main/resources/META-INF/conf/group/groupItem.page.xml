@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0">
+    <form query-id="group" object-id="group">
+        <fields>
+            <input-text id="codesStr" label="Коды группы" required="true"
+                        description="Введите коды группы через пробел"/>
+            <output-text id="codes" visible="false">
+                <dependencies>
+                    <set-value on="codesStr">codesStr.trim().split(' ');</set-value>
+                </dependencies>
+            </output-text>
+            <input-text id="name" label="Наименование группы" required="true"/>
+            <input-text id="description" label="Описание"/>
+            <input-text id="priority" label="Приоритет" domain="integer"/>
+        </fields>
+    </form>
+</simple-page>

@@ -3,7 +3,10 @@ package ru.i_novus.config.service.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigResponse;
+import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -21,15 +24,14 @@ public class ConfigEntity {
      * Код настройки
      */
     @Id
-    @Access(AccessType.PROPERTY)
     @Column(name = "code", nullable = false)
     private String code;
 
     /**
-     * Код прикладной системы
+     * Код приложения
      */
-    @Column(name = "serviceCode", nullable = false)
-    private String serviceCode;
+    @Column(name = "application_code", nullable = false)
+    private String applicationCode;
 
     /**
      * Наименование настройки
@@ -51,27 +53,27 @@ public class ConfigEntity {
     private ValueTypeEnum valueType;
 
 
-    public ConfigEntity(ConfigForm configForm) {
-        this.code = configForm.getCode();
-        this.serviceCode = configForm.getServiceCode();
-        this.name = configForm.getName();
-        this.description = configForm.getDescription();
-
-        String valueType = configForm.getValueType();
-        ValueTypeEnum valueTypeEnum = ValueTypeEnum.getValueType(valueType);
-        this.valueType = Objects.requireNonNullElse(valueTypeEnum, ValueTypeEnum.STRING);
+    public ConfigEntity(ConfigRequest configRequest) {
+        this.code = configRequest.getCode();
+        this.applicationCode = configRequest.getApplicationCode();
+        this.name = configRequest.getName();
+        this.description = configRequest.getDescription();
+        setValueType(configRequest.getValueType());
     }
 
-    public ConfigForm toConfigForm(String value, String systemName, String groupName) {
-        ConfigForm configForm = new ConfigForm();
-        configForm.setCode(this.code);
-        configForm.setName(this.name);
-        configForm.setDescription(this.description);
-        configForm.setValueType(Objects.requireNonNullElse(this.valueType, ValueTypeEnum.STRING).getTitle());
-        configForm.setValue(value);
-        configForm.setServiceCode(this.serviceCode);
-        configForm.setSystemName(systemName);
-        configForm.setGroupName(groupName);
-        return configForm;
+    public void setValueType(String valueType) {
+        this.valueType = Objects.requireNonNullElse(ValueTypeEnum.getValueType(valueType), ValueTypeEnum.STRING);
+    }
+
+    public ConfigResponse toConfigResponse(String value, ApplicationResponse application, GroupForm group) {
+        ConfigResponse configResponse = new ConfigResponse();
+        configResponse.setCode(this.code);
+        configResponse.setName(this.name);
+        configResponse.setDescription(this.description);
+        configResponse.setValueType(Objects.requireNonNullElse(this.valueType, ValueTypeEnum.STRING).getTitle());
+        configResponse.setValue(value);
+        configResponse.setApplication(application);
+        configResponse.setGroup(group);
+        return configResponse;
     }
 }

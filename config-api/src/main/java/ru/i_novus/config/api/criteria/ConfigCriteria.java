@@ -21,11 +21,11 @@ public class ConfigCriteria extends AbstractCriteria {
     @ApiParam("Наименование настройки")
     private String name;
 
-    @QueryParam("group")
-    @ApiParam("Наименование групп")
-    private List<String> groupNames;
+    @QueryParam("groupId")
+    @ApiParam("Идентификаторы групп")
+    private List<Integer> groupIds;
 
-    @QueryParam("system")
-    @ApiParam("Наименование систем")
-    private List<String> systemNames;
+    @QueryParam("systemCode")
+    @ApiParam("Коды систем")
+    private List<String> systemCodes;
 }

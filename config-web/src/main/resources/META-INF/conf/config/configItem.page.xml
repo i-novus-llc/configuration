@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0">
+    <form query-id="config" object-id="config">
+        <fields>
+            <row>
+                <input-select id="systemName" label="Система" required="true" query-id="system"/>
+                <input-select id="applicationName" label="Приложение" query-id="application">
+                    <pre-filters>
+                        <eq field-id="systemCode" value="{systemName.id}"/>
+                    </pre-filters>
+                    <dependencies>
+                        <enabling on="systemName">systemName.id != 'common-system'</enabling>
+                        <set-value on="systemName" apply-on-init="false">null</set-value>
+                    </dependencies>
+                </input-select>
+            </row>
+            <input-text id="code" label="Код настройки" required="true">
+                <dependencies>
+                    <enabling on="isCreateForm">isCreateForm</enabling>
+                </dependencies>
+            </input-text>
+            <input-text id="name" label="Наименование настройки"/>
+            <row>
+                <input-select id="group" label="Группа настроек" required="true" query-id="group">
+                    <pre-filters>
+                        <like field-id="codes" value="{code}" />
+                    </pre-filters>
+                    <dependencies>
+                        <enabling on="isCreateForm">isCreateForm</enabling>
+                        <set-value on="code">if (isCreateForm) return null</set-value>
+                    </dependencies>
+                </input-select>
+
+                <input-select id="valueType" label="Тип значения" required="true">
+                    <default-value id="1" name="Строка"/>
+                    <options>
+                        <option id="string" name="Строка"/>
+                        <option id="integer" name="Число"/>
+                        <option id="checkbox" name="Чекбокс"/>
+                    </options>
+                </input-select>
+            </row>
+            <input-text id="description" label="Описание"/>
+            <hidden id="isCreateForm" default-value="true"/>
+        </fields>
+    </form>
+</simple-page>

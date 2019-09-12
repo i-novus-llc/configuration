@@ -12,11 +12,11 @@ import javax.ws.rs.QueryParam;
 @ApiModel("Критерий поиска групп настроек")
 public class GroupCriteria extends AbstractCriteria {
 
-    @QueryParam("groupName")
+    @QueryParam("name")
     @ApiParam("Имя группы")
     private String name;
 
-    @QueryParam("groupCode")
+    @QueryParam("code")
     @ApiParam("Код группы")
     private String code;
 }

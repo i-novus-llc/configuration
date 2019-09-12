@@ -1,10 +1,16 @@
 package ru.i_novus.config.api.service;
 
+import java.util.Map;
+
 public interface ConfigValueService {
 
-    String getValue(String serviceCode, String code);
+    String getValue(String appName, String code);
 
-    void saveValue(String serviceCode, String code, String value);
+    Map<String, String> getKeyValueListByApplicationCode(String appName);
 
-    void deleteValue(String serviceCode, String code);
+    void saveValue(String appName, String code, String value);
+
+    void saveAllValues(String appName, Map<String, String> data);
+
+    void deleteValue(String appName, String code);
 }

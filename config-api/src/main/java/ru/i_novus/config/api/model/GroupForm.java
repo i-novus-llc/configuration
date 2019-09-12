@@ -15,8 +15,11 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ApiModel("Группа настройки")
+@ApiModel("Группа настроек")
 public class GroupForm {
+
+    @ApiModelProperty("Идентификатор группы")
+    private Integer id;
 
     @NotBlank(message = "Имя не должно быть пустым")
     @ApiModelProperty("Наименование группы")
@@ -24,6 +27,9 @@ public class GroupForm {
 
     @ApiModelProperty("Описание группы")
     private String description;
+
+    @ApiModelProperty("Приоритет группы")
+    private Integer priority;
 
     @NotEmpty(message = "Группа настройки должна иметь один или более кодов")
     @ApiModelProperty("Коды группы")

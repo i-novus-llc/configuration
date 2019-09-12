@@ -7,3 +7,7 @@ databaseChangeLog:
       file: db/changelog/V3_create_config.yaml
   - include:
       file: db/changelog/V4_create_config_group_code.yaml
+  - include:
+      file: db/changelog/V11_create_system.yaml
+  - include:
+      file: db/changelog/V12_create_application.yaml

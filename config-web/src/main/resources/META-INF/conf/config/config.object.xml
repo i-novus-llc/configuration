@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<object xmlns="http://n2oapp.net/framework/config/schema/object-3.0">
+    <operations>
+
+        <operation id="create">
+            <invocation>
+                <rest method="POST">${config.service.url}/</rest>
+            </invocation>
+            <in-parameters>
+                <param id="applicationName.id" mapping="['applicationCode']"/>
+                <param id="code" mapping="['code']"/>
+                <param id="name" mapping="['name']"/>
+                <param id="valueType.name" mapping="['valueType']"/>
+                <param id="description" mapping="['description']"/>
+            </in-parameters>
+        </operation>
+
+        <operation id="update">
+            <invocation>
+                <rest method="PUT">${config.service.url}/{code}</rest>
+            </invocation>
+            <in-parameters>
+                <param id="applicationName.id" mapping="['applicationCode']"/>
+                <param id="code" mapping="['code']"/>
+                <param id="name" mapping="['name']"/>
+                <param id="valueType.name" mapping="['valueType']"/>
+                <param id="description" mapping="['description']"/>
+            </in-parameters>
+        </operation>
+
+        <operation id="delete">
+            <invocation>
+                <rest method="DELETE">${config.service.url}/{code}</rest>
+            </invocation>
+            <in-parameters>
+                <param id="code" mapping="['code']"/>
+            </in-parameters>
+        </operation>
+
+    </operations>
+</object>

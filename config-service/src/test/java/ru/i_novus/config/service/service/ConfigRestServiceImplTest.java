@@ -1,5 +1,6 @@
 package ru.i_novus.config.service.service;
 
+import net.n2oapp.platform.jaxrs.RestException;
 import net.n2oapp.platform.jaxrs.autoconfigure.EnableJaxRsProxyClient;
 import net.n2oapp.platform.test.autoconfigure.DefinePort;
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
@@ -10,24 +11,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.GroupForm;
-import ru.i_novus.config.api.service.ConfigGroupRestService;
+import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.config.service.ConfigServiceApplication;
-import ru.i_novus.config.service.service.builders.ConfigFormBuilder;
+import ru.i_novus.config.service.entity.ValueTypeEnum;
+import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
+import ru.i_novus.system_application.service.CommonSystemResponse;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -36,14 +38,12 @@ import static org.mockito.Mockito.when;
         classes = ConfigServiceApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableJaxRsProxyClient(
-        classes = {
-                ConfigRestService.class,
-                ConfigGroupRestService.class
-        },
+        classes = ConfigRestService.class,
         address = "http://localhost:${server.port}/api"
 )
 @DefinePort
 @EnableEmbeddedPg
+@TestPropertySource(properties = "spring.liquibase.change-log=classpath:/db/db.changelog-master-test.yaml")
 public class ConfigRestServiceImplTest {
 
     /**
@@ -53,10 +53,6 @@ public class ConfigRestServiceImplTest {
     @Qualifier("configRestServiceJaxRsProxyClient")
     private ConfigRestService configRestService;
 
-    @Autowired
-    @Qualifier("configGroupRestServiceJaxRsProxyClient")
-    private ConfigGroupRestService groupRestService;
-
     @MockBean
     private ConfigValueService configValueService;
 
@@ -64,6 +60,7 @@ public class ConfigRestServiceImplTest {
     @Before
     public void setUp() {
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
+        doNothing().when(configValueService).saveValue(any(), any(), any());
     }
 
 
@@ -72,30 +69,17 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
+        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(new ConfigCriteria()).getContent();
 
-        assertEquals(3, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
-        assertEquals(configForm3, configForms.get(2));
-
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        assertEquals(3, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest3, configResponses.get(2));
     }
 
     /**
@@ -103,32 +87,18 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByCodeTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest2();
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest3();
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setCode("sec");
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
-
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
     }
 
     /**
@@ -136,32 +106,18 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByNameTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest2();
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest3();
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setName("name");
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
-
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
     }
 
     /**
@@ -169,33 +125,39 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByGroupNameTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest2();
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest3();
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setGroupNames(Collections.singletonList("Security settings"));
+        criteria.setGroupIds(Collections.singletonList(102));
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
+    }
 
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+    /**
+     * Проверка, что фильтрация настроек по именам систем работает корректно
+     */
+    @Test
+    public void getAllConfigBySystemNameTest() {
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest2();
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest3();
+
+
+        ConfigCriteria criteria = new ConfigCriteria();
+        criteria.setSystemCodes(Arrays.asList("system-security", new CommonSystemResponse().getCode()));
+
+        List<ConfigResponse> configResponses =
+                configRestService.getAllConfig(criteria).getContent();
+
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
     }
 
     /**
@@ -203,39 +165,38 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void configPaginationTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
-        configRestService.saveConfig(configForm2);
-        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
-        configRestService.saveConfig(configForm3);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
-        GroupForm groupForm2 = ConfigFormBuilder.buildGroupForm2();
-        Integer groupId2 = groupRestService.saveGroup(groupForm2);
-
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
+        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setPageSize(2);
 
-        List<ConfigForm> configForms =
+        List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(2, configForms.size());
-        assertEquals(configForm, configForms.get(0));
-        assertEquals(configForm2, configForms.get(1));
+        assertEquals(2, configResponses.size());
+        configAssertEquals(configRequest, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(1));
 
         criteria.setPageNumber(1);
-        configForms = configRestService.getAllConfig(criteria).getContent();
+        configResponses = configRestService.getAllConfig(criteria).getContent();
 
-        assertEquals(1, configForms.size());
-        assertEquals(configForm3, configForms.get(0));
+        assertEquals(1, configResponses.size());
+        configAssertEquals(configRequest3, configResponses.get(0));
+    }
 
-        groupRestService.deleteGroup(groupId);
-        groupRestService.deleteGroup(groupId2);
-        configRestService.deleteConfig(configForm.getCode());
-        configRestService.deleteConfig(configForm2.getCode());
-        configRestService.deleteConfig(configForm3.getCode());
+    /**
+     * Проверка, что настройка по некоторому заданному коду возвращается корректно
+     */
+    @Test
+    public void getConfigTest() {
+        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
+        configRestService.saveConfig(configRequest);
+
+        configAssertEquals(configRequest, configRestService.getConfig(configRequest.getCode()));
+
+        configRestService.deleteConfig(configRequest.getCode());
     }
 
     /**
@@ -243,34 +204,24 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void saveConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
+        configRestService.saveConfig(configRequest);
 
-        List<ConfigForm> configForms =
-                configRestService.getAllConfig(new ConfigCriteria()).getContent();
+        ConfigResponse configResponse = configRestService.getConfig(configRequest.getCode());
 
-        assertEquals(1, configForms.size());
-        assertEquals(configForm, configForms.get(0));
+        configAssertEquals(configRequest, configResponse);
 
-        groupRestService.deleteGroup(groupId);
-        configRestService.deleteConfig(configForm.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
     }
 
     /**
-     * Проверка, что сохранение настройки с уже существующим кодом приводит к BadRequestException
+     * Проверка, что сохранение настройки с уже существующим кодом приводит к RestException
      */
-    @Test(expected = BadRequestException.class)
+    @Test(expected = RestException.class)
     public void saveAlreadyExistsConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
 
-        try {
-            configRestService.saveConfig(configForm);
-        } finally {
-            configRestService.deleteConfig(configForm.getCode());
-        }
+        configRestService.saveConfig(configRequest);
     }
 
     /**
@@ -278,45 +229,51 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void updateConfigMetadataTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
-        configRestService.saveConfig(configForm);
-        GroupForm groupForm = ConfigFormBuilder.buildGroupForm1();
-        Integer groupId = groupRestService.saveGroup(groupForm);
+        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
+        configRestService.saveConfig(configRequest);
 
-        configForm.setServiceCode("test");
-        configForm.setDescription("test");
-        configForm.setValue("test");
+        configRequest.setApplicationCode(null);
+        configRequest.setDescription("test-test");
+        configRequest.setName("test-test");
+        configRequest.setValue("1");
+        configRequest.setValueType(ValueTypeEnum.NUMBER.getTitle());
 
-        when(configValueService.getValue(any(), any())).thenReturn(configForm.getValue());
+        configRestService.updateConfig(configRequest.getCode(), configRequest);
 
-        configRestService.updateConfig(configForm.getCode(), configForm);
+        when(configValueService.getValue(any(), any())).thenReturn(configRequest.getValue());
+        configAssertEquals(configRequest, configRestService.getConfig(configRequest.getCode()));
 
-        assertEquals(configForm, configRestService.getConfig(configForm.getCode()));
-
-        groupRestService.deleteGroup(groupId);
-        configRestService.deleteConfig(configForm.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
     }
 
     /**
      * Проверка, что удаление настройки по коду происходит корректно
      */
-    @Test
+    @Test(expected = RestException.class)
     public void deleteConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
+        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
 
-        configRestService.saveConfig(configForm);
-        configRestService.deleteConfig(configForm.getCode());
+        configRestService.saveConfig(configRequest);
+        configRestService.deleteConfig(configRequest.getCode());
 
-        assertTrue(configRestService.getAllConfig(new ConfigCriteria()).isEmpty());
+        configRestService.getConfig(configRequest.getCode());
     }
 
     /**
-     * Проверка, что удаление настройки по несуществующему коду приводит к NotFoundException
+     * Проверка, что удаление настройки по несуществующему коду приводит к RestException
      */
-    @Test(expected = NotFoundException.class)
+    @Test(expected = RestException.class)
     public void deleteAlreadyDeletedConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
+        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
 
-        configRestService.deleteConfig(configForm.getCode());
+        configRestService.deleteConfig(configRequest.getCode());
+    }
+
+    private void configAssertEquals(ConfigRequest configRequest, ConfigResponse configResponse) {
+        assertEquals(configRequest.getCode(), configResponse.getCode());
+        assertEquals(configRequest.getName(), configResponse.getName());
+        assertEquals(configRequest.getDescription(), configResponse.getDescription());
+        assertEquals(configRequest.getApplicationCode(), configResponse.getApplication().getCode());
+        assertEquals(configRequest.getValueType(), configResponse.getValueType());
     }
 }
