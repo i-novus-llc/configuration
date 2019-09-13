@@ -32,11 +32,11 @@
                 </input-select>
 
                 <input-select id="valueType" label="Тип значения" required="true">
-                    <default-value id="1" name="Строка"/>
+                    <default-value id="STRING" name="Строка"/>
                     <options>
-                        <option id="string" name="Строка"/>
-                        <option id="integer" name="Число"/>
-                        <option id="checkbox" name="Чекбокс"/>
+                        <option id="STRING" name="Строка"/>
+                        <option id="NUMBER" name="Число"/>
+                        <option id="BOOLEAN" name="Чекбокс"/>
                     </options>
                 </input-select>
             </row>

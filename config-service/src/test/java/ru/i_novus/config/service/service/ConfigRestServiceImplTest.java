@@ -17,9 +17,9 @@ import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.ConfigResponse;
+import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.config.service.entity.ValueTypeEnum;
 import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
 import ru.i_novus.system_application.service.CommonSystemResponse;
 
@@ -236,7 +236,7 @@ public class ConfigRestServiceImplTest {
         configRequest.setDescription("test-test");
         configRequest.setName("test-test");
         configRequest.setValue("1");
-        configRequest.setValueType(ValueTypeEnum.NUMBER.getTitle());
+        configRequest.setValueType(ValueTypeEnum.NUMBER);
 
         configRestService.updateConfig(configRequest.getCode(), configRequest);
 

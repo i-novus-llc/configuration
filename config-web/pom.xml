@@ -15,9 +15,13 @@
     <dependencies>
         <dependency>
             <groupId>ru.i-novus.config</groupId>
-            <artifactId>config-service</artifactId>
+            <artifactId>config-api</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.n2oapp.platform</groupId>
+            <artifactId>n2o-platform-starter-jaxrs-client</artifactId>
         </dependency>
 
         <dependency>
@@ -47,6 +51,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
             </plugin>
         </plugins>
     </build>

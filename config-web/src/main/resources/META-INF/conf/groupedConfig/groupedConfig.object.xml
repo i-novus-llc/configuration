@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<object xmlns="http://n2oapp.net/framework/config/schema/object-3.0">
+    <operations>
+        <operation id="save">
+            <invocation>
+                <rest method="POST">${config.service.url}/byAppCode/{appCode}</rest>
+            </invocation>
+            <in-parameters>
+                <param id="appCode" mapping="['appCode']"/>
+                <param id="data" mapping="['data']" normalize="#data"/>
+            </in-parameters>
+        </operation>
+    </operations>
+</object>

@@ -2,20 +2,28 @@ package ru.i_novus.config.web.provider;
 
 import net.n2oapp.framework.api.metadata.SourceMetadata;
 import net.n2oapp.framework.api.metadata.aware.NamespaceUriAware;
+import net.n2oapp.framework.api.metadata.control.N2oStandardField;
+import net.n2oapp.framework.api.metadata.control.plain.N2oCheckbox;
 import net.n2oapp.framework.api.metadata.control.plain.N2oInputText;
+import net.n2oapp.framework.api.metadata.event.action.N2oCloseAction;
+import net.n2oapp.framework.api.metadata.event.action.N2oInvokeAction;
 import net.n2oapp.framework.api.metadata.global.view.fieldset.N2oFieldSet;
 import net.n2oapp.framework.api.metadata.global.view.fieldset.N2oLineFieldSet;
-import net.n2oapp.framework.api.metadata.global.view.page.N2oSimplePage;
+import net.n2oapp.framework.api.metadata.global.view.page.N2oStandardPage;
+import net.n2oapp.framework.api.metadata.global.view.region.N2oCustomRegion;
+import net.n2oapp.framework.api.metadata.global.view.region.N2oRegion;
 import net.n2oapp.framework.api.metadata.global.view.widget.N2oForm;
+import net.n2oapp.framework.api.metadata.global.view.widget.N2oWidget;
+import net.n2oapp.framework.api.metadata.global.view.widget.toolbar.N2oButton;
+import net.n2oapp.framework.api.metadata.global.view.widget.toolbar.N2oToolbar;
+import net.n2oapp.framework.api.metadata.global.view.widget.toolbar.ToolbarItem;
 import net.n2oapp.framework.api.register.DynamicMetadataProvider;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.GroupedConfigForm;
-import ru.i_novus.config.service.entity.ValueTypeEnum;
+import ru.i_novus.config.api.model.ValueTypeEnum;
+import ru.i_novus.config.api.service.ConfigRestService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,11 +33,13 @@ import java.util.List;
 public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     public static final String CONFIG_DYNAMIC = "configDynamic";
+    private ConfigRestService configRestService;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    public void setConfigRestService(ConfigRestService configRestService) {
+        this.configRestService = configRestService;
+    }
 
-    @Value("${config.service.url}")
-    private String url;
 
     @Override
     public String getCode() {
@@ -40,17 +50,19 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
     public List<? extends SourceMetadata> read(String context) {
         String appCode = "lkb-rdm-frontend";
 
-        N2oSimplePage page = new N2oSimplePage();
+        N2oStandardPage page = new N2oStandardPage();
+        page.setObjectId("groupedConfig");
         N2oForm form = new N2oForm();
+        form.setId("groupedConfigForm");
         form.setName("Параметры настроек" + context);
-        page.setWidget(form);
 
-        List<GroupedConfigForm> groupedConfigFormList =
-                restTemplate.exchange(
-                        url + "/byAppCode/" + appCode,
-                        HttpMethod.GET, null,
-                        new ParameterizedTypeReference<List<GroupedConfigForm>>() {
-                }).getBody();
+        N2oCustomRegion region = new N2oCustomRegion();
+        region.setWidgets(new N2oWidget[] {form});
+        N2oStandardPage.Layout layout = new N2oStandardPage.Layout();
+        layout.setRegions(new N2oRegion[] {region});
+        page.setRegions(layout);
+
+        List<GroupedConfigForm> groupedConfigFormList = configRestService.getGroupedConfigByAppCode(appCode);
 
         ArrayList<NamespaceUriAware> lineFieldSetList = new ArrayList<>();
         for (GroupedConfigForm groupedConfigForm : groupedConfigFormList) {
@@ -62,32 +74,68 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
             lineFieldSet.setLabelWidth("50%");
 
             ArrayList<NamespaceUriAware> n2oFieldList = new ArrayList<>();
-            for(ConfigRequest config : groupedConfigForm.getConfigs()) {
-                if (config.getValueType().equals(ValueTypeEnum.STRING.getTitle()) ||
-                config.getValueType().equals(ValueTypeEnum.NUMBER.getTitle())) {
+            for (ConfigRequest config : groupedConfigForm.getConfigs()) {
+                if (config.getValueType().equals(ValueTypeEnum.STRING) ||
+                        config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                     N2oInputText inputText = new N2oInputText();
+                    fillElement(inputText, config);
 
-                    inputText.setId(config.getCode() + "_id");
-                    inputText.setLabel(config.getName());
-                    inputText.setHelp(config.getDescription());
-                    inputText.setDescription(config.getCode());
-                    inputText.setDefaultValue(config.getValue());
-
-                    if(config.getValueType().equals(ValueTypeEnum.NUMBER.getTitle())) {
+                    if (config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                         inputText.setDomain("integer");
                     }
 
                     n2oFieldList.add(inputText);
-                } else {
-                    // checkbox
+                } else if (config.getValueType().equals(ValueTypeEnum.BOOLEAN)) {
+                    N2oCheckbox checkbox = new N2oCheckbox();
+                    fillElement(checkbox, config);
+                    n2oFieldList.add(checkbox);
                 }
             }
 
             lineFieldSet.setItems(n2oFieldList.toArray(NamespaceUriAware[]::new));
             lineFieldSetList.add(lineFieldSet);
         }
+
+        // Передача appCode
+        N2oInputText inputText = new N2oInputText();
+        inputText.setId("appCode");
+        inputText.setDefaultValue(appCode);
+        inputText.setVisible(false);
+        lineFieldSetList.add(inputText);
         form.setItems(lineFieldSetList.toArray(NamespaceUriAware[]::new));
 
+        N2oToolbar toolbar = new N2oToolbar();
+        toolbar.setPlace("bottomRight");
+
+        N2oButton saveButton = new N2oButton();
+        saveButton.setId("save");
+        saveButton.setLabel("Сохранить");
+        saveButton.setColor("primary");
+        N2oInvokeAction saveAction = new N2oInvokeAction();
+        saveAction.setOperationId("save");
+        saveAction.setCloseOnSuccess(false);
+        saveButton.setAction(saveAction);
+        saveButton.setWidgetId(form.getId());
+
+        N2oButton cancelButton = new N2oButton();
+        cancelButton.setId("cancel");
+        cancelButton.setLabel("Отмена");
+        N2oCloseAction closeAction = new N2oCloseAction();
+        cancelButton.setAction(closeAction);
+        cancelButton.setWidgetId(form.getId());
+
+
+        toolbar.setItems(new ToolbarItem[]{saveButton, cancelButton});
+        page.setToolbars(new N2oToolbar[]{toolbar});
+
         return Arrays.asList(page);
+    }
+
+    private void fillElement(N2oStandardField field, ConfigRequest config) {
+        field.setId("data." + config.getCode().replace(".", "*"));
+        field.setLabel(config.getName());
+        field.setHelp(config.getDescription());
+        field.setDescription(config.getCode());
+        field.setDefaultValue(config.getValue());
     }
 }

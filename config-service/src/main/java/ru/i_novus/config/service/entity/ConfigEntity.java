@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 import javax.persistence.*;
@@ -58,11 +59,7 @@ public class ConfigEntity {
         this.applicationCode = configRequest.getApplicationCode();
         this.name = configRequest.getName();
         this.description = configRequest.getDescription();
-        setValueType(configRequest.getValueType());
-    }
-
-    public void setValueType(String valueType) {
-        this.valueType = Objects.requireNonNullElse(ValueTypeEnum.getValueType(valueType), ValueTypeEnum.STRING);
+        this.valueType = configRequest.getValueType();
     }
 
     public ConfigResponse toConfigResponse(String value, ApplicationResponse application, GroupForm group) {
@@ -70,7 +67,7 @@ public class ConfigEntity {
         configResponse.setCode(this.code);
         configResponse.setName(this.name);
         configResponse.setDescription(this.description);
-        configResponse.setValueType(Objects.requireNonNullElse(this.valueType, ValueTypeEnum.STRING).getTitle());
+        configResponse.setValueType(this.valueType);
         configResponse.setValue(value);
         configResponse.setApplication(application);
         configResponse.setGroup(group);

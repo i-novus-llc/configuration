@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -97,7 +98,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
             ConfigRequest configRequest = new ConfigRequest(
                     configEntity.getCode(), configEntity.getName(), configEntity.getDescription(),
-                    configEntity.getValueType().getTitle(),
+                    configEntity.getValueType(),
                     configValueService.getValue(getAppName(application), configEntity.getCode()),
                     configEntity.getApplicationCode()
             );
@@ -115,6 +116,13 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         }
 
         return result;
+    }
+
+    @Override
+    public void saveApplicationConfig(Map<String, Object> data) {
+        for (Map.Entry entry : data.entrySet()) {
+
+        }
     }
 
     @Override

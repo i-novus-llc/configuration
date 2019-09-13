@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Интерфейс REST API для работы с настройками
@@ -37,11 +38,27 @@ public interface ConfigRestService {
     @ApiOperation(value = "Получение всех настроек", response = ConfigResponse.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка настроек")
     Page<ConfigResponse> getAllConfig(@ApiParam(name = "Критерии поиска настроек")
-                                  @BeanParam ConfigCriteria criteria);
+                                      @BeanParam ConfigCriteria criteria);
 
     @GET
     @Path("/byAppCode/{code}")
+    @ApiOperation(value = "Получение сгруппированных настроек приложения", response = GroupedConfigForm.class, responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Успешное получение сгрупированных настроек приложения"),
+            @ApiResponse(code = 404, message = "Приложение не найдено")
+    })
     List<GroupedConfigForm> getGroupedConfigByAppCode(@PathParam("code") String code);
+
+    @POST
+    @Path("/byAppCode/{code}")
+    @ApiOperation(value = "Изменение значений настроек приложения")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Изменение значений настроек приложения успешно выполнено"),
+            @ApiResponse(code = 400, message = "Некорректный запрос"),
+            @ApiResponse(code = 404, message = "Приложение не найдено")
+    })
+    void saveApplicationConfig(@Valid @NotNull @ApiParam(name = "Пары значений (код настройки / значение)", required = true)
+                                       Map<String, Object> data);
 
     @POST
     @Path("/")

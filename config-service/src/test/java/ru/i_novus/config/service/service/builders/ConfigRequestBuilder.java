@@ -1,6 +1,7 @@
 package ru.i_novus.config.service.service.builders;
 
 import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ValueTypeEnum;
 
 public class ConfigRequestBuilder {
 
@@ -8,7 +9,7 @@ public class ConfigRequestBuilder {
         ConfigRequest configRequest = new ConfigRequest();
         configRequest.setCode("auth.config");
         configRequest.setName("something");
-        configRequest.setValueType("Строка");
+        configRequest.setValueType(ValueTypeEnum.STRING);
         configRequest.setValue("test-value");
         configRequest.setApplicationCode("app-auth");
         return configRequest;
@@ -18,7 +19,7 @@ public class ConfigRequestBuilder {
         ConfigRequest configRequest = new ConfigRequest();
         configRequest.setCode("sec.url");
         configRequest.setName("name");
-        configRequest.setValueType("Строка");
+        configRequest.setValueType(ValueTypeEnum.STRING);
         configRequest.setValue("test-value");
         configRequest.setApplicationCode("app-security");
         return configRequest;
@@ -28,7 +29,7 @@ public class ConfigRequestBuilder {
         ConfigRequest configRequest = new ConfigRequest();
         configRequest.setCode("sec2.spring.sec-token");
         configRequest.setName("name 2");
-        configRequest.setValueType("Строка");
+        configRequest.setValueType(ValueTypeEnum.STRING);
         configRequest.setValue("test-value");
         configRequest.setApplicationCode(null);
         return configRequest;
@@ -38,7 +39,7 @@ public class ConfigRequestBuilder {
         ConfigRequest configRequest = new ConfigRequest();
         configRequest.setCode("sec.test");
         configRequest.setName("test");
-        configRequest.setValueType("Строка");
+        configRequest.setValueType(ValueTypeEnum.STRING);
         configRequest.setValue("test-value");
         configRequest.setApplicationCode("app-security");
         return configRequest;
