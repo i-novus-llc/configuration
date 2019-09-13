@@ -2,15 +2,11 @@ package ru.i_novus.system_application.api.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 @ApiModel("Прикладная система")
 public class SystemResponse {

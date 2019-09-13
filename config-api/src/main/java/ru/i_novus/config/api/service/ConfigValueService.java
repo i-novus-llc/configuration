@@ -6,7 +6,7 @@ public interface ConfigValueService {
 
     String getValue(String appName, String code);
 
-    Map<String, String> getKeyValueListByApplicationCode(String appName);
+    Map<String, String> getKeyValueListByApplicationName(String appName);
 
     void saveValue(String appName, String code, String value);
 

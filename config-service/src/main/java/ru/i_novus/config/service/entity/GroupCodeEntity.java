@@ -1,8 +1,6 @@
 package ru.i_novus.config.service.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -13,8 +11,6 @@ import javax.persistence.*;
  */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "config_group_code", schema = "configuration")
 public class GroupCodeEntity {

@@ -15,17 +15,20 @@ import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.GroupForm;
-import ru.i_novus.config.api.model.GroupedConfigForm;
+import ru.i_novus.config.api.model.GroupedConfigRequest;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
+import ru.i_novus.config.service.mapper.ConfigMapper;
+import ru.i_novus.config.service.mapper.GroupMapper;
+import ru.i_novus.config.service.mapper.GroupedConfigRequestMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
-import ru.i_novus.system_application.api.model.SystemRequest;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
+import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -76,42 +79,44 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         return configEntities.map(e -> {
                     ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
-                    return e.toConfigResponse(
+                    return ConfigMapper.toConfigResponse(
+                            e,
                             configValueService.getValue(getAppName(application), e.getCode()),
                             application,
-                            groupRepository.findOneGroupByConfigCodeStarts(e.getCode()).toGroupForm()
+                            GroupMapper.toGroupForm(groupRepository.findOneGroupByConfigCodeStarts(e.getCode()))
                     );
                 }
         );
     }
 
     @Override
-    public List<GroupedConfigForm> getGroupedConfigByAppCode(String appCode) {
+    public List<GroupedConfigRequest> getGroupedConfigByAppCode(String appCode) {
         List<Object[]> objectList = configRepository.findByAppCode(appCode);
+        List<GroupedConfigRequest> result = new ArrayList<>();
+        String appName = applicationRestService.getApplication(appCode).getName();
 
-        List<GroupedConfigForm> result = new ArrayList<>();
+        Map<String, String> applicationConfigKeyValues =
+                configValueService.getKeyValueListByApplicationName(appName);
+        Map<String, String> commonApplicationConfigKeyValues =
+                configValueService.getKeyValueListByApplicationName(getAppName(null));
+
 
         for (Object[] obj : objectList) {
-            GroupForm groupForm = ((GroupEntity) obj[0]).toGroupForm();
-            ConfigEntity configEntity = ((ConfigEntity) obj[1]);
-            ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
+            GroupForm groupForm = GroupMapper.toGroupForm((GroupEntity) obj[0]);
+            ConfigEntity configEntity = (ConfigEntity) obj[1];
 
-            ConfigRequest configRequest = new ConfigRequest(
-                    configEntity.getCode(), configEntity.getName(), configEntity.getDescription(),
-                    configEntity.getValueType(),
-                    configValueService.getValue(getAppName(application), configEntity.getCode()),
-                    configEntity.getApplicationCode()
-            );
+            String value = applicationConfigKeyValues.get(configEntity.getCode());
+            if (value == null) {
+                value = commonApplicationConfigKeyValues.get(configEntity.getCode());
+            }
+            ConfigRequest configRequest = ConfigMapper.toConfigRequest(configEntity, value);
 
-            GroupedConfigForm existingGroupedConfigForm =
+            GroupedConfigRequest existingGroupedConfigRequest =
                     result.stream().filter(i -> i.getId().equals(groupForm.getId())).findFirst().orElse(null);
-            if (existingGroupedConfigForm != null) {
-                existingGroupedConfigForm.getConfigs().add(configRequest);
+            if (existingGroupedConfigRequest != null) {
+                existingGroupedConfigRequest.getConfigs().add(configRequest);
             } else {
-                result.add(new GroupedConfigForm(
-                        groupForm.getId(), groupForm.getName(), groupForm.getDescription(),
-                        groupForm.getPriority(), Lists.newArrayList(configRequest)
-                ));
+                result.add(GroupedConfigRequestMapper.toGroupedConfigRequest(groupForm, Lists.newArrayList(configRequest)));
             }
         }
 
@@ -120,7 +125,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Override
     public void saveApplicationConfig(Map<String, Object> data) {
-        for (Map.Entry entry : data.entrySet()) {
+        for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
 
         }
     }
@@ -134,7 +139,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         String value = configValueService.getValue(getAppName(application), configEntity.getCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
 
-        return configEntity.toConfigResponse(value, application, groupEntity.toGroupForm());
+        return ConfigMapper.toConfigResponse(configEntity, value, application, GroupMapper.toGroupForm(groupEntity));
     }
 
     @Override
@@ -143,13 +148,14 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             throw new UserException("config.code.not.unique");
         }
 
-        ConfigEntity configEntity = new ConfigEntity(configRequest);
+        ConfigEntity configEntity = ConfigMapper.toConfigEntity(configRequest);
         configRepository.save(configEntity);
 
-        if (configRequest.getValue() != null) {
-            ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
-            configValueService.saveValue(getAppName(application), configRequest.getCode(), configRequest.getValue());
-        }
+        // -- TODO возможно придется убрать
+//        if (configRequest.getValue() != null) {
+//            ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
+//            configValueService.saveValue(getAppName(application), configRequest.getCode(), configRequest.getValue());
+//        }
     }
 
     @Override
@@ -166,10 +172,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         // --TODO необходимо учесть случай при котором меняется applicationCode
         // в consul нужно удалить данные по предыдущему url и записать их по новому
 
-        if (configRequest.getValue() != null) {
-            ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
-            configValueService.saveValue(getAppName(application), configRequest.getCode(), configRequest.getValue());
-        }
+        // -- TODO возможно придется убрать
+//        if (configRequest.getValue() != null) {
+//            ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
+//            configValueService.saveValue(getAppName(application), configRequest.getCode(), configRequest.getValue());
+//        }
     }
 
     @Override
@@ -232,12 +239,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private ApplicationResponse getApplicationResponse(String code) {
-        if (code == null) {
-            CommonSystemResponse commonSystemResponse = new CommonSystemResponse();
-            return new ApplicationResponse(null, null,
-                    new SystemRequest(commonSystemResponse.getCode(), commonSystemResponse.getName(), null)
-            );
-        }
-        return applicationRestService.getApplication(code);
+        return code == null ? ApplicationMapper.getCommonSystemApplication() : applicationRestService.getApplication(code);
     }
 }

@@ -12,6 +12,7 @@ import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 import ru.i_novus.system_application.service.entity.ApplicationEntity;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
+import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 import ru.i_novus.system_application.service.repository.ApplicationRepository;
 
 /**
@@ -34,13 +35,13 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "code"));
 
         return applicationRepository.findAll(toPredicate(criteria), criteria)
-                .map(ApplicationEntity::toApplicationResponse);
+                .map(ApplicationMapper::toApplicationResponse);
     }
 
     @Override
     public ApplicationResponse getApplication(String code) {
         ApplicationEntity applicationEntity = applicationRepository.findByCode(code);
-        return applicationEntity != null ? applicationEntity.toApplicationResponse() : null;
+        return applicationEntity != null ? ApplicationMapper.toApplicationResponse(applicationEntity) : null;
     }
 
     private Predicate toPredicate(ApplicationCriteria criteria) {

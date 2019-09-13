@@ -31,17 +31,19 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
     }
 
     @Override
-    public Map<String, String> getKeyValueListByApplicationCode(String appName) {
-        List raw = restTemplate.getForObject(getFullUrl(appName, "") + "?recurse=true", List.class);
+    public Map<String, String> getKeyValueListByApplicationName(String appName) {
+        List<Map> raw = restTemplate.getForObject(getFullUrl(appName, "") + "?recurse=true", List.class);
 
         Map<String, String> keyValues = new HashMap<>();
         if (raw != null && !raw.isEmpty()) {
-            for (int i = 1; i < raw.size(); i++) {
-                Map rawObject = (Map) raw.get(i);
-                String code = ((String) rawObject.get("Key"))
-                        .substring(prefix.length() + appName.length() + 2)
-                        .replace("/", ".");
-                String value = new String(Base64.getDecoder().decode((String) rawObject.get("Value")));
+            for (Map rawObject : raw) {
+                String code = ((String) rawObject.get("Key"));
+                if (code.endsWith("/")) continue;
+                code = code.substring(prefix.length() + appName.length() + 2).replace("/", ".");
+
+                Object rawValue = rawObject.get("Value");
+                String value = (rawValue != null) ? new String(Base64.getDecoder().decode((String) rawValue)) : null;
+
                 keyValues.put(code, value);
             }
         }
@@ -51,7 +53,7 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Override
     public void saveValue(String appName, String code, String value) {
-//        restTemplate.put(getFullUrl(appName, code), value);
+        restTemplate.put(getFullUrl(appName, code), value);
     }
 
     @Override

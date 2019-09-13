@@ -16,6 +16,7 @@ import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.entity.QSystemEntity;
 import ru.i_novus.system_application.service.entity.SystemEntity;
+import ru.i_novus.system_application.service.mapper.SystemMapper;
 import ru.i_novus.system_application.service.repository.SystemRepository;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class SystemRestServiceImpl implements SystemRestService {
         criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "code"));
 
         Page<SystemResponse> systemResponsePage = systemRepository.findAll(toPredicate(criteria), criteria)
-                .map(SystemEntity::toSystemResponse);
+                .map(SystemMapper::toSystemResponse);
         ArrayList<SystemResponse> systemResponses = new ArrayList<>(systemResponsePage.getContent());
 
         long totalElements = systemResponsePage.getTotalElements();
@@ -61,7 +62,7 @@ public class SystemRestServiceImpl implements SystemRestService {
     @Override
     public SystemResponse getSystem(String code) {
         SystemEntity systemEntity = systemRepository.findByCode(code);
-        return systemEntity != null ? systemEntity.toSystemResponse() : null;
+        return systemEntity != null ? SystemMapper.toSystemResponse(systemEntity) : null;
     }
 
     private Predicate toPredicate(SystemCriteria criteria) {

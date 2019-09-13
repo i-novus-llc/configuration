@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.GroupedConfigForm;
+import ru.i_novus.config.api.model.GroupedConfigRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -42,12 +42,12 @@ public interface ConfigRestService {
 
     @GET
     @Path("/byAppCode/{code}")
-    @ApiOperation(value = "Получение сгруппированных настроек приложения", response = GroupedConfigForm.class, responseContainer = "List")
+    @ApiOperation(value = "Получение сгруппированных настроек приложения", response = GroupedConfigRequest.class, responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение сгрупированных настроек приложения"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
-    List<GroupedConfigForm> getGroupedConfigByAppCode(@PathParam("code") String code);
+    List<GroupedConfigRequest> getGroupedConfigByAppCode(@PathParam("code") @ApiParam(name = "Код приложения") String code);
 
     @POST
     @Path("/byAppCode/{code}")

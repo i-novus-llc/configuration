@@ -16,6 +16,7 @@ import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.service.entity.GroupEntity;
 import ru.i_novus.config.service.entity.QGroupCodeEntity;
 import ru.i_novus.config.service.entity.QGroupEntity;
+import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.GroupCodeRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 
@@ -47,13 +48,13 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Override
     public GroupForm getGroup(Integer groupId) {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow();
-        return groupEntity.toGroupForm();
+        return GroupMapper.toGroupForm(groupEntity);
     }
 
     @Override
     public List<GroupForm> getGroupByConfigCode(String code) {
         return groupRepository.findGroupsByConfigCode(code).stream()
-                .map(GroupEntity::toGroupForm)
+                .map(GroupMapper::toGroupForm)
                 .collect(Collectors.toList());
     }
 
@@ -62,13 +63,13 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC,"id"));
         Page<GroupEntity> groupEntities = groupRepository.findAll(toPredicate(criteria), criteria);
 
-        return groupEntities.map(GroupEntity::toGroupForm);
+        return groupEntities.map(GroupMapper::toGroupForm);
     }
 
     @Override
     @Transactional
     public Integer saveGroup(@Valid @NotNull GroupForm groupForm) {
-        GroupEntity groupEntity = new GroupEntity(groupForm);
+        GroupEntity groupEntity = GroupMapper.toGroupEntity(groupForm);
 
         if (groupCodeRepository.existsAtLeastOneCode(groupForm.getCodes(), -1)) {
             throw new UserException("config.group.codes.not.unique");

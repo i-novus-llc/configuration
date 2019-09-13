@@ -21,7 +21,7 @@ import net.n2oapp.framework.api.register.DynamicMetadataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.i_novus.config.api.model.ConfigRequest;
-import ru.i_novus.config.api.model.GroupedConfigForm;
+import ru.i_novus.config.api.model.GroupedConfigRequest;
 import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 
@@ -62,19 +62,19 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         layout.setRegions(new N2oRegion[] {region});
         page.setRegions(layout);
 
-        List<GroupedConfigForm> groupedConfigFormList = configRestService.getGroupedConfigByAppCode(appCode);
+        List<GroupedConfigRequest> groupedConfigRequestList = configRestService.getGroupedConfigByAppCode(appCode);
 
         ArrayList<NamespaceUriAware> lineFieldSetList = new ArrayList<>();
-        for (GroupedConfigForm groupedConfigForm : groupedConfigFormList) {
+        for (GroupedConfigRequest groupedConfigRequest : groupedConfigRequestList) {
             N2oLineFieldSet lineFieldSet = new N2oLineFieldSet();
             lineFieldSet.setCollapsible(true);
-            lineFieldSet.setLabel(groupedConfigForm.getName());
+            lineFieldSet.setLabel(groupedConfigRequest.getName());
             lineFieldSet.setFieldLabelLocation(N2oFieldSet.FieldLabelLocation.left);
             lineFieldSet.setFieldLabelAlign(N2oFieldSet.FieldLabelAlign.left);
             lineFieldSet.setLabelWidth("50%");
 
             ArrayList<NamespaceUriAware> n2oFieldList = new ArrayList<>();
-            for (ConfigRequest config : groupedConfigForm.getConfigs()) {
+            for (ConfigRequest config : groupedConfigRequest.getConfigs()) {
                 if (config.getValueType().equals(ValueTypeEnum.STRING) ||
                         config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                     N2oInputText inputText = new N2oInputText();
