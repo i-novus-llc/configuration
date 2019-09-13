@@ -32,10 +32,7 @@ import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Реализация REST сервиса для работы с настройками
@@ -125,8 +122,28 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Override
     public void saveApplicationConfig(Map<String, Object> data) {
-        for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
+        String appName = applicationRestService.getApplication((String) data.get("appCode")).getName();
+        Map<String, String> updatedKeyValues = new HashMap<>();
 
+        Map<String, String> applicationConfigKeyValues =
+                configValueService.getKeyValueListByApplicationName(appName);
+        Map<String, String> commonApplicationConfigKeyValues =
+                configValueService.getKeyValueListByApplicationName(getAppName(null));
+
+        for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
+            String code = ((String) entry.getKey()).replace("*", ".");
+            String value = String.valueOf(entry.getValue());
+            String applicationConfigValue = applicationConfigKeyValues.get(code);
+            String commonApplicationValue = commonApplicationConfigKeyValues.get(code);
+
+            if (applicationConfigValue != null && !applicationConfigValue.equals(value) ||
+            applicationConfigValue == null && !commonApplicationValue.equals(value)) {
+                updatedKeyValues.put(code, value);
+            }
+        }
+
+        if (!updatedKeyValues.isEmpty()) {
+            configValueService.saveAllValues(appName, updatedKeyValues);
         }
     }
 
