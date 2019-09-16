@@ -1,12 +1,12 @@
 package ru.i_novus.config.service.service;
 
-import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -14,14 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.GroupForm;
-import ru.i_novus.config.api.model.GroupedConfigRequest;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
 import ru.i_novus.config.service.mapper.ConfigMapper;
 import ru.i_novus.config.service.mapper.GroupMapper;
-import ru.i_novus.config.service.mapper.GroupedConfigRequestMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
@@ -32,7 +29,8 @@ import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Реализация REST сервиса для работы с настройками
@@ -46,6 +44,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     private ConfigRepository configRepository;
     private GroupRepository groupRepository;
 
+    @Value("${config.application.default.name}")
+    private String defaultAppName;
 
     @Autowired
     public void setConfigValueService(ConfigValueService configValueService) {
@@ -87,67 +87,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     @Override
-    public List<GroupedConfigRequest> getGroupedConfigByAppCode(String appCode) {
-        List<Object[]> objectList = configRepository.findByAppCode(appCode);
-        List<GroupedConfigRequest> result = new ArrayList<>();
-        String appName = applicationRestService.getApplication(appCode).getName();
-
-        Map<String, String> applicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationName(appName);
-        Map<String, String> commonApplicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationName(getAppName(null));
-
-
-        for (Object[] obj : objectList) {
-            GroupForm groupForm = GroupMapper.toGroupForm((GroupEntity) obj[0]);
-            ConfigEntity configEntity = (ConfigEntity) obj[1];
-
-            String value = applicationConfigKeyValues.get(configEntity.getCode());
-            if (value == null) {
-                value = commonApplicationConfigKeyValues.get(configEntity.getCode());
-            }
-            ConfigRequest configRequest = ConfigMapper.toConfigRequest(configEntity, value);
-
-            GroupedConfigRequest existingGroupedConfigRequest =
-                    result.stream().filter(i -> i.getId().equals(groupForm.getId())).findFirst().orElse(null);
-            if (existingGroupedConfigRequest != null) {
-                existingGroupedConfigRequest.getConfigs().add(configRequest);
-            } else {
-                result.add(GroupedConfigRequestMapper.toGroupedConfigRequest(groupForm, Lists.newArrayList(configRequest)));
-            }
-        }
-
-        return result;
-    }
-
-    @Override
-    public void saveApplicationConfig(Map<String, Object> data) {
-        String appName = applicationRestService.getApplication((String) data.get("appCode")).getName();
-        Map<String, String> updatedKeyValues = new HashMap<>();
-
-        Map<String, String> applicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationName(appName);
-        Map<String, String> commonApplicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationName(getAppName(null));
-
-        for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
-            String code = ((String) entry.getKey()).replace("*", ".");
-            String value = String.valueOf(entry.getValue());
-            String applicationConfigValue = applicationConfigKeyValues.get(code);
-            String commonApplicationValue = commonApplicationConfigKeyValues.get(code);
-
-            if (applicationConfigValue != null && !applicationConfigValue.equals(value) ||
-            applicationConfigValue == null && !commonApplicationValue.equals(value)) {
-                updatedKeyValues.put(code, value);
-            }
-        }
-
-        if (!updatedKeyValues.isEmpty()) {
-            configValueService.saveAllValues(appName, updatedKeyValues);
-        }
-    }
-
-    @Override
     public ConfigResponse getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
@@ -167,12 +106,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(configRequest);
         configRepository.save(configEntity);
-
-        // -- TODO возможно придется убрать
-//        if (configRequest.getValue() != null) {
-//            ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
-//            configValueService.saveValue(getAppName(application), configRequest.getCode(), configRequest.getValue());
-//        }
     }
 
     @Override
@@ -180,20 +113,23 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public void updateConfig(String code, @Valid @NotNull ConfigRequest configRequest) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
-        configEntity.setApplicationCode(configRequest.getApplicationCode());
         configEntity.setName(configRequest.getName());
         configEntity.setValueType(configRequest.getValueType());
         configEntity.setDescription(configRequest.getDescription());
-        configRepository.save(configEntity);
 
         // --TODO необходимо учесть случай при котором меняется applicationCode
-        // в consul нужно удалить данные по предыдущему url и записать их по новому
-
-        // -- TODO возможно придется убрать
-//        if (configRequest.getValue() != null) {
-//            ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
-//            configValueService.saveValue(getAppName(application), configRequest.getCode(), configRequest.getValue());
+//        if (configEntity.getApplicationCode() != null &&
+//                configRequest.getApplicationCode() != configEntity.getApplicationCode()) {
+//            String appName = getAppName(applicationRestService.getApplication(configEntity.getApplicationCode()));
+//            if (configRequest != null) {
+//                String value = configValueService.getValue(appName, configRequest.getCode());
+//                configValueService.saveValue(appName, code, value);
+//            }
+//            configValueService.deleteValue(appName, code);
 //        }
+
+        configEntity.setApplicationCode(configRequest.getApplicationCode());
+        configRepository.save(configEntity);
     }
 
     @Override
@@ -252,7 +188,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private String getAppName(ApplicationResponse application) {
-        return (application != null && application.getCode() != null) ? application.getName() : "application";
+        return (application != null && application.getCode() != null) ? application.getName() : defaultAppName;
     }
 
     private ApplicationResponse getApplicationResponse(String code) {

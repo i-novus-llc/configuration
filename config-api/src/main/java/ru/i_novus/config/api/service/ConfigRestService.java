@@ -5,14 +5,11 @@ import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.GroupedConfigRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Интерфейс REST API для работы с настройками
@@ -39,26 +36,6 @@ public interface ConfigRestService {
     @ApiResponse(code = 200, message = "Успешное получение списка настроек")
     Page<ConfigResponse> getAllConfig(@ApiParam(name = "Критерии поиска настроек")
                                       @BeanParam ConfigCriteria criteria);
-
-    @GET
-    @Path("/byAppCode/{code}")
-    @ApiOperation(value = "Получение сгруппированных настроек приложения", response = GroupedConfigRequest.class, responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Успешное получение сгрупированных настроек приложения"),
-            @ApiResponse(code = 404, message = "Приложение не найдено")
-    })
-    List<GroupedConfigRequest> getGroupedConfigByAppCode(@PathParam("code") @ApiParam(name = "Код приложения") String code);
-
-    @POST
-    @Path("/byAppCode/{code}")
-    @ApiOperation(value = "Изменение значений настроек приложения")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Изменение значений настроек приложения успешно выполнено"),
-            @ApiResponse(code = 400, message = "Некорректный запрос"),
-            @ApiResponse(code = 404, message = "Приложение не найдено")
-    })
-    void saveApplicationConfig(@Valid @NotNull @ApiParam(name = "Пары значений (код настройки / значение)", required = true)
-                                       Map<String, Object> data);
 
     @POST
     @Path("/")

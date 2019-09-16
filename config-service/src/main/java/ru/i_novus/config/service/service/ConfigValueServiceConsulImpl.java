@@ -7,6 +7,9 @@ import ru.i_novus.config.api.service.ConfigValueService;
 
 import java.util.*;
 
+/**
+ * Реализация сервиса для работы со значениями настроек, хранящихся в Consul
+ */
 @Service
 public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
@@ -25,7 +28,7 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
         try {
             value = restTemplate.getForObject(getFullUrl(appName, code) + "?raw=1", String.class);
         } catch (Exception e) {
-            return "1234";
+            // TODO - что если значение не найдено?
         }
         return value;
     }
@@ -79,7 +82,12 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Override
     public void deleteValue(String appName, String code) {
-//        restTemplate.delete(getFullUrl(appName, code));
+        restTemplate.delete(getFullUrl(appName, code));
+    }
+
+    @Override
+    public void deleteAllValues(String appName) {
+        restTemplate.delete(getFullUrl(appName, "") + "?recurse=true");
     }
 
     private String getFullUrl(String appName, String code) {

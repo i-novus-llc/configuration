@@ -2,6 +2,9 @@ package ru.i_novus.config.api.service;
 
 import java.util.Map;
 
+/**
+ * Сервис для работы со значениями настроек по имени приложения
+ */
 public interface ConfigValueService {
 
     String getValue(String appName, String code);
@@ -13,4 +16,6 @@ public interface ConfigValueService {
     void saveAllValues(String appName, Map<String, String> data);
 
     void deleteValue(String appName, String code);
+
+    void deleteAllValues(String appName);
 }

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.GroupedConfigRequest;
 import ru.i_novus.config.api.model.ValueTypeEnum;
-import ru.i_novus.config.api.service.ConfigRestService;
+import ru.i_novus.system_application.api.service.ApplicationRestService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,13 +33,12 @@ import java.util.List;
 public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     public static final String CONFIG_DYNAMIC = "configDynamic";
-    private ConfigRestService configRestService;
+    private ApplicationRestService applicationRestService;
 
     @Autowired
-    public void setConfigRestService(ConfigRestService configRestService) {
-        this.configRestService = configRestService;
+    public void setApplicationRestService(ApplicationRestService applicationRestService) {
+        this.applicationRestService = applicationRestService;
     }
-
 
     @Override
     public String getCode() {
@@ -62,7 +61,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         layout.setRegions(new N2oRegion[] {region});
         page.setRegions(layout);
 
-        List<GroupedConfigRequest> groupedConfigRequestList = configRestService.getGroupedConfigByAppCode(appCode);
+        List<GroupedConfigRequest> groupedConfigRequestList = applicationRestService.getGroupedApplicationConfig(appCode);
 
         ArrayList<NamespaceUriAware> lineFieldSetList = new ArrayList<>();
         for (GroupedConfigRequest groupedConfigRequest : groupedConfigRequestList) {
