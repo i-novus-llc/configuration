@@ -16,7 +16,7 @@ public class ConfigRequestBuilder {
 
     public static ConfigRequest buildConfigRequest2() {
         ConfigRequest configRequest = new ConfigRequest();
-        configRequest.setCode("sec.url");
+        configRequest.setCode("sec1.url");
         configRequest.setName("name");
         configRequest.setValueType("Строка");
         configRequest.setValue("test-value");
@@ -36,7 +36,7 @@ public class ConfigRequestBuilder {
 
     public static ConfigRequest buildTestConfigRequest() {
         ConfigRequest configRequest = new ConfigRequest();
-        configRequest.setCode("sec.test");
+        configRequest.setCode("sec1.test");
         configRequest.setName("test");
         configRequest.setValueType("Строка");
         configRequest.setValue("test-value");
