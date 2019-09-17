@@ -91,6 +91,6 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
     }
 
     private String getFullUrl(String appName, String code) {
-        return url + prefix + "/" + appName + "/" + code.replace(".", "/");
+        return url + appName + "/" + code.replace(".", "/");
     }
 }

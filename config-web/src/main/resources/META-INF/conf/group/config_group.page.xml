@@ -2,7 +2,7 @@
 <simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
              name="Группы настроек">
 
-    <table id="group_table" query-id="group">
+    <table id="group_table" query-id="config_group">
         <filters search-buttons="false">
             <row>
                 <input-text id="code" label="Код группы" domain="string"/>
@@ -21,7 +21,7 @@
             <column text-field-id="option">
                 <toolbar>
                     <button id="update" label="Изменить" icon="fa fa-pencil" type="icon">
-                        <show-modal page-id="groupItem" detail-field-id="id"
+                        <show-modal page-id="config_groupItem" detail-field-id="id"
                                     submit-operation-id="update" page-name="Изменить группу настроек"/>
                     </button>
                     <button id="delete" label="Удалить" icon="fa fa-trash" type="icon">
@@ -33,7 +33,7 @@
 
         <toolbar>
             <button id="create" label="Создать" color="primary" icon="fa fa-plus">
-                <show-modal page-id="groupItem" submit-operation-id="create"
+                <show-modal page-id="config_groupItem" submit-operation-id="create"
                             page-name="Создать группу настроек" upload="defaults"/>
             </button>
         </toolbar>

@@ -7,11 +7,11 @@
             <row>
                 <input-text id="code" label="Код настройки" domain="string"/>
                 <input-text id="name" label="Наименование настройки" domain="string"/>
-                <input-select id="systems" label="Система" query-id="system"
+                <input-select id="systems" label="Система" query-id="config_system"
                               placeholder="Все" type="multi"/>
             </row>
             <row>
-                <input-select id="groups" label="Группа настроек" query-id="group"
+                <input-select id="groups" label="Группа настроек" query-id="config_group"
                               placeholder="Все" type="multi"/>
                 <search-buttons id="search"/>
                 <input-select id="hidden" visible="false"/>

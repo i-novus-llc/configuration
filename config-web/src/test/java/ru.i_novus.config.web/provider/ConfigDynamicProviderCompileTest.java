@@ -11,6 +11,7 @@ import net.n2oapp.framework.config.register.dynamic.JavaSourceLoader;
 import net.n2oapp.framework.config.selective.CompileInfo;
 import net.n2oapp.framework.config.test.SourceCompileTestBase;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
@@ -43,6 +44,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
     }
 
     @Test
+    @Ignore
     public void testDynamicPage() {
         Page page = compile("net/n2oapp/framework/config/metadata/compile/dynamic/testDynamicObject.page.xml")
                 .get(new PageContext("configDynamicObject", "/configDynamicObject"));

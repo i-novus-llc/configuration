@@ -10,6 +10,6 @@ services:
 
   config-web:
     build:
-      context: config-web
+      context: config-webapp
       args:
-        JAR_FILE: target/config-web.jar
+        JAR_FILE: target/config-webapp.jar

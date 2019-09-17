@@ -1,8 +1,8 @@
 <access xmlns="http://n2oapp.net/framework/config/schema/access-2.0">
     <permit-all>
         <object-access object-id="config" operations="*"/>
-        <object-access object-id="group" operations="*"/>
-        <object-access object-id="application" operations="*"/>
+        <object-access object-id="config_group" operations="*"/>
+        <object-access object-id="config_application" operations="*"/>
         <object-access object-id="groupedConfig" operations="*"/>
     </permit-all>
 </access>
