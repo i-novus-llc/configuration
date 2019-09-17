@@ -16,7 +16,7 @@ public class GroupFormBuilder {
     public static GroupForm buildGroupForm2() {
         GroupForm groupForm = new GroupForm();
         groupForm.setName("Security settings");
-        groupForm.setCodes(Arrays.asList("sec", "sec2"));
+        groupForm.setCodes(Arrays.asList("sec1", "sec2"));
         return groupForm;
     }
 

@@ -15,11 +15,11 @@ INSERT INTO configuration.config_group (id, name) VALUES
 
 INSERT INTO configuration.config_group_code(code, group_id) VALUES
                 ('auth', 101),
-                ('sec', 102),
+                ('sec1', 102),
                 ('sec2', 102),
                 ('base-sec', 103);
 
 INSERT INTO configuration.config (code, name, value_type, application_code) VALUES
                 ('auth.config', 'something', 'STRING', 'app-auth'),
-                ('sec.url', 'name', 'STRING', 'app-security'),
+                ('sec1.url', 'name', 'STRING', 'app-security'),
                 ('sec2.spring.sec-token', 'name 2', 'STRING', null);
