@@ -28,9 +28,13 @@
             <select/>
         </field>
 
+        <field id="isSystem" domain="boolean">
+            <select default-value="true"/>
+        </field>
+
         <field id="children" domain="object[]">
             <select mapping="[applications]"
-                    normalize="(#this == null || #this.isEmpty()) ? null : #this"/>
+                    normalize="T(ru.i_novus.config.web.ApplicationSystemUtil).get(#this)"/>
         </field>
 
         <field id="appCode" domain="string">
