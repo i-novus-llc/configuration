@@ -61,6 +61,7 @@ public class ConfigRestServiceImplTest {
     public void setUp() {
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
         doNothing().when(configValueService).saveValue(any(), any(), any());
+        doNothing().when(configValueService).deleteValue(any(), any());
     }
 
 
@@ -77,9 +78,9 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(new ConfigCriteria()).getContent();
 
         assertEquals(3, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
-        configAssertEquals(configRequest3, configResponses.get(2));
+        configAssertEquals(configRequest3, configResponses.get(0));
+        configAssertEquals(configRequest, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(2));
     }
 
     /**
@@ -97,8 +98,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configRequest, configResponses.get(1));
     }
 
     /**
@@ -116,8 +117,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configRequest, configResponses.get(1));
     }
 
     /**
@@ -136,8 +137,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configRequest, configResponses.get(1));
     }
 
     /**
@@ -156,8 +157,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configRequest, configResponses.get(1));
     }
 
     /**
@@ -176,14 +177,14 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest, configResponses.get(0));
-        configAssertEquals(configRequest2, configResponses.get(1));
+        configAssertEquals(configRequest3, configResponses.get(0));
+        configAssertEquals(configRequest, configResponses.get(1));
 
         criteria.setPageNumber(1);
         configResponses = configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(1, configResponses.size());
-        configAssertEquals(configRequest3, configResponses.get(0));
+        configAssertEquals(configRequest2, configResponses.get(0));
     }
 
     /**

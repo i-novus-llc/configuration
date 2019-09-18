@@ -128,9 +128,9 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
             String applicationConfigValue = applicationConfigKeyValues.get(code);
             String commonApplicationValue = commonApplicationConfigKeyValues.get(code);
 
-            if ((applicationConfigValue != null && !applicationConfigValue.equals(value)) ||
-                    (applicationConfigValue == null && !commonApplicationValue.equals(value)) ||
-                    (applicationConfigValue == null && commonApplicationValue == null)) {
+            if ((applicationConfigValue == null && commonApplicationValue == null) ||
+                    (applicationConfigValue != null && !applicationConfigValue.equals(value)) ||
+                    (applicationConfigValue == null && !commonApplicationValue.equals(value))) {
                 updatedKeyValues.put(code, value);
             }
         }

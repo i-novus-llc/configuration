@@ -129,7 +129,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                             ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
                             return ConfigMapper.toConfigResponse(
                                     e,
-                                    configValueService.getValue(getAppName(application), e.getCode()),
+                                    getValue(getAppName(application), e.getCode()),
                                     application,
                                     GroupMapper.toGroupForm(groupRepository.findOneGroupByConfigCodeStarts(e.getCode()))
                             );
@@ -143,7 +143,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
 
-        String value = configValueService.getValue(getAppName(application), configEntity.getCode());
+        String value = getValue(getAppName(application), configEntity.getCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
 
         return ConfigMapper.toConfigResponse(configEntity, value, application, GroupMapper.toGroupForm(groupEntity));
@@ -168,16 +168,15 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         configEntity.setValueType(configRequest.getValueType());
         configEntity.setDescription(configRequest.getDescription());
 
-        // --TODO необходимо учесть случай при котором меняется applicationCode
-//        if (configEntity.getApplicationCode() != null &&
-//                configRequest.getApplicationCode() != configEntity.getApplicationCode()) {
-//            String appName = getAppName(applicationRestService.getApplication(configEntity.getApplicationCode()));
-//            if (configRequest != null) {
-//                String value = configValueService.getValue(appName, configRequest.getCode());
-//                configValueService.saveValue(appName, code, value);
-//            }
-//            configValueService.deleteValue(appName, code);
-//        }
+        if (configEntity.getApplicationCode() != null &&
+                !configEntity.getApplicationCode().equals(configRequest.getApplicationCode())) {
+            String oldAppName = getAppName(applicationRestService.getApplication(configEntity.getApplicationCode()));
+            String newAppName = getAppName(applicationRestService.getApplication(configRequest.getApplicationCode()));
+
+            String value = getValue(oldAppName, code);
+            configValueService.saveValue(newAppName, code, value);
+            configValueService.deleteValue(oldAppName, code);
+        }
 
         configEntity.setApplicationCode(configRequest.getApplicationCode());
         configRepository.save(configEntity);
@@ -199,5 +198,15 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     private ApplicationResponse getApplicationResponse(String code) {
         return code == null ? ApplicationMapper.getCommonSystemApplication() : applicationRestService.getApplication(code);
+    }
+
+    private String getValue(String appName, String code) {
+        String value;
+        try {
+            value = configValueService.getValue(appName, code);
+        } catch (Exception e) {
+            value = configValueService.getValue(defaultAppName, code);
+        }
+        return value;
     }
 }

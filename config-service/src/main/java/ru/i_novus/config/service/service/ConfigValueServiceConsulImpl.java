@@ -24,13 +24,7 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Override
     public String getValue(String appName, String code) {
-        String value = null;
-        try {
-            value = restTemplate.getForObject(getFullUrl(appName, code) + "?raw=1", String.class);
-        } catch (Exception e) {
-            // TODO - что если значение не найдено?
-        }
-        return value;
+        return restTemplate.getForObject(getFullUrl(appName, code) + "?raw=1", String.class);
     }
 
     @Override
