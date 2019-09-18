@@ -1,14 +1,14 @@
 package ru.i_novus.config.service.service;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
@@ -27,6 +27,8 @@ import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -43,6 +45,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     private ConfigRepository configRepository;
     private GroupRepository groupRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Value("${config.application.default.name}")
     private String defaultAppName;
@@ -70,20 +75,66 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Override
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
-        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "code"));
+        QConfigEntity qConfigEntity = QConfigEntity.configEntity;
+        QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
+        QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
+        QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
 
-        Page<ConfigEntity> configEntities = configRepository.findAll(toPredicate(criteria), criteria);
+        JPAQuery<ConfigEntity> query = new JPAQuery(entityManager);
 
-        return configEntities.map(e -> {
-                    ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
-                    return ConfigMapper.toConfigResponse(
-                            e,
-                            configValueService.getValue(getAppName(application), e.getCode()),
-                            application,
-                            GroupMapper.toGroupForm(groupRepository.findOneGroupByConfigCodeStarts(e.getCode()))
-                    );
-                }
-        );
+        query.from(qConfigEntity)
+                .leftJoin(qApplicationEntity).on(qConfigEntity.applicationCode.eq(qApplicationEntity.code));
+
+        List<Integer> groupIds = criteria.getGroupIds();
+        if (groupIds != null && !groupIds.isEmpty()) {
+            BooleanExpression exists = JPAExpressions.selectOne().from(qGroupCodeEntity).from(qGroupEntity)
+                    .where(new BooleanBuilder()
+                            .and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
+                            .and(qGroupEntity.id.in(groupIds))
+                            .and(qConfigEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code)))
+                    .exists();
+            query.where(exists);
+        }
+
+        if (criteria.getCode() != null) {
+            query.where(qConfigEntity.code.containsIgnoreCase(criteria.getCode()));
+        }
+
+        if (criteria.getName() != null) {
+            query.where(qConfigEntity.name.containsIgnoreCase(criteria.getName()));
+        }
+
+        List<String> systemCodes = criteria.getSystemCodes();
+        if (systemCodes != null && !systemCodes.isEmpty()) {
+            BooleanBuilder exists = new BooleanBuilder().and(JPAExpressions.selectOne().from(qApplicationEntity)
+                    .where(new BooleanBuilder()
+                            .and(qConfigEntity.applicationCode.eq(qApplicationEntity.code))
+                            .and(qApplicationEntity.system.code.in(systemCodes)))
+                    .exists());
+
+            if (systemCodes.contains(new CommonSystemResponse().getCode())) {
+                exists.or(qConfigEntity.applicationCode.isNull());
+            }
+
+            query.where(exists);
+        }
+
+        query.orderBy(qApplicationEntity.system.code.asc().nullsFirst(), qConfigEntity.code.asc())
+                .limit(criteria.getPageSize())
+                .offset(criteria.getOffset());
+        long total = query.fetchCount();
+
+        return new PageImpl<>(query.fetch(), criteria, total)
+                .map(e -> {
+                            ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
+                            return ConfigMapper.toConfigResponse(
+                                    e,
+                                    configValueService.getValue(getAppName(application), e.getCode()),
+                                    application,
+                                    GroupMapper.toGroupForm(groupRepository.findOneGroupByConfigCodeStarts(e.getCode()))
+                            );
+                        }
+                );
     }
 
     @Override
@@ -141,51 +192,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         configValueService.deleteValue(getAppName(application), code);
     }
 
-    private Predicate toPredicate(ConfigCriteria criteria) {
-        QConfigEntity qConfigEntity = QConfigEntity.configEntity;
-        QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
-        QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
-        QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
-
-        BooleanBuilder builder = new BooleanBuilder();
-
-        List<Integer> groupIds = criteria.getGroupIds();
-        if (groupIds != null && !groupIds.isEmpty()) {
-            BooleanExpression exists = JPAExpressions.selectOne().from(qGroupCodeEntity).from(qGroupEntity)
-                    .where(new BooleanBuilder()
-                            .and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
-                            .and(qGroupEntity.id.in(groupIds))
-                            .and(qConfigEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code)))
-                    .exists();
-            builder.and(exists);
-        }
-
-        if (criteria.getCode() != null) {
-            builder.and(qConfigEntity.code.containsIgnoreCase(criteria.getCode()));
-        }
-
-        if (criteria.getName() != null) {
-            builder.and(qConfigEntity.name.containsIgnoreCase(criteria.getName()));
-        }
-
-        List<String> systemCodes = criteria.getSystemCodes();
-        if (systemCodes != null && !systemCodes.isEmpty()) {
-            BooleanBuilder exists = new BooleanBuilder().and(JPAExpressions.selectOne().from(qApplicationEntity)
-                    .where(new BooleanBuilder()
-                            .and(qConfigEntity.applicationCode.eq(qApplicationEntity.code))
-                            .and(qApplicationEntity.system.code.in(systemCodes)))
-                    .exists());
-
-            if (systemCodes.contains(new CommonSystemResponse().getCode())) {
-                exists.or(qConfigEntity.applicationCode.isNull());
-            }
-
-            builder.and(exists);
-        }
-
-        // TODO отсортировать по systemCode
-        return builder.getValue();
-    }
 
     private String getAppName(ApplicationResponse application) {
         return (application != null && application.getCode() != null) ? application.getName() : defaultAppName;
