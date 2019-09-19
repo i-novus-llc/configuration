@@ -1,4 +1,4 @@
-package ru.i_novus.config.web.cache_operation;
+package ru.i_novus.config.web.cache;
 
 import net.n2oapp.criteria.dataset.DataSet;
 import net.n2oapp.framework.api.metadata.compile.BindProcessor;
