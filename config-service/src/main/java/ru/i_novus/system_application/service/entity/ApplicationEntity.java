@@ -9,7 +9,7 @@ import javax.persistence.*;
  */
 @Data
 @Entity
-@Table(name = "application", schema = "configuration")
+@Table(name = "application", schema = "rdm")
 public class ApplicationEntity {
 
     /**

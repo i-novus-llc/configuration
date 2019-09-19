@@ -10,7 +10,7 @@ import java.util.List;
  */
 @Data
 @Entity
-@Table(name = "system", schema = "configuration")
+@Table(name = "system", schema = "rdm")
 public class SystemEntity {
 
     /**

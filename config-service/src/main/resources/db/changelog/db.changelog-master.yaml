@@ -1,12 +1,14 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/V1_create_schema.yaml
+      file: db/changelog/V1_create_schema_configuration.yaml
   - include:
       file: db/changelog/V2_create_config_group.yaml
   - include:
       file: db/changelog/V3_create_config.yaml
   - include:
       file: db/changelog/V4_create_config_group_code.yaml
+  - include:
+      file: db/changelog/V10_create_schema_rdm.yaml
   - include:
       file: db/changelog/V11_create_system.yaml
   - include:
