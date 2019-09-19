@@ -128,9 +128,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                 .map(e -> {
                             ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
                             return ConfigMapper.toConfigResponse(
-                                    e,
-                                    getValue(getAppName(application), e.getCode()),
-                                    application,
+                                    e, application,
                                     GroupMapper.toGroupForm(groupRepository.findOneGroupByConfigCodeStarts(e.getCode()))
                             );
                         }
@@ -142,11 +140,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
         ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
-
-        String value = getValue(getAppName(application), configEntity.getCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
 
-        return ConfigMapper.toConfigResponse(configEntity, value, application, GroupMapper.toGroupForm(groupEntity));
+        return ConfigMapper.toConfigResponse(configEntity, application, GroupMapper.toGroupForm(groupEntity));
     }
 
     @Override
@@ -173,7 +169,13 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             String oldAppName = getAppName(applicationRestService.getApplication(configEntity.getApplicationCode()));
             String newAppName = getAppName(applicationRestService.getApplication(configRequest.getApplicationCode()));
 
-            String value = getValue(oldAppName, code);
+
+            String value;
+            try {
+                value = configValueService.getValue(oldAppName, code);
+            } catch (Exception e) {
+                value = configValueService.getValue(defaultAppName, code);
+            }
             configValueService.saveValue(newAppName, code, value);
             configValueService.deleteValue(oldAppName, code);
         }
@@ -198,15 +200,5 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     private ApplicationResponse getApplicationResponse(String code) {
         return code == null ? ApplicationMapper.getCommonSystemApplication() : applicationRestService.getApplication(code);
-    }
-
-    private String getValue(String appName, String code) {
-        String value;
-        try {
-            value = configValueService.getValue(appName, code);
-        } catch (Exception e) {
-            value = configValueService.getValue(defaultAppName, code);
-        }
-        return value;
     }
 }

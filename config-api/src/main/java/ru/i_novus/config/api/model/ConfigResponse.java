@@ -24,9 +24,6 @@ public class ConfigResponse {
     @ApiModelProperty("Тип значения настройки")
     private ValueTypeEnum valueType;
 
-    @ApiModelProperty("Значение настройки")
-    private String value;
-
     @ApiModelProperty("Приложение")
     private ApplicationResponse application;
 

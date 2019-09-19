@@ -18,14 +18,12 @@ public class ConfigMapper {
         return configEntity;
     }
 
-    public static ConfigResponse toConfigResponse(ConfigEntity configEntity, String value,
-                                                  ApplicationResponse application, GroupForm group) {
+    public static ConfigResponse toConfigResponse(ConfigEntity configEntity, ApplicationResponse application, GroupForm group) {
         ConfigResponse configResponse = new ConfigResponse();
         configResponse.setCode(configEntity.getCode());
         configResponse.setName(configEntity.getName());
         configResponse.setDescription(configEntity.getDescription());
         configResponse.setValueType(configEntity.getValueType());
-        configResponse.setValue(value);
         configResponse.setApplication(application);
         configResponse.setGroup(group);
         return configResponse;
