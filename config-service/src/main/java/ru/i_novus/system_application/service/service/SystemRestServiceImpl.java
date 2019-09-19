@@ -1,13 +1,10 @@
 package ru.i_novus.system_application.service.service;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.i_novus.system_application.api.criteria.SystemCriteria;
 import ru.i_novus.system_application.api.model.SystemResponse;
@@ -19,6 +16,8 @@ import ru.i_novus.system_application.service.entity.SystemEntity;
 import ru.i_novus.system_application.service.mapper.SystemMapper;
 import ru.i_novus.system_application.service.repository.SystemRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +30,9 @@ public class SystemRestServiceImpl implements SystemRestService {
 
     private SystemRepository systemRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Autowired
     public void setSystemRepository(SystemRepository systemRepository) {
         this.systemRepository = systemRepository;
@@ -39,20 +41,44 @@ public class SystemRestServiceImpl implements SystemRestService {
 
     @Override
     public Page<SystemResponse> getAllSystem(SystemCriteria criteria) {
-        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "code"));
+        QSystemEntity qSystemEntity = QSystemEntity.systemEntity;
+        QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
 
-        Page<SystemResponse> systemResponsePage = systemRepository.findAll(toPredicate(criteria), criteria)
+        JPAQuery<SystemEntity> query = new JPAQuery<>(entityManager);
+        query.distinct().from(qSystemEntity).leftJoin(qApplicationEntity).on(qSystemEntity.code.eq(qApplicationEntity.system.code));
+
+        // TODO - фильтрует системы, но почему-то не фильтрует приложения
+        if (criteria.getAppCode() != null) {
+            query = new JPAQuery<>(entityManager);
+            query.from(qSystemEntity).innerJoin(qApplicationEntity)
+                    .on(qSystemEntity.code.eq(qApplicationEntity.system.code))
+                    .on(qApplicationEntity.code.containsIgnoreCase(criteria.getAppCode()));
+        }
+
+        List<String> systemCodes = criteria.getCodes();
+        if (systemCodes != null && !systemCodes.isEmpty()) {
+            query.where(qSystemEntity.code.in(systemCodes));
+        }
+        query.orderBy(qSystemEntity.code.asc())
+                .limit(criteria.getPageSize())
+                .offset(criteria.getOffset());
+        long total = query.fetchCount();
+
+        Page<SystemResponse> systemResponsePage = new PageImpl<>(query.fetch(), criteria, total)
                 .map(SystemMapper::toSystemResponse);
         ArrayList<SystemResponse> systemResponses = new ArrayList<>(systemResponsePage.getContent());
 
         long totalElements = systemResponsePage.getTotalElements();
         CommonSystemResponse commonSystemResponse = new CommonSystemResponse();
 
-        if ((criteria.getPageNumber() == 0 && criteria.getAppCode() == null &&
+        if ((criteria.getAppCode() == null &&
                 (criteria.getCodes() == null || criteria.getCodes().isEmpty())) ||
                 (criteria.getCodes() != null && criteria.getCodes().contains(commonSystemResponse.getCode()))
         ) {
-            systemResponses.add(0, commonSystemResponse);
+            if (criteria.getPageNumber() == 0) {
+                systemResponses.add(0, commonSystemResponse);
+            }
+            // TODO - не правильно отображается число записей на второй странице
             totalElements++;
         }
 
@@ -63,27 +89,5 @@ public class SystemRestServiceImpl implements SystemRestService {
     public SystemResponse getSystem(String code) {
         SystemEntity systemEntity = systemRepository.findByCode(code);
         return systemEntity != null ? SystemMapper.toSystemResponse(systemEntity) : null;
-    }
-
-    private Predicate toPredicate(SystemCriteria criteria) {
-        QSystemEntity qSystemEntity = QSystemEntity.systemEntity;
-        QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
-
-        BooleanBuilder builder = new BooleanBuilder();
-
-        if (criteria.getAppCode() != null) {
-            builder.and(JPAExpressions.selectFrom(qApplicationEntity)
-                    .where(qSystemEntity.code.eq(qApplicationEntity.system.code)
-                            .and(qApplicationEntity.code.containsIgnoreCase(criteria.getAppCode())))
-                    .exists()
-            );
-        }
-
-        List<String> systemCodes = criteria.getCodes();
-        if (systemCodes != null && !systemCodes.isEmpty()) {
-            builder.and(qSystemEntity.code.in(systemCodes));
-        }
-
-        return builder.getValue();
     }
 }

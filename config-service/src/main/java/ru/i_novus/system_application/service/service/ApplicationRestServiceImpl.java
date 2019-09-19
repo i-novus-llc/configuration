@@ -86,9 +86,10 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
         Map<String, String> applicationConfigKeyValues =
                 configValueService.getKeyValueListByApplicationName(appName);
-        Map<String, String> commonApplicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationName(defaultAppName);
-
+        Map<String, String> commonApplicationConfigKeyValues = new HashMap<>();
+        if (appName != defaultAppName) {
+            configValueService.getKeyValueListByApplicationName(defaultAppName);
+        }
 
         for (Object[] obj : objectList) {
             GroupForm groupForm = GroupMapper.toGroupForm((GroupEntity) obj[0]);
