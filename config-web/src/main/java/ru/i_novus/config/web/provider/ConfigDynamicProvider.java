@@ -47,7 +47,6 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     @Override
     public List<? extends SourceMetadata> read(String context) {
-        String appCode = "lkb-rdm-frontend";
 
         N2oStandardPage page = new N2oStandardPage();
         page.setObjectId("groupedConfig");
@@ -61,7 +60,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         layout.setRegions(new N2oRegion[] {region});
         page.setRegions(layout);
 
-        List<GroupedConfigRequest> groupedConfigRequestList = applicationRestService.getGroupedApplicationConfig(appCode);
+        List<GroupedConfigRequest> groupedConfigRequestList = applicationRestService.getGroupedApplicationConfig(context);
 
         ArrayList<NamespaceUriAware> lineFieldSetList = new ArrayList<>();
         for (GroupedConfigRequest groupedConfigRequest : groupedConfigRequestList) {
@@ -98,7 +97,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         // Передача appCode
         N2oInputText inputText = new N2oInputText();
         inputText.setId("appCode");
-        inputText.setDefaultValue(appCode);
+        inputText.setDefaultValue(context);
         inputText.setVisible(false);
         lineFieldSetList.add(inputText);
         form.setItems(lineFieldSetList.toArray(NamespaceUriAware[]::new));
