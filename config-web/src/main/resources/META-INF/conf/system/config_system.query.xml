@@ -34,7 +34,7 @@
 
         <field id="children" domain="object[]">
             <select mapping="[applications]"
-                    normalize="T(ru.i_novus.config.web.ApplicationSystemUtil).get(#this)"/>
+                    normalize="T(ru.i_novus.config.web.ApplicationSystemUtil).normalize(#this)"/>
         </field>
 
         <field id="appCode" domain="string">
