@@ -45,8 +45,8 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     private ConfigRepository configRepository;
 
-    @Value("${config.application.default.name}")
-    private String defaultAppName;
+    @Value("${config.application.default.code}")
+    private String defaultAppCode;
 
     @Autowired
     public void setApplicationRepository(ApplicationRepository applicationRepository) {
@@ -82,14 +82,11 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     public List<GroupedConfigRequest> getGroupedApplicationConfig(String appCode) {
         List<Object[]> objectList = configRepository.findByAppCode(appCode);
         List<GroupedConfigRequest> result = new ArrayList<>();
-        String appName = getApplication(appCode).getName();
 
         Map<String, String> applicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationName(appName);
-        Map<String, String> commonApplicationConfigKeyValues = new HashMap<>();
-        if (appName != defaultAppName) {
-            configValueService.getKeyValueListByApplicationName(defaultAppName);
-        }
+                configValueService.getKeyValueListByApplicationCode(appCode);
+        Map<String, String> commonApplicationConfigKeyValues =
+            configValueService.getKeyValueListByApplicationCode(defaultAppCode);
 
         for (Object[] obj : objectList) {
             GroupForm groupForm = GroupMapper.toGroupForm((GroupEntity) obj[0]);
@@ -114,30 +111,29 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     }
 
     @Override
-    public void saveApplicationConfig(Map<String, Object> data) {
-        String appName = getApplication((String) data.get("appCode")).getName();
+    public void saveApplicationConfig(String code, Map<String, Object> data) {
         Map<String, String> updatedKeyValues = new HashMap<>();
 
         Map<String, String> applicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationName(appName);
+                configValueService.getKeyValueListByApplicationCode(code);
         Map<String, String> commonApplicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationName(defaultAppName);
+                configValueService.getKeyValueListByApplicationCode(defaultAppCode);
 
         for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
-            String code = ((String) entry.getKey()).replace("*", ".");
+            String key = ((String) entry.getKey()).replace("*", ".");
             String value = String.valueOf(entry.getValue());
-            String applicationConfigValue = applicationConfigKeyValues.get(code);
-            String commonApplicationValue = commonApplicationConfigKeyValues.get(code);
+            String applicationConfigValue = applicationConfigKeyValues.get(key);
+            String commonApplicationValue = commonApplicationConfigKeyValues.get(key);
 
             if ((applicationConfigValue == null && commonApplicationValue == null) ||
                     (applicationConfigValue != null && !applicationConfigValue.equals(value)) ||
                     (applicationConfigValue == null && !commonApplicationValue.equals(value))) {
-                updatedKeyValues.put(code, value);
+                updatedKeyValues.put(key, value);
             }
         }
 
         if (!updatedKeyValues.isEmpty()) {
-            configValueService.saveAllValues(appName, updatedKeyValues);
+            configValueService.saveAllValues(code, updatedKeyValues);
         }
     }
 

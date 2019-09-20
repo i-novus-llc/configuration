@@ -49,8 +49,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Value("${config.application.default.name}")
-    private String defaultAppName;
+    @Value("${config.application.default.code}")
+    private String defaultAppCode;
 
     @Autowired
     public void setConfigValueService(ConfigValueService configValueService) {
@@ -166,18 +166,14 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         if (configEntity.getApplicationCode() != null &&
                 !configEntity.getApplicationCode().equals(configRequest.getApplicationCode())) {
-            String oldAppName = getAppName(applicationRestService.getApplication(configEntity.getApplicationCode()));
-            String newAppName = getAppName(applicationRestService.getApplication(configRequest.getApplicationCode()));
-
-
             String value;
             try {
-                value = configValueService.getValue(oldAppName, code);
+                value = configValueService.getValue(configEntity.getApplicationCode(), code);
             } catch (Exception e) {
-                value = configValueService.getValue(defaultAppName, code);
+                value = configValueService.getValue(defaultAppCode, code);
             }
-            configValueService.saveValue(newAppName, code, value);
-            configValueService.deleteValue(oldAppName, code);
+            configValueService.saveValue(configRequest.getApplicationCode(), code, value);
+            configValueService.deleteValue(configEntity.getApplicationCode(), code);
         }
 
         configEntity.setApplicationCode(configRequest.getApplicationCode());
@@ -187,15 +183,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     public void deleteConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
-        ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
 
         configRepository.deleteByCode(code);
-        configValueService.deleteValue(getAppName(application), code);
-    }
-
-
-    private String getAppName(ApplicationResponse application) {
-        return (application != null && application.getCode() != null) ? application.getName() : defaultAppName;
+        configValueService.deleteValue(configEntity.getApplicationCode(), code);
     }
 
     private ApplicationResponse getApplicationResponse(String code) {

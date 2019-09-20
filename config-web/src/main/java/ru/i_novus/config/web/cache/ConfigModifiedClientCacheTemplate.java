@@ -13,7 +13,7 @@ public class ConfigModifiedClientCacheTemplate extends ModifiedClientCacheTempla
 
     @Override
     protected long getLastModifiedFromServer(HttpServletRequest req) {
-        return !req.getPathInfo().endsWith("config_system_system_table_row") ?
+        return !req.getPathInfo().matches("/systems/.+/update") ?
                 super.getLastModifiedFromServer(req):
                 -1;
     }
