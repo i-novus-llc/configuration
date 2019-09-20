@@ -108,16 +108,16 @@ public class SystemRestServiceImplTest {
         criteria.setPageSize(2);
         List<SystemResponse> systemResponses = systemRestService.getAllSystem(criteria).getContent();
 
-        assertEquals(3, systemResponses.size());
+        assertEquals(2, systemResponses.size());
         assertEquals(new CommonSystemResponse().getCode(), systemResponses.get(0).getCode());
         systemAssertEquals(systemRequest, systemResponses.get(1));
-        systemAssertEquals(systemRequest2, systemResponses.get(2));
 
         criteria.setPageNumber(1);
         systemResponses = systemRestService.getAllSystem(criteria).getContent();
 
-        assertEquals(1, systemResponses.size());
-        systemAssertEquals(systemRequest3, systemResponses.get(0));
+        assertEquals(2, systemResponses.size());
+        systemAssertEquals(systemRequest2, systemResponses.get(0));
+        systemAssertEquals(systemRequest3, systemResponses.get(1));
     }
 
     /**

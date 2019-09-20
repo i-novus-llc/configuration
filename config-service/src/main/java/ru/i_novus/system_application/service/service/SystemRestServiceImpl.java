@@ -59,9 +59,20 @@ public class SystemRestServiceImpl implements SystemRestService {
         if (systemCodes != null && !systemCodes.isEmpty()) {
             query.where(qSystemEntity.code.in(systemCodes));
         }
-        query.orderBy(qSystemEntity.code.asc())
-                .limit(criteria.getPageSize())
-                .offset(criteria.getOffset());
+        query.orderBy(qSystemEntity.code.asc());
+
+        // настройка пагинации в зависимости от наличия общесистемных
+        if (criteria.getAppCode() == null && (criteria.getCodes() == null || criteria.getCodes().isEmpty() ||
+                criteria.getCodes().contains(new CommonSystemResponse().getCode()))) {
+            if (criteria.getPageNumber() == 0) {
+                query.limit(criteria.getPageSize() - 1);
+            } else {
+                query.offset(criteria.getOffset() - 1);
+            }
+        } else {
+            query.limit(criteria.getPageSize())
+                    .offset(criteria.getOffset());
+        }
         long total = query.fetchCount();
 
         Page<SystemResponse> systemResponsePage = new PageImpl<>(query.fetch(), criteria, total)
@@ -78,7 +89,6 @@ public class SystemRestServiceImpl implements SystemRestService {
             if (criteria.getPageNumber() == 0) {
                 systemResponses.add(0, commonSystemResponse);
             }
-            // TODO - не правильно отображается число записей на второй странице
             totalElements++;
         }
 
