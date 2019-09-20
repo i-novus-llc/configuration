@@ -4,7 +4,7 @@
         <page page-id="config_system" label="Настройка приложения" route="/"/>
         <sub-menu label="Администрирование">
             <page page-id="config" label="Список настроек"/>
-            <page page-id="config_group" label="Группы настроек" route="/group"/>
+            <page page-id="config_group" label="Группы настроек" route="/groups"/>
         </sub-menu>
     </nav>
 </header>

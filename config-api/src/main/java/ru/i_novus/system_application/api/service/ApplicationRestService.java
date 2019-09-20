@@ -41,7 +41,7 @@ public interface ApplicationRestService {
     public ApplicationResponse getApplication(@PathParam("code") @ApiParam(name = "Код приложения") String code);
 
     @GET
-    @Path("/{code}/config")
+    @Path("/{code}/configs")
     @ApiOperation(value = "Получение сгруппированных настроек приложения", response = GroupedConfigRequest.class, responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение сгрупированных настроек приложения"),
@@ -50,7 +50,7 @@ public interface ApplicationRestService {
     List<GroupedConfigRequest> getGroupedApplicationConfig(@PathParam("code") @ApiParam(name = "Код приложения") String code);
 
     @POST
-    @Path("/{code}/config")
+    @Path("/{code}/configs")
     @ApiOperation(value = "Изменение значений настроек приложения")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Изменение значений настроек приложения успешно выполнено"),

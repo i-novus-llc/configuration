@@ -3,7 +3,7 @@
     <operations>
         <operation id="save">
             <invocation>
-                <rest method="POST">${config.service.url}/auth/applications/{appCode}/config</rest>
+                <rest method="POST">${config.service.url}/auth/applications/{appCode}/configs</rest>
             </invocation>
             <in-parameters>
                 <param id="appCode" mapping="['appCode']"/>

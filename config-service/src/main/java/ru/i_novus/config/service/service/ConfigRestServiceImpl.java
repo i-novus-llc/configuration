@@ -49,7 +49,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Value("${config.application.default.code}")
+    @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
 
     @Autowired

@@ -7,4 +7,5 @@ spring:
       port: 8500
       config:
         prefix: config
+        defaultContext: application
         enabled: ${config.server.enable}

@@ -45,7 +45,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     private ConfigRepository configRepository;
 
-    @Value("${config.application.default.code}")
+    @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
 
     @Autowired
@@ -120,7 +120,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
                 configValueService.getKeyValueListByApplicationCode(defaultAppCode);
 
         for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
-            String key = ((String) entry.getKey()).replace("*", ".");
+            String key = ((String) entry.getKey()).replace("_", ".");
             String value = String.valueOf(entry.getValue());
             String applicationConfigValue = applicationConfigKeyValues.get(key);
             String commonApplicationValue = commonApplicationConfigKeyValues.get(key);
