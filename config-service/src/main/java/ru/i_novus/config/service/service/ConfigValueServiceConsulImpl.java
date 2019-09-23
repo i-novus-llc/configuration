@@ -28,7 +28,7 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
     }
 
     @Override
-    public Map<String, String> getKeyValueListByApplicationCode(String appCode) {
+    public Map<String, String> getKeyValueList(String appCode) {
         List<Map> raw = restTemplate.getForObject(getFullUrl(appCode, "") + "?recurse=true", List.class);
 
         Map<String, String> keyValues = new HashMap<>();

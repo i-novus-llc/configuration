@@ -47,11 +47,16 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     @Override
     public List<? extends SourceMetadata> read(String context) {
-        String appName = applicationRestService.getApplication(context).getName();
-
         N2oStandardPage page = new N2oStandardPage();
         page.setObjectId("groupedConfig");
-        page.setName(appName + " (" + context + ")");
+
+        if (!context.equals("common-system")) {
+            String appName = applicationRestService.getApplication(context).getName();
+            page.setName(appName + " (" + context + ")");
+        } else {
+            page.setName("Общесистемные");
+        }
+
         N2oForm form = new N2oForm();
         form.setId("groupedConfigForm");
 
@@ -131,7 +136,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
     }
 
     private void fillElement(N2oStandardField field, ConfigRequest config) {
-        field.setId("data." + config.getCode().replace(".", "_"));
+        field.setId("data." + config.getCode().replace(".", "@"));
         field.setLabel(config.getName());
         field.setHelp(config.getDescription());
         field.setDescription(config.getCode());

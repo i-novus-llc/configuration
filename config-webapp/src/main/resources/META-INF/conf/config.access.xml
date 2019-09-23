@@ -3,6 +3,7 @@
         <object-access object-id="config" operations="*"/>
         <object-access object-id="config_group" operations="*"/>
         <object-access object-id="config_application" operations="*"/>
+        <object-access object-id="config_system" operations="*"/>
         <object-access object-id="groupedConfig" operations="*"/>
     </permit-all>
 </access>

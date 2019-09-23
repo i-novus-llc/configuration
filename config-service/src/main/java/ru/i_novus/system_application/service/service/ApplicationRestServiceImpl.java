@@ -22,15 +22,13 @@ import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
+import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.ApplicationEntity;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 import ru.i_novus.system_application.service.repository.ApplicationRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Реализация REST сервиса для получения приложений
@@ -80,20 +78,35 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public List<GroupedConfigRequest> getGroupedApplicationConfig(String appCode) {
+        if (appCode.equals(new CommonSystemResponse().getCode()))
+            appCode = null;
+
         List<Object[]> objectList = configRepository.findByAppCode(appCode);
         List<GroupedConfigRequest> result = new ArrayList<>();
 
-        Map<String, String> applicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationCode(appCode);
-        Map<String, String> commonApplicationConfigKeyValues =
-            configValueService.getKeyValueListByApplicationCode(defaultAppCode);
+        Map<String, String> commonApplicationConfigKeyValues = configValueService.getKeyValueList(defaultAppCode);
+
+        Map<String, String> applicationConfigKeyValues = null;
+        boolean applicationConfigsNotExist = false;
+        if (appCode != null) {
+            try {
+                applicationConfigKeyValues = configValueService.getKeyValueList(appCode);
+            } catch (Exception e) {
+                applicationConfigsNotExist = true;
+            }
+        }
 
         for (Object[] obj : objectList) {
             GroupForm groupForm = GroupMapper.toGroupForm((GroupEntity) obj[0]);
             ConfigEntity configEntity = (ConfigEntity) obj[1];
 
-            String value = applicationConfigKeyValues.get(configEntity.getCode());
-            if (value == null) {
+            String value;
+            if (appCode != null && !applicationConfigsNotExist) {
+                value = applicationConfigKeyValues.get(configEntity.getCode());
+                if (value == null) {
+                    value = commonApplicationConfigKeyValues.get(configEntity.getCode());
+                }
+            } else {
                 value = commonApplicationConfigKeyValues.get(configEntity.getCode());
             }
             ConfigRequest configRequest = ConfigMapper.toConfigRequest(configEntity, value);
@@ -114,13 +127,19 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     public void saveApplicationConfig(String code, Map<String, Object> data) {
         Map<String, String> updatedKeyValues = new HashMap<>();
 
-        Map<String, String> applicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationCode(code);
         Map<String, String> commonApplicationConfigKeyValues =
-                configValueService.getKeyValueListByApplicationCode(defaultAppCode);
+                configValueService.getKeyValueList(defaultAppCode);
+        Map<String, String> applicationConfigKeyValues = Collections.EMPTY_MAP;
+        if (!code.equals(new CommonSystemResponse().getCode())) {
+            try {
+                applicationConfigKeyValues = configValueService.getKeyValueList(code);
+            } catch (Exception e) {}
+        } else {
+            code = defaultAppCode;
+        }
 
         for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
-            String key = ((String) entry.getKey()).replace("_", ".");
+            String key = ((String) entry.getKey()).replace("@", ".");
             String value = String.valueOf(entry.getValue());
             String applicationConfigValue = applicationConfigKeyValues.get(key);
             String commonApplicationValue = commonApplicationConfigKeyValues.get(key);
@@ -135,6 +154,11 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         if (!updatedKeyValues.isEmpty()) {
             configValueService.saveAllValues(code, updatedKeyValues);
         }
+    }
+
+    @Override
+    public void deleteApplicationConfig(String code) {
+        configValueService.deleteAllValues(code);
     }
 
     private Predicate toPredicate(ApplicationCriteria criteria) {

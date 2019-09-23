@@ -9,7 +9,7 @@ public interface ConfigValueService {
 
     String getValue(String appCode, String code);
 
-    Map<String, String> getKeyValueListByApplicationCode(String appCode);
+    Map<String, String> getKeyValueList(String appCode);
 
     void saveValue(String appCode, String code, String value);
 

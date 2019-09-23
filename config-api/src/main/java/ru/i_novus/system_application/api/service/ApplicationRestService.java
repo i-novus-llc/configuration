@@ -60,4 +60,13 @@ public interface ApplicationRestService {
     void saveApplicationConfig(@PathParam("code") @ApiParam(name = "Код приложения") String code,
                                @Valid @NotNull @ApiParam(name = "Пары значений (код настройки / значение)", required = true)
                                        Map<String, Object> data);
+
+    @DELETE
+    @Path("/{code}/configs")
+    @ApiOperation(value = "Удаление значений настроек приложения")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Удаление значений настроек приложения успешно выполнено"),
+            @ApiResponse(code = 404, message = "Приложение не найдено")
+    })
+    void deleteApplicationConfig(@PathParam("code") @ApiParam(name = "Код приложения") String code);
 }

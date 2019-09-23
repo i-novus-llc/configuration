@@ -17,13 +17,9 @@
             <column text-field-id="name" label="Наименование"/>
             <column text-field-id="">
                 <toolbar>
-                    <button id="update" label="Изменить" icon="fa fa-pencil" type="icon" model="filter"
-                            visible="{typeof isSystem == 'undefined'}">
-
-                    </button>
                     <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
                             visible="{typeof isSystem == 'undefined'}">
-
+                        <invoke operation-id="delete"/>
                     </button>
                 </toolbar>
             </column>
