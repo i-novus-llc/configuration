@@ -17,6 +17,10 @@
             <select/>
         </field>
 
+        <field id="codeStr" domain="string">
+            <select mapping="[code]" normalize="#this == 'common-system' ? null : #this"/>
+        </field>
+
         <field id="name" domain="string">
             <select/>
             <filters>

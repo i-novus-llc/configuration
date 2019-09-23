@@ -12,19 +12,19 @@ public class GroupedConfigRequestBuilder {
 
     public static List<GroupedConfigRequest> build() {
         ConfigRequest configRequest1 = new ConfigRequest();
-        configRequest1.setCode("data.code1");
+        configRequest1.setCode("test.code1");
         configRequest1.setName("name1");
         configRequest1.setDescription("desc1");
         configRequest1.setValueType(ValueTypeEnum.STRING);
         configRequest1.setValue("text");
         ConfigRequest configRequest2 = new ConfigRequest();
-        configRequest2.setCode("data.code2");
+        configRequest2.setCode("test.code2");
         configRequest2.setName("name2");
         configRequest2.setDescription("desc2");
         configRequest2.setValueType(ValueTypeEnum.NUMBER);
         configRequest2.setValue("123");
         ConfigRequest configRequest3 = new ConfigRequest();
-        configRequest3.setCode("data.code3");
+        configRequest3.setCode("test.code3");
         configRequest3.setName("name3");
         configRequest3.setDescription("desc3");
         configRequest3.setValueType(ValueTypeEnum.BOOLEAN);

@@ -13,7 +13,7 @@
         </filters>
 
         <columns>
-            <column text-field-id="code" label="Код"/>
+            <column text-field-id="codeStr" label="Код"/>
             <column text-field-id="name" label="Наименование"/>
             <column text-field-id="">
                 <toolbar>

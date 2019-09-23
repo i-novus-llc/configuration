@@ -11,6 +11,7 @@ public class ApplicationSystemUtil {
             return null;
         for (Object item : children) {
             ((DataSet)item).put("id", ((DataSet)item).get("code"));
+            ((DataSet)item).put("codeStr", ((DataSet)item).get("code"));
         }
         return children;
     }
