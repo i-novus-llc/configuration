@@ -65,12 +65,11 @@ public class SystemRestServiceImplTest {
      * Проверка, что фильтрация систем по коду приложения работает корректно
      */
     @Test
-    @Ignore
     public void getAllSystemByAppCodeTest() {
-        SystemRequest systemRequest = SystemRequestBuilder.buildSystemRequest1();
+        SystemRequest systemRequest = SystemRequestBuilder.buildSystemRequest2();
 
         SystemCriteria criteria = new SystemCriteria();
-        criteria.setAppCode("app-security");
+        criteria.setAppCode("sec");
         List<SystemResponse> systemResponses = systemRestService.getAllSystem(criteria).getContent();
 
         assertEquals(1, systemResponses.size());

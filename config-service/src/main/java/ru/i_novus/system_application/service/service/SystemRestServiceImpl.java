@@ -50,7 +50,7 @@ public class SystemRestServiceImpl implements SystemRestService {
         // TODO - фильтрует системы, но почему-то не фильтрует приложения
         if (criteria.getAppCode() != null) {
             query = new JPAQuery<>(entityManager);
-            query.from(qSystemEntity).innerJoin(qApplicationEntity)
+            query.distinct().from(qSystemEntity).innerJoin(qApplicationEntity)
                     .on(qSystemEntity.code.eq(qApplicationEntity.system.code))
                     .on(qApplicationEntity.code.containsIgnoreCase(criteria.getAppCode()));
         }
@@ -82,9 +82,9 @@ public class SystemRestServiceImpl implements SystemRestService {
         long totalElements = systemResponsePage.getTotalElements();
         CommonSystemResponse commonSystemResponse = new CommonSystemResponse();
 
-        if ((criteria.getAppCode() == null &&
-                (criteria.getCodes() == null || criteria.getCodes().isEmpty())) ||
-                (criteria.getCodes() != null && criteria.getCodes().contains(commonSystemResponse.getCode()))
+        if (criteria.getAppCode() == null &&
+                ((criteria.getCodes() == null || criteria.getCodes().isEmpty()) ||
+                        (criteria.getCodes() != null && criteria.getCodes().contains(commonSystemResponse.getCode())))
         ) {
             if (criteria.getPageNumber() == 0) {
                 systemResponses.add(0, commonSystemResponse);
