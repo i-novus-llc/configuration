@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
@@ -21,7 +22,6 @@ import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
-import ru.i_novus.system_application.service.CommonSystemResponse;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,6 +55,9 @@ public class ConfigRestServiceImplTest {
 
     @MockBean
     private ConfigValueService configValueService;
+
+    @Value("${config.common.system.code}")
+    private String commonSystemCode;
 
 
     @Before
@@ -151,7 +154,7 @@ public class ConfigRestServiceImplTest {
 
 
         ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setSystemCodes(Arrays.asList("system-security", new CommonSystemResponse().getCode()));
+        criteria.setSystemCodes(Arrays.asList("system-security", commonSystemCode));
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();

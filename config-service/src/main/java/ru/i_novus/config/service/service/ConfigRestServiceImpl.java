@@ -23,7 +23,6 @@ import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
-import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 
@@ -51,6 +50,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
+
+    @Value("${config.common.system.code}")
+    private String commonSystemCode;
 
     @Autowired
     public void setConfigValueService(ConfigValueService configValueService) {
@@ -112,7 +114,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                             .and(qApplicationEntity.system.code.in(systemCodes)))
                     .exists());
 
-            if (systemCodes.contains(new CommonSystemResponse().getCode())) {
+            if (systemCodes.contains(commonSystemCode)) {
                 exists.or(qConfigEntity.applicationCode.isNull());
             }
 

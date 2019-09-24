@@ -7,7 +7,7 @@
             </invocation>
             <in-parameters>
                 <param id="appCode" mapping="['appCode']"/>
-                <param id="data" mapping="['data']" normalize="#data"/>
+                <param id="data" mapping="['data']"/>
             </in-parameters>
         </operation>
     </operations>

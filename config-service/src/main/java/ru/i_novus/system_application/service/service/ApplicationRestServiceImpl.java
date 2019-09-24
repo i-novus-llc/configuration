@@ -22,7 +22,6 @@ import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
-import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.ApplicationEntity;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.mapper.ApplicationMapper;
@@ -45,6 +44,9 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
+
+    @Value("${config.common.system.code}")
+    private String commonSystemCode;
 
     @Autowired
     public void setApplicationRepository(ApplicationRepository applicationRepository) {
@@ -78,7 +80,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public List<GroupedConfigRequest> getGroupedApplicationConfig(String appCode) {
-        if (appCode.equals(new CommonSystemResponse().getCode()))
+        if (appCode.equals(commonSystemCode))
             appCode = null;
 
         List<Object[]> objectList = configRepository.findByAppCode(appCode);
@@ -130,7 +132,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         Map<String, String> commonApplicationConfigKeyValues =
                 configValueService.getKeyValueList(defaultAppCode);
         Map<String, String> applicationConfigKeyValues = Collections.EMPTY_MAP;
-        if (!code.equals(new CommonSystemResponse().getCode())) {
+        if (!code.equals(commonSystemCode)) {
             try {
                 applicationConfigKeyValues = configValueService.getKeyValueList(code);
             } catch (Exception e) {}

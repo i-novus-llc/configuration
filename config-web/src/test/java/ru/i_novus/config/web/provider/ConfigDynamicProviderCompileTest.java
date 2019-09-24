@@ -70,7 +70,6 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
     }
 
     @Test
-    @Ignore
     public void testDynamicPage() {
         Page page = compile("/ru/i_novus/config/web/provider/configDynamicObject.page.xml")
                 .get(new PageContext("configDynamicObject", "/systems"));
@@ -78,7 +77,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(widget, instanceOf(Table.class));
         Table table = (Table) widget;
         assertThat(table.getComponent().getCells().size(), is(2));
-        assertThat(table.getComponent().getCells().get(0).getId(), is("code"));
+        assertThat(table.getComponent().getCells().get(0).getId(), is("codeStr"));
         assertThat(table.getComponent().getCells().get(1).getId(), is("name"));
 
         // динамическая страница

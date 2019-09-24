@@ -2,6 +2,7 @@ package ru.i_novus.system_application.service.service;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +30,9 @@ import java.util.List;
 public class SystemRestServiceImpl implements SystemRestService {
 
     private SystemRepository systemRepository;
+
+    @Value("${config.common.system.code}")
+    private String commonSystemCode;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -63,7 +67,7 @@ public class SystemRestServiceImpl implements SystemRestService {
 
         // настройка пагинации в зависимости от наличия общесистемных
         if (criteria.getAppCode() == null && (criteria.getCodes() == null || criteria.getCodes().isEmpty() ||
-                criteria.getCodes().contains(new CommonSystemResponse().getCode()))) {
+                criteria.getCodes().contains(commonSystemCode))) {
             if (criteria.getPageNumber() == 0) {
                 query.limit(criteria.getPageSize() - 1);
             } else {
@@ -84,7 +88,7 @@ public class SystemRestServiceImpl implements SystemRestService {
 
         if (criteria.getAppCode() == null &&
                 ((criteria.getCodes() == null || criteria.getCodes().isEmpty()) ||
-                        (criteria.getCodes() != null && criteria.getCodes().contains(commonSystemResponse.getCode())))
+                        (criteria.getCodes() != null && criteria.getCodes().contains(commonSystemCode)))
         ) {
             if (criteria.getPageNumber() == 0) {
                 systemResponses.add(0, commonSystemResponse);

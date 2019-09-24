@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -15,7 +16,6 @@ import ru.i_novus.system_application.api.criteria.SystemCriteria;
 import ru.i_novus.system_application.api.model.SystemRequest;
 import ru.i_novus.system_application.api.model.SystemResponse;
 import ru.i_novus.system_application.api.service.SystemRestService;
-import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.service.builders.SystemRequestBuilder;
 
 import java.util.Arrays;
@@ -42,6 +42,9 @@ public class SystemRestServiceImplTest {
     @Autowired
     @Qualifier("systemRestServiceJaxRsProxyClient")
     private SystemRestService systemRestService;
+
+    @Value("${config.common.system.code}")
+    private String commonSystemCode;
 
 
     /**
@@ -107,7 +110,7 @@ public class SystemRestServiceImplTest {
         List<SystemResponse> systemResponses = systemRestService.getAllSystem(criteria).getContent();
 
         assertEquals(2, systemResponses.size());
-        assertEquals(new CommonSystemResponse().getCode(), systemResponses.get(0).getCode());
+        assertEquals(commonSystemCode, systemResponses.get(0).getCode());
         systemAssertEquals(systemRequest, systemResponses.get(1));
 
         criteria.setPageNumber(1);

@@ -4,7 +4,7 @@
 
     <table id="system_table" selected="false" route="/systems">
         <columns>
-            <column text-field-id="code" label="Код"/>
+            <column text-field-id="codeStr" label="Код"/>
             <column text-field-id="name" label="Наименование"/>
         </columns>
         <rows>

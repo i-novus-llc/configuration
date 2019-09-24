@@ -19,6 +19,7 @@ import net.n2oapp.framework.api.metadata.global.view.widget.toolbar.N2oToolbar;
 import net.n2oapp.framework.api.metadata.global.view.widget.toolbar.ToolbarItem;
 import net.n2oapp.framework.api.register.DynamicMetadataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.i_novus.config.api.model.ConfigRequest;
 import ru.i_novus.config.api.model.GroupedConfigRequest;
@@ -33,6 +34,10 @@ import java.util.List;
 public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     public static final String CONFIG_DYNAMIC = "configDynamic";
+
+    @Value("${config.common.system.code}")
+    private String commonSystemCode;
+
     private ApplicationRestService applicationRestService;
 
     @Autowired
@@ -50,7 +55,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         N2oStandardPage page = new N2oStandardPage();
         page.setObjectId("groupedConfig");
 
-        if (!context.equals("common-system")) {
+        if (!context.equals(commonSystemCode)) {
             String appName = applicationRestService.getApplication(context).getName();
             page.setName(appName + " (" + context + ")");
         } else {
