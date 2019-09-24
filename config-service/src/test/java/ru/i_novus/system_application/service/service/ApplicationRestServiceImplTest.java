@@ -5,17 +5,15 @@ import net.n2oapp.platform.test.autoconfigure.DefinePort;
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.config.service.service.ConfigValueServiceConsulImpl;
 import ru.i_novus.config.service.service.MockedConfigValueService;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
@@ -27,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -52,7 +48,7 @@ public class ApplicationRestServiceImplTest {
     @Qualifier("applicationRestServiceJaxRsProxyClient")
     private ApplicationRestService applicationRestService;
 
-    @Mock
+    @MockBean
     private ConfigValueService configValueService;
 
     @Value("${spring.cloud.consul.config.defaultContext}")

@@ -1,7 +1,7 @@
 package ru.i_novus.system_application.service.mapper;
 
-import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
+import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
 import ru.i_novus.system_application.api.model.SimpleSystemResponse;
 import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.ApplicationEntity;
