@@ -15,5 +15,5 @@ public class ApplicationResponse {
     private String name;
 
     @ApiModelProperty("Прикладная система")
-    private SystemRequest system;
+    private SimpleSystemResponse system;
 }

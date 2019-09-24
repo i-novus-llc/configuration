@@ -9,15 +9,15 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.GroupForm;
-import ru.i_novus.config.api.model.GroupedConfigRequest;
+import ru.i_novus.config.api.model.GroupedApplicationConfig;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.ConfigEntity;
 import ru.i_novus.config.service.entity.GroupEntity;
 import ru.i_novus.config.service.mapper.ConfigMapper;
 import ru.i_novus.config.service.mapper.GroupMapper;
-import ru.i_novus.config.service.mapper.GroupedConfigRequestMapper;
+import ru.i_novus.config.service.mapper.GroupedApplicationConfigMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
@@ -79,12 +79,12 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     }
 
     @Override
-    public List<GroupedConfigRequest> getGroupedApplicationConfig(String appCode) {
+    public List<GroupedApplicationConfig> getGroupedApplicationConfig(String appCode) {
         if (appCode.equals(commonSystemCode))
             appCode = null;
 
         List<Object[]> objectList = configRepository.findByAppCode(appCode);
-        List<GroupedConfigRequest> result = new ArrayList<>();
+        List<GroupedApplicationConfig> result = new ArrayList<>();
 
         Map<String, String> commonApplicationConfigKeyValues = configValueService.getKeyValueList(defaultAppCode);
 
@@ -111,14 +111,14 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
             } else {
                 value = commonApplicationConfigKeyValues.get(configEntity.getCode());
             }
-            ConfigRequest configRequest = ConfigMapper.toConfigRequest(configEntity, value);
+            ConfigForm configForm = ConfigMapper.toConfigForm(configEntity, value);
 
-            GroupedConfigRequest existingGroupedConfigRequest =
+            GroupedApplicationConfig existingGroupedApplicationConfig =
                     result.stream().filter(i -> i.getId().equals(groupForm.getId())).findFirst().orElse(null);
-            if (existingGroupedConfigRequest != null) {
-                existingGroupedConfigRequest.getConfigs().add(configRequest);
+            if (existingGroupedApplicationConfig != null) {
+                existingGroupedApplicationConfig.getConfigs().add(configForm);
             } else {
-                result.add(GroupedConfigRequestMapper.toGroupedConfigRequest(groupForm, Lists.newArrayList(configRequest)));
+                result.add(GroupedApplicationConfigMapper.toGroupedApplicationConfig(groupForm, Lists.newArrayList(configForm)));
             }
         }
 

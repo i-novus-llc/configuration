@@ -1,8 +1,8 @@
 package ru.i_novus.system_application.service.mapper;
 
-import ru.i_novus.system_application.api.model.ApplicationRequest;
+import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
-import ru.i_novus.system_application.api.model.SystemRequest;
+import ru.i_novus.system_application.api.model.SimpleSystemResponse;
 import ru.i_novus.system_application.service.CommonSystemResponse;
 import ru.i_novus.system_application.service.entity.ApplicationEntity;
 
@@ -13,26 +13,26 @@ public class ApplicationMapper {
         applicationResponse.setCode(applicationEntity.getCode());
         applicationResponse.setName(applicationEntity.getName());
         applicationResponse.setSystem(
-                applicationEntity.getSystem() == null ? null : SystemMapper.toSystemRequest(applicationEntity.getSystem())
+                applicationEntity.getSystem() == null ? null : SystemMapper.toSimpleSystemResponse(applicationEntity.getSystem())
         );
         return applicationResponse;
     }
 
-    public static ApplicationRequest toApplicationRequest(ApplicationEntity applicationEntity) {
-        ApplicationRequest applicationRequest = new ApplicationRequest();
-        applicationRequest.setCode(applicationEntity.getCode());
-        applicationRequest.setName(applicationEntity.getName());
-        applicationRequest.setSystemCode(applicationEntity.getSystem().getCode());
-        return applicationRequest;
+    public static SimpleApplicationResponse toSimpleApplicationResponse(ApplicationEntity applicationEntity) {
+        SimpleApplicationResponse simpleApplicationResponse = new SimpleApplicationResponse();
+        simpleApplicationResponse.setCode(applicationEntity.getCode());
+        simpleApplicationResponse.setName(applicationEntity.getName());
+        simpleApplicationResponse.setSystemCode(applicationEntity.getSystem().getCode());
+        return simpleApplicationResponse;
     }
 
     public static ApplicationResponse getCommonSystemApplication() {
         ApplicationResponse applicationResponse = new ApplicationResponse();
         CommonSystemResponse commonSystemResponse = new CommonSystemResponse();
-        SystemRequest systemRequest = new SystemRequest();
-        systemRequest.setCode(commonSystemResponse.getCode());
-        systemRequest.setName(commonSystemResponse.getName());
-        applicationResponse.setSystem(systemRequest);
+        SimpleSystemResponse simpleSystemResponse = new SimpleSystemResponse();
+        simpleSystemResponse.setCode(commonSystemResponse.getCode());
+        simpleSystemResponse.setName(commonSystemResponse.getName());
+        applicationResponse.setSystem(simpleSystemResponse);
         return applicationResponse;
     }
 }

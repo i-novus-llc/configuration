@@ -23,7 +23,6 @@ import net.n2oapp.framework.config.register.dynamic.JavaSourceLoader;
 import net.n2oapp.framework.config.selective.CompileInfo;
 import net.n2oapp.framework.config.test.SourceCompileTestBase;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
@@ -50,7 +49,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         ApplicationResponse applicationResponse = new ApplicationResponse();
         applicationResponse.setName("appName");
         when(applicationRestService.getApplication(any())).thenReturn(applicationResponse);
-        when(applicationRestService.getGroupedApplicationConfig(any())).thenReturn(GroupedConfigRequestBuilder.build());
+        when(applicationRestService.getGroupedApplicationConfig(any())).thenReturn(GroupedApplicationConfigBuilder.build());
 
         super.setUp();
     }
@@ -72,8 +71,8 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
     @Test
     public void testDynamicPage() {
         Page page = compile("/ru/i_novus/config/web/provider/configDynamicObject.page.xml")
-                .get(new PageContext("configDynamicObject", "/systems"));
-        Widget widget = page.getWidgets().get("systems_system_table");
+                .get(new PageContext("configDynamicObject", "/"));
+        Widget widget = page.getWidgets().get("__system_table");
         assertThat(widget, instanceOf(Table.class));
         Table table = (Table) widget;
         assertThat(table.getComponent().getCells().size(), is(2));
@@ -101,7 +100,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         StandardField field = (StandardField) lineFieldSet.getRows().get(0).getCols().get(0).getFields().get(0);
         assertThat(field.getControl(), instanceOf(InputText.class));
         assertThat(field.getControl().getSrc(), is("InputText"));
-        assertThat(field.getId(), is("data.test_code1"));
+        assertThat(field.getId(), is("data.test@code1"));
         assertThat(field.getLabel(), is("name1"));
         assertThat(field.getDescription(), is("test.code1"));
         assertThat(field.getHelp(), is("desc1"));
@@ -110,7 +109,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         field = (StandardField) lineFieldSet.getRows().get(1).getCols().get(0).getFields().get(0);
         assertThat(field.getControl(), instanceOf(InputText.class));
         assertThat(field.getControl().getSrc(), is("InputNumber"));
-        assertThat(field.getId(), is("data.test_code2"));
+        assertThat(field.getId(), is("data.test@code2"));
         assertThat(field.getLabel(), is("name2"));
         assertThat(field.getDescription(), is("test.code2"));
         assertThat(field.getHelp(), is("desc2"));
@@ -124,7 +123,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         field = (StandardField) lineFieldSet.getRows().get(0).getCols().get(0).getFields().get(0);
         assertThat(field.getControl(), instanceOf(Checkbox.class));
         assertThat(((Checkbox)field.getControl()).getLabel(), is("name3"));
-        assertThat(field.getId(), is("data.test_code3"));
+        assertThat(field.getId(), is("data.test@code3"));
         assertThat(field.getDescription(), is("test.code3"));
         assertThat(field.getHelp(), is("desc3"));
         assertThat(dynamicPage.getModels().get(String.format("resolve['%s'].%s", widgetId, field.getId())).getValue(), is(true));
@@ -166,7 +165,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         LinkAction linkAction = (LinkAction) actions.get("cancel");
         assertThat(linkAction.getId(), is("cancel"));
         assertThat(linkAction.getSrc(), is("link"));
-        assertThat(linkAction.getOptions().getPath(), is("/systems"));
+        assertThat(linkAction.getOptions().getPath(), is("/systems/appCode"));
     }
 
     private void assertLineFieldSetProperties(LineFieldSet lineFieldSet) {

@@ -16,12 +16,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.config.service.service.builders.ConfigRequestBuilder;
+import ru.i_novus.config.service.service.builders.ConfigFormBuilder;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -73,17 +73,17 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
-        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
-        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
+        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
+        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
+        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(new ConfigCriteria()).getContent();
 
         assertEquals(3, configResponses.size());
-        configAssertEquals(configRequest3, configResponses.get(0));
-        configAssertEquals(configRequest, configResponses.get(1));
-        configAssertEquals(configRequest2, configResponses.get(2));
+        configAssertEquals(configForm3, configResponses.get(0));
+        configAssertEquals(configForm, configResponses.get(1));
+        configAssertEquals(configForm2, configResponses.get(2));
     }
 
     /**
@@ -91,8 +91,8 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByCodeTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest2();
-        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest3();
+        ConfigForm configForm = ConfigFormBuilder.buildConfigForm2();
+        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm3();
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setCode("sec");
@@ -101,8 +101,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest2, configResponses.get(0));
-        configAssertEquals(configRequest, configResponses.get(1));
+        configAssertEquals(configForm2, configResponses.get(0));
+        configAssertEquals(configForm, configResponses.get(1));
     }
 
     /**
@@ -110,8 +110,8 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByNameTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest2();
-        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest3();
+        ConfigForm configForm = ConfigFormBuilder.buildConfigForm2();
+        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm3();
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setName("name");
@@ -120,8 +120,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest2, configResponses.get(0));
-        configAssertEquals(configRequest, configResponses.get(1));
+        configAssertEquals(configForm2, configResponses.get(0));
+        configAssertEquals(configForm, configResponses.get(1));
     }
 
     /**
@@ -129,8 +129,8 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigByGroupNameTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest2();
-        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest3();
+        ConfigForm configForm = ConfigFormBuilder.buildConfigForm2();
+        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm3();
 
 
         ConfigCriteria criteria = new ConfigCriteria();
@@ -140,8 +140,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest2, configResponses.get(0));
-        configAssertEquals(configRequest, configResponses.get(1));
+        configAssertEquals(configForm2, configResponses.get(0));
+        configAssertEquals(configForm, configResponses.get(1));
     }
 
     /**
@@ -149,8 +149,8 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getAllConfigBySystemNameTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest2();
-        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest3();
+        ConfigForm configForm = ConfigFormBuilder.buildConfigForm2();
+        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm3();
 
 
         ConfigCriteria criteria = new ConfigCriteria();
@@ -160,8 +160,8 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest2, configResponses.get(0));
-        configAssertEquals(configRequest, configResponses.get(1));
+        configAssertEquals(configForm2, configResponses.get(0));
+        configAssertEquals(configForm, configResponses.get(1));
     }
 
     /**
@@ -169,9 +169,9 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void configPaginationTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
-        ConfigRequest configRequest2 = ConfigRequestBuilder.buildConfigRequest2();
-        ConfigRequest configRequest3 = ConfigRequestBuilder.buildConfigRequest3();
+        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
+        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm2();
+        ConfigForm configForm3 = ConfigFormBuilder.buildConfigForm3();
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setPageSize(2);
@@ -180,14 +180,14 @@ public class ConfigRestServiceImplTest {
                 configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(2, configResponses.size());
-        configAssertEquals(configRequest3, configResponses.get(0));
-        configAssertEquals(configRequest, configResponses.get(1));
+        configAssertEquals(configForm3, configResponses.get(0));
+        configAssertEquals(configForm, configResponses.get(1));
 
         criteria.setPageNumber(1);
         configResponses = configRestService.getAllConfig(criteria).getContent();
 
         assertEquals(1, configResponses.size());
-        configAssertEquals(configRequest2, configResponses.get(0));
+        configAssertEquals(configForm2, configResponses.get(0));
     }
 
     /**
@@ -195,12 +195,12 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getConfigTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
-        configRestService.saveConfig(configRequest);
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        configRestService.saveConfig(configForm);
 
-        configAssertEquals(configRequest, configRestService.getConfig(configRequest.getCode()));
+        configAssertEquals(configForm, configRestService.getConfig(configForm.getCode()));
 
-        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configForm.getCode());
     }
 
     /**
@@ -208,14 +208,14 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void saveConfigTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
-        configRestService.saveConfig(configRequest);
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        configRestService.saveConfig(configForm);
 
-        ConfigResponse configResponse = configRestService.getConfig(configRequest.getCode());
+        ConfigResponse configResponse = configRestService.getConfig(configForm.getCode());
 
-        configAssertEquals(configRequest, configResponse);
+        configAssertEquals(configForm, configResponse);
 
-        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configForm.getCode());
     }
 
     /**
@@ -223,9 +223,9 @@ public class ConfigRestServiceImplTest {
      */
     @Test(expected = RestException.class)
     public void saveAlreadyExistsConfigTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildConfigRequest1();
+        ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
 
-        configRestService.saveConfig(configRequest);
+        configRestService.saveConfig(configForm);
     }
 
     /**
@@ -233,21 +233,21 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void updateConfigMetadataTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
-        configRestService.saveConfig(configRequest);
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        configRestService.saveConfig(configForm);
 
-        configRequest.setApplicationCode(null);
-        configRequest.setDescription("test-test");
-        configRequest.setName("test-test");
-        configRequest.setValue("1");
-        configRequest.setValueType(ValueTypeEnum.NUMBER);
+        configForm.setApplicationCode(null);
+        configForm.setDescription("test-test");
+        configForm.setName("test-test");
+        configForm.setValue("1");
+        configForm.setValueType(ValueTypeEnum.NUMBER);
 
-        configRestService.updateConfig(configRequest.getCode(), configRequest);
+        configRestService.updateConfig(configForm.getCode(), configForm);
 
-        when(configValueService.getValue(any(), any())).thenReturn(configRequest.getValue());
-        configAssertEquals(configRequest, configRestService.getConfig(configRequest.getCode()));
+        when(configValueService.getValue(any(), any())).thenReturn(configForm.getValue());
+        configAssertEquals(configForm, configRestService.getConfig(configForm.getCode()));
 
-        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configForm.getCode());
     }
 
     /**
@@ -255,12 +255,12 @@ public class ConfigRestServiceImplTest {
      */
     @Test(expected = RestException.class)
     public void deleteConfigTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
 
-        configRestService.saveConfig(configRequest);
-        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.saveConfig(configForm);
+        configRestService.deleteConfig(configForm.getCode());
 
-        configRestService.getConfig(configRequest.getCode());
+        configRestService.getConfig(configForm.getCode());
     }
 
     /**
@@ -268,16 +268,16 @@ public class ConfigRestServiceImplTest {
      */
     @Test(expected = RestException.class)
     public void deleteAlreadyDeletedConfigTest() {
-        ConfigRequest configRequest = ConfigRequestBuilder.buildTestConfigRequest();
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
 
-        configRestService.deleteConfig(configRequest.getCode());
+        configRestService.deleteConfig(configForm.getCode());
     }
 
-    private void configAssertEquals(ConfigRequest configRequest, ConfigResponse configResponse) {
-        assertEquals(configRequest.getCode(), configResponse.getCode());
-        assertEquals(configRequest.getName(), configResponse.getName());
-        assertEquals(configRequest.getDescription(), configResponse.getDescription());
-        assertEquals(configRequest.getApplicationCode(), configResponse.getApplication().getCode());
-        assertEquals(configRequest.getValueType(), configResponse.getValueType());
+    private void configAssertEquals(ConfigForm configForm, ConfigResponse configResponse) {
+        assertEquals(configForm.getCode(), configResponse.getCode());
+        assertEquals(configForm.getName(), configResponse.getName());
+        assertEquals(configForm.getDescription(), configResponse.getDescription());
+        assertEquals(configForm.getApplicationCode(), configResponse.getApplication().getCode());
+        assertEquals(configForm.getValueType(), configResponse.getValueType());
     }
 }

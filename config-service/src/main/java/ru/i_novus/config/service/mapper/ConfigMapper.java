@@ -1,6 +1,6 @@
 package ru.i_novus.config.service.mapper;
 
-import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.service.entity.ConfigEntity;
@@ -8,13 +8,13 @@ import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 public class ConfigMapper {
     
-    public static ConfigEntity toConfigEntity(ConfigRequest configRequest) {
+    public static ConfigEntity toConfigEntity(ConfigForm configForm) {
         ConfigEntity configEntity = new ConfigEntity();
-        configEntity.setCode(configRequest.getCode());
-        configEntity.setName(configRequest.getName());
-        configEntity.setDescription(configRequest.getDescription());
-        configEntity.setValueType(configRequest.getValueType());
-        configEntity.setApplicationCode(configRequest.getApplicationCode());
+        configEntity.setCode(configForm.getCode());
+        configEntity.setName(configForm.getName());
+        configEntity.setDescription(configForm.getDescription());
+        configEntity.setValueType(configForm.getValueType());
+        configEntity.setApplicationCode(configForm.getApplicationCode());
         return configEntity;
     }
 
@@ -29,15 +29,15 @@ public class ConfigMapper {
         return configResponse;
     }
 
-    public static ConfigRequest toConfigRequest(ConfigEntity configEntity, String value) {
-        ConfigRequest configRequest = new ConfigRequest();
-        configRequest.setCode(configEntity.getCode());
-        configRequest.setName(configEntity.getName());
-        configRequest.setDescription(configEntity.getDescription());
-        configRequest.setValueType(configEntity.getValueType());
-        configRequest.setValue(value);
-        configRequest.setApplicationCode(configEntity.getApplicationCode());
-        return configRequest;
+    public static ConfigForm toConfigForm(ConfigEntity configEntity, String value) {
+        ConfigForm configForm = new ConfigForm();
+        configForm.setCode(configEntity.getCode());
+        configForm.setName(configEntity.getName());
+        configForm.setDescription(configEntity.getDescription());
+        configForm.setValueType(configEntity.getValueType());
+        configForm.setValue(value);
+        configForm.setApplicationCode(configEntity.getApplicationCode());
+        return configForm;
     }
 }
 

@@ -3,7 +3,7 @@ package ru.i_novus.config.api.service;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 
 import javax.validation.Valid;
@@ -45,7 +45,7 @@ public interface ConfigRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос")
     })
     void saveConfig(@Valid @NotNull @ApiParam(name = "Новая настройка", required = true)
-                            ConfigRequest configRequest);
+                            ConfigForm configForm);
 
     @PUT
     @Path("/{code}")
@@ -57,7 +57,7 @@ public interface ConfigRestService {
     })
     void updateConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code,
                       @Valid @NotNull @ApiParam(name = "Обновленная настройка", required = true)
-                              ConfigRequest configRequest);
+                              ConfigForm configForm);
 
     @DELETE
     @Path("/{code}")

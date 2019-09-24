@@ -21,8 +21,8 @@ import net.n2oapp.framework.api.register.DynamicMetadataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.i_novus.config.api.model.ConfigRequest;
-import ru.i_novus.config.api.model.GroupedConfigRequest;
+import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.GroupedApplicationConfig;
 import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 
@@ -71,19 +71,19 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         layout.setRegions(new N2oRegion[] {region});
         page.setRegions(layout);
 
-        List<GroupedConfigRequest> groupedConfigRequestList = applicationRestService.getGroupedApplicationConfig(context);
+        List<GroupedApplicationConfig> groupedApplicationConfigList = applicationRestService.getGroupedApplicationConfig(context);
 
         ArrayList<NamespaceUriAware> lineFieldSetList = new ArrayList<>();
-        for (GroupedConfigRequest groupedConfigRequest : groupedConfigRequestList) {
+        for (GroupedApplicationConfig groupedApplicationConfig : groupedApplicationConfigList) {
             N2oLineFieldSet lineFieldSet = new N2oLineFieldSet();
             lineFieldSet.setCollapsible(true);
-            lineFieldSet.setLabel(groupedConfigRequest.getName());
+            lineFieldSet.setLabel(groupedApplicationConfig.getName());
             lineFieldSet.setFieldLabelLocation(N2oFieldSet.FieldLabelLocation.left);
             lineFieldSet.setFieldLabelAlign(N2oFieldSet.FieldLabelAlign.left);
             lineFieldSet.setLabelWidth("50%");
 
             ArrayList<NamespaceUriAware> n2oFieldList = new ArrayList<>();
-            for (ConfigRequest config : groupedConfigRequest.getConfigs()) {
+            for (ConfigForm config : groupedApplicationConfig.getConfigs()) {
                 if (config.getValueType().equals(ValueTypeEnum.STRING) ||
                         config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                     N2oInputText inputText = new N2oInputText();
@@ -140,7 +140,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         return Arrays.asList(page);
     }
 
-    private void fillElement(N2oStandardField field, ConfigRequest config) {
+    private void fillElement(N2oStandardField field, ConfigForm config) {
         field.setId("data." + config.getCode().replace(".", "@"));
         field.setLabel(config.getName());
         field.setHelp(config.getDescription());

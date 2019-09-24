@@ -22,5 +22,5 @@ public class SystemResponse {
     private String description;
 
     @ApiModelProperty("Приложения системы")
-    private List<ApplicationRequest> applications;
+    private List<SimpleApplicationResponse> applications;
 }

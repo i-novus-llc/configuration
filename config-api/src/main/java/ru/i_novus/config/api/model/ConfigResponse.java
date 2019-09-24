@@ -8,7 +8,7 @@ import ru.i_novus.system_application.api.model.ApplicationResponse;
 import javax.validation.constraints.NotBlank;
 
 @Data
-@ApiModel("Настройка")
+@ApiModel("Выходные данные настройки")
 public class ConfigResponse {
 
     @NotBlank(message = "Отсутствует код настройки")

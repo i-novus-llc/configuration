@@ -8,8 +8,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
-@ApiModel("Группа со всеми ее настройками")
-public class GroupedConfigRequest {
+@ApiModel("Группа со всеми ее настройками, принадлежащими некоторому приложению")
+public class GroupedApplicationConfig {
 
     @ApiModelProperty("Идентификатор группы")
     private Integer id;
@@ -25,5 +25,5 @@ public class GroupedConfigRequest {
     private Integer priority;
 
     @ApiModelProperty("Настройки, принадлежащие группе")
-    private List<ConfigRequest> configs;
+    private List<ConfigForm> configs;
 }

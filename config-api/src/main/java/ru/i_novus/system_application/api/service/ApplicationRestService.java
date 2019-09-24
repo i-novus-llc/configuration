@@ -2,7 +2,7 @@ package ru.i_novus.system_application.api.service;
 
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
-import ru.i_novus.config.api.model.GroupedConfigRequest;
+import ru.i_novus.config.api.model.GroupedApplicationConfig;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 
@@ -42,12 +42,12 @@ public interface ApplicationRestService {
 
     @GET
     @Path("/{code}/configs")
-    @ApiOperation(value = "Получение сгруппированных настроек приложения", response = GroupedConfigRequest.class, responseContainer = "List")
+    @ApiOperation(value = "Получение сгруппированных настроек приложения", response = GroupedApplicationConfig.class, responseContainer = "List")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешное получение сгрупированных настроек приложения"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
-    List<GroupedConfigRequest> getGroupedApplicationConfig(@PathParam("code") @ApiParam(name = "Код приложения") String code);
+    List<GroupedApplicationConfig> getGroupedApplicationConfig(@PathParam("code") @ApiParam(name = "Код приложения") String code);
 
     @POST
     @Path("/{code}/configs")

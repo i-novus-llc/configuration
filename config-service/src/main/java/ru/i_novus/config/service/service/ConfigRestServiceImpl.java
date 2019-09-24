@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigRequest;
+import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
@@ -148,37 +148,37 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     @Override
-    public void saveConfig(@Valid @NotNull ConfigRequest configRequest) {
-        if (configRepository.existsByCode(configRequest.getCode())) {
+    public void saveConfig(@Valid @NotNull ConfigForm configForm) {
+        if (configRepository.existsByCode(configForm.getCode())) {
             throw new UserException("config.code.not.unique");
         }
 
-        ConfigEntity configEntity = ConfigMapper.toConfigEntity(configRequest);
+        ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
         configRepository.save(configEntity);
     }
 
     @Override
     @Transactional
-    public void updateConfig(String code, @Valid @NotNull ConfigRequest configRequest) {
+    public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
-        configEntity.setName(configRequest.getName());
-        configEntity.setValueType(configRequest.getValueType());
-        configEntity.setDescription(configRequest.getDescription());
+        configEntity.setName(configForm.getName());
+        configEntity.setValueType(configForm.getValueType());
+        configEntity.setDescription(configForm.getDescription());
 
         if (configEntity.getApplicationCode() != null &&
-                !configEntity.getApplicationCode().equals(configRequest.getApplicationCode())) {
+                !configEntity.getApplicationCode().equals(configForm.getApplicationCode())) {
             String value;
             try {
                 value = configValueService.getValue(configEntity.getApplicationCode(), code);
             } catch (Exception e) {
                 value = configValueService.getValue(defaultAppCode, code);
             }
-            configValueService.saveValue(configRequest.getApplicationCode(), code, value);
+            configValueService.saveValue(configForm.getApplicationCode(), code, value);
             configValueService.deleteValue(configEntity.getApplicationCode(), code);
         }
 
-        configEntity.setApplicationCode(configRequest.getApplicationCode());
+        configEntity.setApplicationCode(configForm.getApplicationCode());
         configRepository.save(configEntity);
     }
 

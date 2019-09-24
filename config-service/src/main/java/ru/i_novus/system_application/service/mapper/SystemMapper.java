@@ -1,6 +1,6 @@
 package ru.i_novus.system_application.service.mapper;
 
-import ru.i_novus.system_application.api.model.SystemRequest;
+import ru.i_novus.system_application.api.model.SimpleSystemResponse;
 import ru.i_novus.system_application.api.model.SystemResponse;
 import ru.i_novus.system_application.service.entity.SystemEntity;
 
@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 
 public class SystemMapper {
 
-    public static SystemRequest toSystemRequest(SystemEntity systemEntity) {
-        SystemRequest systemRequest = new SystemRequest();
-        systemRequest.setCode(systemEntity.getCode());
-        systemRequest.setName(systemEntity.getName());
-        systemRequest.setDescription(systemEntity.getDescription());
-        return systemRequest;
+    public static SimpleSystemResponse toSimpleSystemResponse(SystemEntity systemEntity) {
+        SimpleSystemResponse simpleSystemResponse = new SimpleSystemResponse();
+        simpleSystemResponse.setCode(systemEntity.getCode());
+        simpleSystemResponse.setName(systemEntity.getName());
+        simpleSystemResponse.setDescription(systemEntity.getDescription());
+        return simpleSystemResponse;
     }
 
     public static SystemResponse toSystemResponse(SystemEntity systemEntity) {
@@ -23,7 +23,7 @@ public class SystemMapper {
         systemResponse.setDescription(systemEntity.getDescription());
         systemResponse.setApplications(
                 systemEntity.getApplications().stream()
-                        .map(ApplicationMapper::toApplicationRequest)
+                        .map(ApplicationMapper::toSimpleApplicationResponse)
                         .collect(Collectors.toList())
         );
         return systemResponse;

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("Простая версия приложения")
-public class ApplicationRequest {
+public class SimpleApplicationResponse {
 
     @ApiModelProperty("Код приложения")
     private String code;

@@ -7,8 +7,8 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-@ApiModel("Входные данные настройки")
-public class ConfigRequest {
+@ApiModel("Настройка")
+public class ConfigForm {
 
     @NotBlank(message = "Отсутствует код настройки")
     @ApiModelProperty("Код настройки")
