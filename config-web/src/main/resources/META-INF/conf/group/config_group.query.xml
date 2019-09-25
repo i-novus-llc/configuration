@@ -3,13 +3,13 @@
        object-id="config_group">
 
     <list count-mapping="[totalElements]" result-mapping="[content]">
-        <rest filters-separator="&amp;">${config.service.url}/group/?{filters}&amp;page={page}&amp;size={limit}</rest>
+        <rest filters-separator="&amp;">${config.service.url}/groups/?{filters}&amp;page={page}&amp;size={limit}</rest>
     </list>
     <unique>
-        <rest>${config.service.url}/group/{id}</rest>
+        <rest>${config.service.url}/groups/{id}</rest>
     </unique>
     <list filters="codeLike" result-mapping="#this">
-        <rest>${config.service.url}/group/byCode/{codeLike}</rest>
+        <rest>${config.service.url}/groups/byCode/{codeLike}</rest>
     </list>
 
     <fields>

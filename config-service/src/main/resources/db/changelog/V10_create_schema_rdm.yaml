@@ -5,4 +5,4 @@ databaseChangeLog:
       dbms: postgresql
       changes:
         - sqlFile:
-            path: db/sql/V1_create_schema.sql
+            path: db/sql/V10_create_schema_rdm.sql

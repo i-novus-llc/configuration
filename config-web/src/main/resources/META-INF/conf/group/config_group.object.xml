@@ -4,7 +4,7 @@
 
         <operation id="create">
             <invocation>
-                <rest method="POST">${config.service.url}/group/</rest>
+                <rest method="POST">${config.service.url}/groups/</rest>
             </invocation>
             <in-parameters>
                 <param id="codes" mapping="['codes']" domain="string[]"/>
@@ -16,7 +16,7 @@
 
         <operation id="update">
             <invocation>
-                <rest method="PUT">${config.service.url}/group/{id}</rest>
+                <rest method="PUT">${config.service.url}/groups/{id}</rest>
             </invocation>
             <in-parameters>
                 <param id="id" mapping="['id']"/>
@@ -29,7 +29,7 @@
 
         <operation id="delete">
             <invocation>
-                <rest method="DELETE">${config.service.url}/group/{id}</rest>
+                <rest method="DELETE">${config.service.url}/groups/{id}</rest>
             </invocation>
             <in-parameters>
                 <param id="id" mapping="['id']"/>

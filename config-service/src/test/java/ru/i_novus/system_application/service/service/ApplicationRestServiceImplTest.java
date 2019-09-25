@@ -7,19 +7,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.ConfigServiceApplication;
+import ru.i_novus.config.api.service.ConfigValueService;
+import ru.i_novus.config.service.service.MockedConfigValueService;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
-import ru.i_novus.system_application.api.model.ApplicationRequest;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
+import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
-import ru.i_novus.system_application.service.service.builders.ApplicationRequestBuilder;
+import ru.i_novus.system_application.service.service.builders.SimpleApplicationResponseBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -42,22 +48,28 @@ public class ApplicationRestServiceImplTest {
     @Qualifier("applicationRestServiceJaxRsProxyClient")
     private ApplicationRestService applicationRestService;
 
+    @MockBean
+    private ConfigValueService configValueService;
+
+    @Value("${spring.cloud.consul.config.defaultContext}")
+    private String defaultAppCode;
+
 
     /**
      * Проверка, что список приложений возвращается корректно
      */
     @Test
     public void getAllApplicationTest() {
-        ApplicationRequest applicationRequest = ApplicationRequestBuilder.buildApplicationRequest1();
-        ApplicationRequest applicationRequest2 = ApplicationRequestBuilder.buildApplicationRequest2();
-        ApplicationRequest applicationRequest3 = ApplicationRequestBuilder.buildApplicationRequest3();
+        SimpleApplicationResponse simpleApplicationResponse = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse1();
+        SimpleApplicationResponse simpleApplicationResponse2 = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse2();
+        SimpleApplicationResponse simpleApplicationResponse3 = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse3();
 
         List<ApplicationResponse> applicationResponses =
                 applicationRestService.getAllApplication(new ApplicationCriteria()).getContent();
         assertEquals(3, applicationResponses.size());
-        applicationAssertEquals(applicationRequest, applicationResponses.get(0));
-        applicationAssertEquals(applicationRequest2, applicationResponses.get(1));
-        applicationAssertEquals(applicationRequest3, applicationResponses.get(2));
+        applicationAssertEquals(simpleApplicationResponse, applicationResponses.get(0));
+        applicationAssertEquals(simpleApplicationResponse2, applicationResponses.get(1));
+        applicationAssertEquals(simpleApplicationResponse3, applicationResponses.get(2));
     }
 
     /**
@@ -65,8 +77,8 @@ public class ApplicationRestServiceImplTest {
      */
     @Test
     public void getAllApplicationBySystemCodeTest() {
-        ApplicationRequest applicationRequest = ApplicationRequestBuilder.buildApplicationRequest2();
-        ApplicationRequest applicationRequest2 = ApplicationRequestBuilder.buildApplicationRequest3();
+        SimpleApplicationResponse simpleApplicationResponse = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse2();
+        SimpleApplicationResponse simpleApplicationResponse2 = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse3();
 
         ApplicationCriteria criteria = new ApplicationCriteria();
         criteria.setSystemCode("system-security");
@@ -74,8 +86,8 @@ public class ApplicationRestServiceImplTest {
                 applicationRestService.getAllApplication(criteria).getContent();
 
         assertEquals(2, applicationResponses.size());
-        applicationAssertEquals(applicationRequest, applicationResponses.get(0));
-        applicationAssertEquals(applicationRequest2, applicationResponses.get(1));
+        applicationAssertEquals(simpleApplicationResponse, applicationResponses.get(0));
+        applicationAssertEquals(simpleApplicationResponse2, applicationResponses.get(1));
     }
 
     /**
@@ -83,9 +95,9 @@ public class ApplicationRestServiceImplTest {
      */
     @Test
     public void getAllApplicationPaginationTest() {
-        ApplicationRequest applicationRequest = ApplicationRequestBuilder.buildApplicationRequest1();
-        ApplicationRequest applicationRequest2 = ApplicationRequestBuilder.buildApplicationRequest2();
-        ApplicationRequest applicationRequest3 = ApplicationRequestBuilder.buildApplicationRequest3();
+        SimpleApplicationResponse simpleApplicationResponse = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse1();
+        SimpleApplicationResponse simpleApplicationResponse2 = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse2();
+        SimpleApplicationResponse simpleApplicationResponse3 = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse3();
 
         ApplicationCriteria criteria = new ApplicationCriteria();
         criteria.setPageSize(2);
@@ -93,14 +105,14 @@ public class ApplicationRestServiceImplTest {
                 applicationRestService.getAllApplication(criteria).getContent();
 
         assertEquals(2, applicationResponses.size());
-        applicationAssertEquals(applicationRequest, applicationResponses.get(0));
-        applicationAssertEquals(applicationRequest2, applicationResponses.get(1));
+        applicationAssertEquals(simpleApplicationResponse, applicationResponses.get(0));
+        applicationAssertEquals(simpleApplicationResponse2, applicationResponses.get(1));
 
         criteria.setPageNumber(1);
         applicationResponses = applicationRestService.getAllApplication(criteria).getContent();
 
         assertEquals(1, applicationResponses.size());
-        applicationAssertEquals(applicationRequest3, applicationResponses.get(0));
+        applicationAssertEquals(simpleApplicationResponse3, applicationResponses.get(0));
     }
 
     /**
@@ -108,16 +120,46 @@ public class ApplicationRestServiceImplTest {
      */
     @Test
     public void getApplicationTest() {
-        ApplicationRequest applicationRequest = ApplicationRequestBuilder.buildApplicationRequest1();
+        SimpleApplicationResponse simpleApplicationResponse = SimpleApplicationResponseBuilder.buildSimpleApplicationResponse1();
         ApplicationResponse applicationResponse =
-                applicationRestService.getApplication(applicationRequest.getCode());
+                applicationRestService.getApplication(simpleApplicationResponse.getCode());
 
-        applicationAssertEquals(applicationRequest, applicationResponse);
+        applicationAssertEquals(simpleApplicationResponse, applicationResponse);
     }
 
-    private void applicationAssertEquals(ApplicationRequest applicationRequest, ApplicationResponse applicationResponse) {
-        assertEquals(applicationRequest.getCode(), applicationResponse.getCode());
-        assertEquals(applicationRequest.getName(), applicationResponse.getName());
-        assertEquals(applicationRequest.getSystemCode(), applicationResponse.getSystem().getCode());
+    /**
+     * Проверка, что в консул сохраняются ожидаемые данные
+     */
+    @Test
+    public void saveApplicationConfigTest() {
+        String appCode = "appCode";
+
+        Map<String, String> dataValue = Map.of(
+                "k1", "v1", "k2", "v2",
+                "k3", "v3", "k4", "v444",
+                "k5", "v555", "k6", "v666"
+        );
+        Map<String, Object> data = Map.of("data", dataValue);
+
+        Map<String, String> commonApplicationConfigKeyValues = Map.of(
+                "k1", "v1", "k2", "v2",
+                "k4", "v4", "k5", "v5"
+        );
+        Map<String, String> applicationConfigKeyValues = Map.of(
+                "k1", "v1", "k3", "v3",
+                "k4", "v4", "k6", "v6"
+        );
+
+        when(configValueService.getKeyValueList(defaultAppCode)).thenReturn(commonApplicationConfigKeyValues);
+        when(configValueService.getKeyValueList(appCode)).thenReturn(applicationConfigKeyValues);
+        configValueService = new MockedConfigValueService();
+
+        applicationRestService.saveApplicationConfig(appCode, data);
+    }
+
+    private void applicationAssertEquals(SimpleApplicationResponse simpleApplicationResponse, ApplicationResponse applicationResponse) {
+        assertEquals(simpleApplicationResponse.getCode(), applicationResponse.getCode());
+        assertEquals(simpleApplicationResponse.getName(), applicationResponse.getName());
+        assertEquals(simpleApplicationResponse.getSystemCode(), applicationResponse.getSystem().getCode());
     }
 }

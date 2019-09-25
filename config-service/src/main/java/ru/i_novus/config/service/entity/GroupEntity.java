@@ -1,21 +1,17 @@
 package ru.i_novus.config.service.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.i_novus.config.api.model.GroupForm;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Сущность Группа настроек
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
 @Table(name = "config_group", schema = "configuration")
 public class  GroupEntity {
@@ -52,24 +48,11 @@ public class  GroupEntity {
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
     private List<GroupCodeEntity> codes = new ArrayList<>();
 
-    public GroupEntity(GroupForm groupForm) {
-        this.name = groupForm.getName();
-        this.description = groupForm.getDescription();
-        this.priority = groupForm.getPriority();
-    }
-
-    public GroupForm toGroupForm() {
-        GroupForm groupForm = new GroupForm();
-        groupForm.setId(this.id);
-        groupForm.setName(this.name);
-        groupForm.setDescription(this.description);
-        groupForm.setPriority(this.priority);
-        groupForm.setCodes(codes.stream().map(GroupCodeEntity::getCode).collect(Collectors.toList()));
-        return groupForm;
-    }
 
     public void setCode(String code) {
-        GroupCodeEntity groupCodeEntity = new GroupCodeEntity(code, this);
+        GroupCodeEntity groupCodeEntity = new GroupCodeEntity();
+        groupCodeEntity.setCode(code);
+        groupCodeEntity.setGroup(this);
         codes.add(groupCodeEntity);
     }
 }

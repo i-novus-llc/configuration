@@ -70,11 +70,8 @@
             </filters>
         </field>
 
-        <field id="valueType.name" domain="string">
-            <select mapping="[valueType]"/>
-        </field>
         <field id="valueType.id" domain="string">
-            <select mapping="[valueTypeCode]"/>
+            <select mapping="[valueType]"/>
         </field>
 
         <field id="description" domain="string">

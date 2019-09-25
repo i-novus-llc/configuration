@@ -3,14 +3,12 @@ package ru.i_novus.config.api.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
-@NoArgsConstructor
 @Data
-@ApiModel("Входные данные настройки")
-public class ConfigRequest {
+@ApiModel("Настройка")
+public class ConfigForm {
 
     @NotBlank(message = "Отсутствует код настройки")
     @ApiModelProperty("Код настройки")
@@ -23,7 +21,7 @@ public class ConfigRequest {
     private String description;
 
     @ApiModelProperty("Тип значения настройки")
-    private String valueType;
+    private ValueTypeEnum valueType;
 
     @ApiModelProperty("Значение настройки")
     private String value;

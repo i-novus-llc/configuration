@@ -1,15 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <header xmlns="http://n2oapp.net/framework/config/schema/header-2.0">
-    <nav welcome-page-id="config">
-        <page page-id="config" label="Настройка приложения"/>
+    <nav welcome-page-id="config_system">
+        <page page-id="config_system" label="Настройка приложения" route="/"/>
         <sub-menu label="Администрирование">
             <page page-id="config" label="Список настроек"/>
-            <page page-id="group" label="Группы настроек" route="/group"/>
+            <page page-id="config_group" label="Группы настроек" route="/groups"/>
         </sub-menu>
     </nav>
-    <extra-menu>
-        <sub-menu label="Пользователь">
-            <page page-id="config" label="Выход"/>
-        </sub-menu>
-    </extra-menu>
 </header>

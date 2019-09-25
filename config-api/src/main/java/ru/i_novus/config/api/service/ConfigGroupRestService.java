@@ -15,7 +15,7 @@ import java.util.List;
  * Интерфейс REST API для работы с группами настроек
  */
 @Valid
-@Path("/group")
+@Path("/groups")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api("REST сервис для работы с группами настроек")
