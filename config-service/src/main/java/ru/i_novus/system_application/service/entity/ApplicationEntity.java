@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -14,13 +15,12 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "application", schema = "rdm")
-public class ApplicationEntity {
+public class ApplicationEntity implements Serializable {
 
     /**
      * Идентификатор приложения
      */
     @Id
-    @Type(type = "pg-uuid")
     @Column(name = "id", nullable = false)
     private UUID id;
 
@@ -45,7 +45,7 @@ public class ApplicationEntity {
     /**
      * Прикладная система
      */
-    @JoinColumn(name = "system_code")
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "system_code", referencedColumnName = "code")
     private SystemEntity system;
 }

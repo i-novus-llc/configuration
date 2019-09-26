@@ -49,13 +49,12 @@ public class SystemRestServiceImpl implements SystemRestService {
         QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
 
         JPAQuery<SystemEntity> query = new JPAQuery<>(entityManager);
-        query.distinct().from(qSystemEntity).leftJoin(qApplicationEntity).on(qSystemEntity.code.eq(qApplicationEntity.system.code));
+        query.distinct().from(qSystemEntity).leftJoin(qSystemEntity.applications, qApplicationEntity);
 
         // TODO - фильтрует системы, но почему-то не фильтрует приложения
         if (criteria.getAppCode() != null) {
             query = new JPAQuery<>(entityManager);
-            query.distinct().from(qSystemEntity).innerJoin(qApplicationEntity)
-                    .on(qSystemEntity.code.eq(qApplicationEntity.system.code))
+            query.distinct().from(qSystemEntity).innerJoin(qSystemEntity.applications, qApplicationEntity)
                     .on(qApplicationEntity.code.containsIgnoreCase(criteria.getAppCode()));
         }
 
