@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/V11_create_system.yaml
   - include:
       file: db/changelog/V12_create_application.yaml
+  - include:
+      file: db/changelog/V21_insert_quartz_tables.yaml
