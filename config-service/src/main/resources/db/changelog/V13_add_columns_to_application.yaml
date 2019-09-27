@@ -1,8 +1,8 @@
 databaseChangeLog:
   - changeSet:
-      id: insert_quartz_tables
+      id: add_columns_to_application
       author: ilebedenko
       dbms: postgresql
       changes:
         - sqlFile:
-            path: db/sql/V21_insert_quartz_tables.sql
+            path: db/sql/V13_add_columns_to_application.sql

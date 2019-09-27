@@ -14,4 +14,8 @@ databaseChangeLog:
   - include:
       file: db/changelog/V12_create_application.yaml
   - include:
-      file: db/changelog/V21_insert_quartz_tables.yaml
+      file: db/changelog/V13_add_columns_to_application.yaml
+  - include:
+      file: db/changelog/V14_add_columns_to_system.yaml
+  - include:
+      file: quartz-db/changelog/quartz-init.xml

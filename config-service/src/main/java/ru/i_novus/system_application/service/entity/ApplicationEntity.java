@@ -2,7 +2,6 @@ package ru.i_novus.system_application.service.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
