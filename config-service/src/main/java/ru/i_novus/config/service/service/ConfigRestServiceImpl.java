@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
+import ru.i_novus.config.api.model.EventTypeEnum;
+import ru.i_novus.config.api.model.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
@@ -21,6 +23,8 @@ import ru.i_novus.config.service.mapper.ConfigMapper;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
+import ru.i_novus.ms.audit.client.AuditClient;
+import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 import ru.i_novus.system_application.service.entity.QApplicationEntity;
@@ -30,6 +34,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +49,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     private ConfigRepository configRepository;
     private GroupRepository groupRepository;
+
+    private AuditClient auditClient;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -74,6 +81,10 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         this.groupRepository = groupRepository;
     }
 
+    @Autowired
+    public void setAuditClient(AuditClient auditClient) {
+        this.auditClient = auditClient;
+    }
 
     @Override
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
@@ -154,7 +165,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         }
 
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
+
         configRepository.save(configEntity);
+        audit(configEntity, EventTypeEnum.CONFIG_CREATE);
     }
 
     @Override
@@ -180,6 +193,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         configEntity.setApplicationCode(configForm.getApplicationCode());
         configRepository.save(configEntity);
+        audit(configEntity, EventTypeEnum.CONFIG_UPDATE);
     }
 
     @Override
@@ -188,9 +202,21 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         configRepository.deleteByCode(code);
         configValueService.deleteValue(configEntity.getApplicationCode(), code);
+        audit(configEntity, EventTypeEnum.APPLICATION_CONFIG_DELETE);
     }
 
     private ApplicationResponse getApplicationResponse(String code) {
         return code == null ? ApplicationMapper.getCommonSystemApplication() : applicationRestService.getApplication(code);
+    }
+
+    private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
+        AuditClientRequest request = new AuditClientRequest();
+        request.setEventDate(LocalDateTime.now());
+        request.setEventType(eventType.toString());
+        request.setObjectType(ObjectTypeEnum.CONFIG.toString());
+        request.setObjectId(configEntity.getCode());
+        request.setObjectName(ObjectTypeEnum.CONFIG.getTitle());
+        request.setContext(configEntity.toString());
+        auditClient.add(request);
     }
 }

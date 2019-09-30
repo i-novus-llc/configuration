@@ -21,7 +21,9 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
             "WHERE c.applicationCode = :code OR c.applicationCode = null " +
             "GROUP BY g.id, c.code ORDER BY g.priority, c.code"
     )
-    List<Object[]> findByAppCode(@Param("code") String code);
+    List<Object[]> findGroupedConfigByAppCode(@Param("code") String code);
+
+    List<ConfigEntity> findByAppCode(String code);
 
     Boolean existsByCode(String code);
 

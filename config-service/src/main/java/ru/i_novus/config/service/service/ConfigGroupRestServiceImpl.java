@@ -11,7 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.GroupCriteria;
+import ru.i_novus.config.api.model.EventTypeEnum;
 import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.service.entity.GroupEntity;
 import ru.i_novus.config.service.entity.QGroupCodeEntity;
@@ -19,9 +21,12 @@ import ru.i_novus.config.service.entity.QGroupEntity;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.GroupCodeRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
+import ru.i_novus.ms.audit.client.AuditClient;
+import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +39,8 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     private GroupRepository groupRepository;
     private GroupCodeRepository groupCodeRepository;
 
+    private AuditClient auditClient;
+
     @Autowired
     public void setGroupRepository(GroupRepository groupRepository) {
         this.groupRepository = groupRepository;
@@ -42,6 +49,11 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Autowired
     public void setGroupCodeRepository(GroupCodeRepository groupCodeRepository) {
         this.groupCodeRepository = groupCodeRepository;
+    }
+
+    @Autowired
+    public void setAuditClient(AuditClient auditClient) {
+        this.auditClient = auditClient;
     }
 
 
@@ -83,6 +95,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
         GroupEntity savedGroupEntity = groupRepository.save(groupEntity);
         groupCodeRepository.saveAll(groupEntity.getCodes());
+        audit(groupForm, EventTypeEnum.CONFIG_GROUP_CREATE);
 
         return savedGroupEntity.getId();
     }
@@ -113,11 +126,13 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         }
 
         groupRepository.save(groupEntity);
+        audit(groupForm, EventTypeEnum.CONFIG_GROUP_UPDATE);
     }
 
     @Override
     public void deleteGroup(Integer groupId) {
         groupRepository.deleteById(groupId);
+        audit(getGroup(groupId), EventTypeEnum.CONFIG_GROUP_DELETE);
     }
 
     private Predicate toPredicate(GroupCriteria criteria) {
@@ -139,5 +154,16 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         }
 
         return builder.getValue();
+    }
+
+    private void audit(GroupForm groupForm, EventTypeEnum eventType) {
+        AuditClientRequest request = new AuditClientRequest();
+        request.setEventDate(LocalDateTime.now());
+        request.setEventType(eventType.toString());
+        request.setObjectType(ObjectTypeEnum.CONFIG_GROUP.toString());
+        request.setObjectId(String.valueOf(groupForm.getId()));
+        request.setObjectName(ObjectTypeEnum.CONFIG_GROUP.getTitle());
+        request.setContext(groupForm.toString());
+        auditClient.add(request);
     }
 }
