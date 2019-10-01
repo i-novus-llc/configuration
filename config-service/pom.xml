@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <audit.version>1.0</audit.version>
+        <audit.version>1.2-SNAPSHOT</audit.version>
     </properties>
 
     <dependencies>

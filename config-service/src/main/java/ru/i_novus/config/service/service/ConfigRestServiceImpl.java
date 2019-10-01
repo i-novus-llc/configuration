@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
@@ -38,7 +36,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,12 +88,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         this.auditClient = auditClient;
     }
 
+
     @Override
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Object principal = ((Authentication) SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         QConfigEntity qConfigEntity = QConfigEntity.configEntity;
         QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
@@ -209,8 +203,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public void deleteConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
-        configRepository.deleteByCode(code);
-        configValueService.deleteValue(configEntity.getApplicationCode(), code);
+//        configRepository.deleteByCode(code);
+//        configValueService.deleteValue(configEntity.getApplicationCode(), code);
         audit(configEntity, EventTypeEnum.APPLICATION_CONFIG_DELETE);
     }
 
@@ -219,13 +213,15 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
-        AuditClientRequest request = new AuditClientRequest();
-        request.setEventDate(LocalDateTime.now());
-        request.setEventType(eventType.toString());
+        // TODO - возможно придется добавить
+        //  userId, sourceWorkstation, hostname, sender, receiver
+        AuditClientRequest request = AuditUtils.getAuditClientRequest();
+        request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.CONFIG.toString());
         request.setObjectId(configEntity.getCode());
         request.setObjectName(ObjectTypeEnum.CONFIG.getTitle());
-        request.setContext(configEntity.toString());
-        auditClient.add(request);
+        request.setContext(AuditUtils.getContext(configEntity));
+        request.setAuditType((short) 1);
+//        auditClient.add(request);
     }
 }

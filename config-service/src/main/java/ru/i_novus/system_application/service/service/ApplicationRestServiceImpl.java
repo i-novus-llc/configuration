@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.ConfigEntity;
@@ -28,7 +29,6 @@ import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 import ru.i_novus.system_application.service.repository.ApplicationRepository;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -194,15 +194,14 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         return builder.getValue();
     }
 
-    private void audit(ConfigForm configForm, EventTypeEnum eventTypeEnum) {
-        AuditClientRequest request = new AuditClientRequest();
-        // TODO - исправить формат даты на ISO 8601
-        request.setEventDate(LocalDateTime.now());
-        request.setEventType(eventTypeEnum.toString());
+    private void audit(ConfigForm configForm, EventTypeEnum eventType) {
+        AuditClientRequest request = AuditUtils.getAuditClientRequest();
+        request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.APPLICATION_CONFIG.toString());
         request.setObjectId(configForm.getCode());
         request.setObjectName(ObjectTypeEnum.APPLICATION_CONFIG.getTitle());
-        request.setContext(configForm.toString());
+        request.setContext(AuditUtils.getContext(configForm));
+        request.setAuditType((short) 1);
         auditClient.add(request);
     }
 }

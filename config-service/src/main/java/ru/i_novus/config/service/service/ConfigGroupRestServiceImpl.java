@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.config.api.model.EventTypeEnum;
 import ru.i_novus.config.api.model.GroupForm;
@@ -27,7 +28,6 @@ import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,7 +74,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public Page<GroupForm> getAllGroup(GroupCriteria criteria) {
-        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC,"id"));
+        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "id"));
         Page<GroupEntity> groupEntities = groupRepository.findAll(toPredicate(criteria), criteria);
 
         return groupEntities.map(GroupMapper::toGroupForm);
@@ -159,13 +159,13 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     private void audit(GroupForm groupForm, EventTypeEnum eventType) {
-        AuditClientRequest request = new AuditClientRequest();
-        request.setEventDate(LocalDateTime.now());
-        request.setEventType(eventType.toString());
+        AuditClientRequest request = AuditUtils.getAuditClientRequest();
+        request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.CONFIG_GROUP.toString());
         request.setObjectId(String.valueOf(groupForm.getId()));
         request.setObjectName(ObjectTypeEnum.CONFIG_GROUP.getTitle());
-        request.setContext(groupForm.toString());
+        request.setContext(AuditUtils.getContext(groupForm));
+        request.setAuditType((short) 1);
         auditClient.add(request);
     }
 }
