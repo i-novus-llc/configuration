@@ -18,7 +18,7 @@ import java.util.Map;
  * Интерфейс API для получения приложений
  */
 @Valid
-@Path("/auth/applications/")
+@Path("/applications/")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api("Сервис для получения приложений")

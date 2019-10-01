@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
  * Интерфейс API для получения прикладных систем
  */
 @Valid
-@Path("/auth/systems/")
+@Path("/systems/")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api("Сервис для получения прикладных систем")

@@ -13,6 +13,7 @@
     </parent>
 
     <properties>
+        <rdm.version>1.68</rdm.version>
         <audit.version>1.2-SNAPSHOT</audit.version>
     </properties>
 
@@ -27,6 +28,12 @@
             <groupId>ru.i-novus.ms.audit</groupId>
             <artifactId>audit-client</artifactId>
             <version>${audit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.inovus.ms.rdm</groupId>
+            <artifactId>rdm-sync-spring-boot-starter</artifactId>
+            <version>${rdm.version}</version>
         </dependency>
 
         <dependency>
@@ -65,6 +72,11 @@
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-jaxrs-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.n2oapp.platform</groupId>
+            <artifactId>n2o-platform-starter-quartz</artifactId>
         </dependency>
 
         <dependency>

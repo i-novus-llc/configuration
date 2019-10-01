@@ -203,8 +203,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public void deleteConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
 
-//        configRepository.deleteByCode(code);
-//        configValueService.deleteValue(configEntity.getApplicationCode(), code);
+        configRepository.deleteByCode(code);
+        configValueService.deleteValue(configEntity.getApplicationCode(), code);
         audit(configEntity, EventTypeEnum.APPLICATION_CONFIG_DELETE);
     }
 
@@ -222,6 +222,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         request.setObjectName(ObjectTypeEnum.CONFIG.getTitle());
         request.setContext(AuditUtils.getContext(configEntity));
         request.setAuditType((short) 1);
-//        auditClient.add(request);
+        auditClient.add(request);
     }
 }
