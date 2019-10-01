@@ -3,7 +3,7 @@
     <operations>
         <operation id="delete">
             <invocation>
-                <rest method="DELETE">${config.service.url}/auth/applications/{code}/configs</rest>
+                <rest method="DELETE">${config.service.url}/applications/{code}/configs</rest>
             </invocation>
             <in-parameters>
                 <param id="code" mapping="['code']"/>

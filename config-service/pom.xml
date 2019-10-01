@@ -12,6 +12,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <rdm.version>1.68</rdm.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>ru.i-novus.config</groupId>
@@ -23,6 +27,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>ru.inovus.ms.rdm</groupId>
+            <artifactId>rdm-sync-spring-boot-starter</artifactId>
+            <version>${rdm.version}</version>
+        </dependency>
+
 
         <!-- Database support -->
         <dependency>
@@ -55,6 +66,11 @@
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-jaxrs-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.n2oapp.platform</groupId>
+            <artifactId>n2o-platform-starter-quartz</artifactId>
         </dependency>
 
 

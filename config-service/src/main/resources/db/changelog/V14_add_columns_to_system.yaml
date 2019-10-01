@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_columns_to_system
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V14_add_columns_to_system.sql

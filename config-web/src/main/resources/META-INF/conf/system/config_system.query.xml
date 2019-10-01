@@ -3,10 +3,10 @@
     object-id="config_system">
 
     <list count-mapping="[totalElements]" result-mapping="[content]">
-        <rest filters-separator="&amp;">${config.service.url}/auth/systems/?{filters}&amp;page={page}&amp;size={limit}</rest>
+        <rest filters-separator="&amp;">${config.service.url}/systems/?{filters}&amp;page={page}&amp;size={limit}</rest>
     </list>
     <unique filters="id">
-        <rest>${config.service.url}/auth/systems/{id}</rest>
+        <rest>${config.service.url}/systems/{id}</rest>
     </unique>
 
     <fields>
