@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -65,6 +66,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     }
 
     @Autowired
+    @Qualifier("simpleAuditClient")
     public void setAuditClient(AuditClient auditClient) {
         this.auditClient = auditClient;
     }
@@ -171,7 +173,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public void deleteApplicationConfig(String code) {
-        List<ConfigEntity> configEntities = configRepository.findByAppCode(code);
+        List<ConfigEntity> configEntities = configRepository.findByApplicationCode(code);
 
         for (ConfigEntity e : configEntities) {
             String value = configValueService.getValue(code, e.getCode());

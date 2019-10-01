@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     @Autowired
+    @Qualifier("simpleAuditClient")
     public void setAuditClient(AuditClient auditClient) {
         this.auditClient = auditClient;
     }

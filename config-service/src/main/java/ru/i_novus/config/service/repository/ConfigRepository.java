@@ -23,7 +23,7 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
     )
     List<Object[]> findGroupedConfigByAppCode(@Param("code") String code);
 
-    List<ConfigEntity> findByAppCode(String code);
+    List<ConfigEntity> findByApplicationCode(String code);
 
     Boolean existsByCode(String code);
 

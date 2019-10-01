@@ -6,9 +6,13 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
@@ -82,12 +86,17 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     @Autowired
+    @Qualifier("simpleAuditClient")
     public void setAuditClient(AuditClient auditClient) {
         this.auditClient = auditClient;
     }
 
     @Override
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Object principal = ((Authentication) SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         QConfigEntity qConfigEntity = QConfigEntity.configEntity;
         QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;

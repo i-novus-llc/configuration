@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.service.MockedConfigValueService;
+import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
@@ -50,6 +51,9 @@ public class ApplicationRestServiceImplTest {
 
     @MockBean
     private ConfigValueService configValueService;
+
+    @MockBean
+    private AuditClient auditClient;
 
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;

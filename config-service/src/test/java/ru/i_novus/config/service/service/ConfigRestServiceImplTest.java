@@ -22,6 +22,7 @@ import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.service.builders.ConfigFormBuilder;
+import ru.i_novus.ms.audit.client.AuditClient;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,6 +56,9 @@ public class ConfigRestServiceImplTest {
 
     @MockBean
     private ConfigValueService configValueService;
+
+    @MockBean
+    private AuditClient auditClient;
 
     @Value("${config.common.system.code}")
     private String commonSystemCode;

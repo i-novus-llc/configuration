@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.ConfigServiceApplication;
@@ -16,6 +17,7 @@ import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
+import ru.i_novus.ms.audit.client.AuditClient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +44,10 @@ public class ConfigGroupRestServiceImplTest {
     @Autowired
     @Qualifier("configGroupRestServiceJaxRsProxyClient")
     private ConfigGroupRestService groupRestService;
+
+    @MockBean
+    private AuditClient auditClient;
+
 
     /**
      * Проверка, что список групп настроек возвращается корректно
