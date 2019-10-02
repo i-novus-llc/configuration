@@ -10,7 +10,7 @@
                 <param id="applicationName.id" mapping="['applicationCode']"/>
                 <param id="code" mapping="['code']"/>
                 <param id="name" mapping="['name']"/>
-                <param id="valueType.name" mapping="['valueType']"/>
+                <param id="valueType.id" mapping="['valueType']"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>
@@ -23,7 +23,7 @@
                 <param id="applicationName.id" mapping="['applicationCode']"/>
                 <param id="code" mapping="['code']"/>
                 <param id="name" mapping="['name']"/>
-                <param id="valueType.name" mapping="['valueType']"/>
+                <param id="valueType.id" mapping="['valueType']"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>

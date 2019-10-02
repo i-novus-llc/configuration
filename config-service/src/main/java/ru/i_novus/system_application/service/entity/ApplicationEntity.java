@@ -1,26 +1,37 @@
 package ru.i_novus.system_application.service.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import ru.i_novus.system_application.api.model.ApplicationRequest;
-import ru.i_novus.system_application.api.model.ApplicationResponse;
-import ru.i_novus.system_application.api.model.SystemRequest;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Сущность Приложение
  */
-@NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
-@Table(name = "application", schema = "configuration")
-public class ApplicationEntity {
+@Table(name = "application", schema = "rdm")
+public class ApplicationEntity implements Serializable {
+
+    /**
+     * Идентификатор приложения
+     */
+    @Id
+    @Column(name = "id", nullable = false)
+    private UUID id;
+
+    /**
+     * Признак удаления
+     */
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 
     /**
      * Код приложения
      */
-    @Id
     @Column(name = "code", nullable = false)
     private String code;
 
@@ -33,17 +44,7 @@ public class ApplicationEntity {
     /**
      * Прикладная система
      */
-    @JoinColumn(name = "system_code")
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "system_code", referencedColumnName = "code")
     private SystemEntity system;
-
-
-    public ApplicationResponse toApplicationResponse() {
-        SystemRequest systemRequest = (system == null) ? null : system.toSystemRequest();
-        return new ApplicationResponse(code, name, systemRequest);
-    }
-
-    public ApplicationRequest toApplicationRequest() {
-        return new ApplicationRequest(code, name, system.getCode());
-    }
 }
