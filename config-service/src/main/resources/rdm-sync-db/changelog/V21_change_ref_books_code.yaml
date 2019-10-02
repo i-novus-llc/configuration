@@ -5,4 +5,4 @@ databaseChangeLog:
       dbms: postgresql
       changes:
         - sqlFile:
-            path: rdm-sync-db/sql/configure_rdm_sync.sql
+            path: rdm-sync-db/sql/V21_change_ref_books_code.sql
