@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: configure_rdm_sync
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: rdm-sync-db/sql/V20_configure_rdm_sync.sql
