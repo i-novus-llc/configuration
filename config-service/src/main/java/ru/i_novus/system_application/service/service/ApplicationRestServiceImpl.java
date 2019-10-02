@@ -66,7 +66,6 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     }
 
     @Autowired
-    @Qualifier("simpleAuditClient")
     public void setAuditClient(AuditClient auditClient) {
         this.auditClient = auditClient;
     }

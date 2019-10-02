@@ -53,7 +53,6 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     @Autowired
-    @Qualifier("simpleAuditClient")
     public void setAuditClient(AuditClient auditClient) {
         this.auditClient = auditClient;
     }

@@ -27,17 +27,13 @@ public class AuditUtils {
         if (context == null)
             return defaultName;
         Authentication authentication = context.getAuthentication();
-        if (authentication == null)
-            return defaultName;
-        if (authentication instanceof AnonymousAuthenticationToken)
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken)
             return defaultName;
 
         Object principal = authentication.getPrincipal();
-        String username = defaultName;
         if (principal instanceof String)
-            username = (String) principal;
-
-        return username;
+            return (String) principal;
+        return defaultName;
     }
 
     public static String getContext(Object obj) {

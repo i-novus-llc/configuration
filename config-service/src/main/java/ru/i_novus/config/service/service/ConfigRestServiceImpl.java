@@ -83,7 +83,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     @Autowired
-    @Qualifier("simpleAuditClient")
     public void setAuditClient(AuditClient auditClient) {
         this.auditClient = auditClient;
     }
@@ -214,7 +213,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
         // TODO - возможно придется добавить
-        //  userId, sourceWorkstation, hostname, sender, receiver
+        //  userId, sourceWorkstation, hostname
         AuditClientRequest request = AuditUtils.getAuditClientRequest();
         request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.CONFIG.toString());
