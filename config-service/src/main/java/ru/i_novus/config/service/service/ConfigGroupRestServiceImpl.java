@@ -6,12 +6,10 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.config.api.model.EventTypeEnum;
 import ru.i_novus.config.api.model.GroupForm;
@@ -23,6 +21,7 @@ import ru.i_novus.config.service.entity.QGroupEntity;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.GroupCodeRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
+import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
@@ -132,8 +131,8 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public void deleteGroup(Integer groupId) {
-        groupRepository.deleteById(groupId);
         audit(getGroup(groupId), EventTypeEnum.CONFIG_GROUP_DELETE);
+        groupRepository.deleteById(groupId);
     }
 
     private Predicate toPredicate(GroupCriteria criteria) {
@@ -164,7 +163,6 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         request.setObjectId(String.valueOf(groupForm.getId()));
         request.setObjectName(ObjectTypeEnum.CONFIG_GROUP.getTitle());
         request.setContext(AuditUtils.getContext(groupForm));
-        request.setAuditType((short) 1);
         auditClient.add(request);
     }
 }

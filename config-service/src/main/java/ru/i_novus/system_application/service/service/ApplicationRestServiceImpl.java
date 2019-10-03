@@ -4,13 +4,11 @@ import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.ConfigEntity;
@@ -19,6 +17,7 @@ import ru.i_novus.config.service.mapper.ConfigMapper;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.mapper.GroupedApplicationConfigMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
+import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
@@ -142,7 +141,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         if (!code.equals(commonSystemCode)) {
             try {
                 applicationConfigKeyValues = configValueService.getKeyValueList(code);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             code = defaultAppCode;
@@ -200,7 +199,6 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         request.setObjectId(configForm.getCode());
         request.setObjectName(ObjectTypeEnum.APPLICATION_CONFIG.getTitle());
         request.setContext(AuditUtils.getContext(configForm));
-        request.setAuditType((short) 1);
         auditClient.add(request);
     }
 }

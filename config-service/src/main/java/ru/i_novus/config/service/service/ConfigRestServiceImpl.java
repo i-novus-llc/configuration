@@ -6,13 +6,11 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
@@ -25,6 +23,7 @@ import ru.i_novus.config.service.mapper.ConfigMapper;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
+import ru.i_novus.config.service.utils.AuditUtils;
 import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
@@ -212,15 +211,12 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
-        // TODO - возможно придется добавить
-        //  userId, sourceWorkstation, hostname
         AuditClientRequest request = AuditUtils.getAuditClientRequest();
         request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.CONFIG.toString());
         request.setObjectId(configEntity.getCode());
         request.setObjectName(ObjectTypeEnum.CONFIG.getTitle());
         request.setContext(AuditUtils.getContext(configEntity));
-        request.setAuditType((short) 1);
         auditClient.add(request);
     }
 }
