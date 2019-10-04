@@ -21,6 +21,7 @@ import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 import ru.i_novus.system_application.service.service.builders.SimpleApplicationResponseBuilder;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -155,6 +156,17 @@ public class ApplicationRestServiceImplTest {
         configValueService = new MockedConfigValueService();
 
         applicationRestService.saveApplicationConfig(appCode, data);
+    }
+
+    /**
+     * Проверка, что в случае нулевых данных не возникает NullPointerException
+     */
+    @Test
+    public void saveApplicationConfigIfNullDataTest() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("appCode", "appCode");
+        data.put("data", null);
+        applicationRestService.saveApplicationConfig("appCode", data);
     }
 
     private void applicationAssertEquals(SimpleApplicationResponse simpleApplicationResponse, ApplicationResponse applicationResponse) {

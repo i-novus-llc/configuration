@@ -127,6 +127,8 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public void saveApplicationConfig(String code, Map<String, Object> data) {
+        if (data.get("data") == null) return;
+
         Map<String, String> updatedKeyValues = new HashMap<>();
 
         Map<String, String> commonApplicationConfigKeyValues =
