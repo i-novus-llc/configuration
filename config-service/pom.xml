@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <rdm.version>1.68</rdm.version>
+        <rdm.version>1.72</rdm.version>
     </properties>
 
     <dependencies>
