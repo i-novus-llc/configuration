@@ -14,7 +14,7 @@
 
     <properties>
         <rdm.version>1.68</rdm.version>
-        <audit.version>2.0-SNAPSHOT</audit.version>
+        <audit.version>2.0</audit.version>
     </properties>
 
     <dependencies>
