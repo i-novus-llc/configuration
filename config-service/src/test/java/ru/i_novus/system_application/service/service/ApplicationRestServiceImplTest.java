@@ -13,8 +13,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.ConfigServiceApplication;
+import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.ValueTypeEnum;
+import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.service.MockedConfigValueService;
+import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
@@ -24,6 +28,7 @@ import ru.i_novus.system_application.service.service.builders.SimpleApplicationR
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -51,6 +56,12 @@ public class ApplicationRestServiceImplTest {
 
     @MockBean
     private ConfigValueService configValueService;
+
+    @MockBean
+    private AuditClient auditClient;
+
+    @Autowired
+    private ConfigRestService configRestService;
 
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
@@ -134,6 +145,14 @@ public class ApplicationRestServiceImplTest {
     @Test
     public void saveApplicationConfigTest() {
         String appCode = "appCode";
+
+        IntStream.rangeClosed(1, 6).mapToObj(i -> {
+            ConfigForm configForm = new ConfigForm();
+            configForm.setCode("k" + i);
+            configForm.setValueType(ValueTypeEnum.STRING);
+            configForm.setApplicationCode(appCode);
+            return configForm;
+        }).forEach(configRestService::saveConfig);
 
         Map<String, String> dataValue = Map.of(
                 "k1", "v1", "k2", "v2",

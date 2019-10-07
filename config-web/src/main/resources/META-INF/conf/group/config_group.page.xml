@@ -24,7 +24,7 @@
                         <show-modal page-id="config_groupItem" detail-field-id="id"
                                     submit-operation-id="update" page-name="Изменить группу настроек"/>
                     </button>
-                    <button id="delete" label="Удалить" icon="fa fa-trash" type="icon">
+                    <button id="delete" label="Удалить" icon="fa fa-trash" type="icon" confirm="true">
                         <invoke operation-id="delete"/>
                     </button>
                 </toolbar>

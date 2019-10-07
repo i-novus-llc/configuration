@@ -31,7 +31,7 @@
                         <show-modal page-id="configItem" detail-field-id="id" upload="query"
                                     submit-operation-id="update" page-name="Изменить параметры настройки"/>
                     </button>
-                    <button id="delete" label="Удалить" icon="fa fa-trash" type="icon">
+                    <button id="delete" label="Удалить" icon="fa fa-trash" type="icon" confirm="true">
                         <invoke operation-id="delete"/>
                     </button>
                 </toolbar>
