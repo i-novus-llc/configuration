@@ -9,6 +9,6 @@
     <refbook code="APP001" sys-table="rdm.application" unique-sys-field="code" deleted-field="is_deleted" mapping-version="1">
         <field sys-field="code" sys-data-type="varchar" rdm-field="code"/>
         <field sys-field="name" sys-data-type="varchar" rdm-field="name"/>
-        <field sys-field="system_code" sys-data-type="varchar" rdm-field="system_code"/>
+        <field sys-field="system" sys-data-type="varchar" rdm-field="system_code"/>
     </refbook>
 </mapping>
