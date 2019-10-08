@@ -9,9 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.GroupForm;
-import ru.i_novus.config.api.model.GroupedApplicationConfig;
+import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.ConfigEntity;
 import ru.i_novus.config.service.entity.GroupEntity;
@@ -19,6 +17,9 @@ import ru.i_novus.config.service.mapper.ConfigMapper;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.mapper.GroupedApplicationConfigMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
+import ru.i_novus.config.service.utils.AuditUtils;
+import ru.i_novus.ms.audit.client.AuditClient;
+import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
@@ -37,10 +38,10 @@ import java.util.*;
 public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     private ApplicationRepository applicationRepository;
-
     private ConfigValueService configValueService;
-
     private ConfigRepository configRepository;
+
+    private AuditClient auditClient;
 
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
@@ -63,6 +64,11 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         this.configRepository = configRepository;
     }
 
+    @Autowired
+    public void setAuditClient(AuditClient auditClient) {
+        this.auditClient = auditClient;
+    }
+
 
     @Override
     public Page<ApplicationResponse> getAllApplication(ApplicationCriteria criteria) {
@@ -83,7 +89,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         if (appCode.equals(commonSystemCode))
             appCode = null;
 
-        List<Object[]> objectList = configRepository.findByAppCode(appCode);
+        List<Object[]> objectList = configRepository.findGroupedConfigByAppCode(appCode);
         List<GroupedApplicationConfig> result = new ArrayList<>();
 
         Map<String, String> commonApplicationConfigKeyValues = configValueService.getKeyValueList(defaultAppCode);
@@ -127,7 +133,13 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public void saveApplicationConfig(String code, Map<String, Object> data) {
+        if (data.get("data") == null) {
+            deleteApplicationConfig(code);
+            return;
+        }
+
         Map<String, String> updatedKeyValues = new HashMap<>();
+        Map<String, String> deletedKeyValues = new HashMap<>();
 
         Map<String, String> commonApplicationConfigKeyValues =
                 configValueService.getKeyValueList(defaultAppCode);
@@ -135,31 +147,51 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         if (!code.equals(commonSystemCode)) {
             try {
                 applicationConfigKeyValues = configValueService.getKeyValueList(code);
-            } catch (Exception e) {}
+                deletedKeyValues = applicationConfigKeyValues;
+            } catch (Exception ignored) {
+            }
         } else {
             code = defaultAppCode;
+            deletedKeyValues = commonApplicationConfigKeyValues;
         }
 
         for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
             String key = ((String) entry.getKey()).replace("@", ".");
             String value = String.valueOf(entry.getValue());
+
+            if (entry.getValue() == null || value.equals("")) continue;
+
             String applicationConfigValue = applicationConfigKeyValues.get(key);
             String commonApplicationValue = commonApplicationConfigKeyValues.get(key);
+            ConfigForm configForm = ConfigMapper.toConfigForm(configRepository.findByCode(key), value);
 
-            if ((applicationConfigValue == null && commonApplicationValue == null) ||
-                    (applicationConfigValue != null && !applicationConfigValue.equals(value)) ||
-                    (applicationConfigValue == null && !commonApplicationValue.equals(value))) {
+            if (applicationConfigValue == null &&
+                    (commonApplicationValue == null || !commonApplicationValue.equals(value))) {
                 updatedKeyValues.put(key, value);
+                audit(configForm, EventTypeEnum.APPLICATION_CONFIG_CREATE);
+            } else if (applicationConfigValue != null && !applicationConfigValue.equals(value)) {
+                updatedKeyValues.put(key, value);
+                audit(configForm, EventTypeEnum.APPLICATION_CONFIG_UPDATE);
             }
+            deletedKeyValues.remove(key);
         }
 
-        if (!updatedKeyValues.isEmpty()) {
-            configValueService.saveAllValues(code, updatedKeyValues);
-        }
+        deletedKeyValues.entrySet().stream().forEach(e ->
+                audit(ConfigMapper.toConfigForm(configRepository.findByCode(e.getKey()), e.getValue()),
+                        EventTypeEnum.APPLICATION_CONFIG_DELETE)
+        );
+
+        configValueService.saveAllValues(code, updatedKeyValues, deletedKeyValues);
     }
 
     @Override
     public void deleteApplicationConfig(String code) {
+        List<ConfigEntity> configEntities = configRepository.findByApplicationCode(code);
+
+        for (ConfigEntity e : configEntities) {
+            String value = configValueService.getValue(code, e.getCode());
+            audit(ConfigMapper.toConfigForm(e, value), EventTypeEnum.APPLICATION_CONFIG_DELETE);
+        }
         configValueService.deleteAllValues(code);
     }
 
@@ -173,5 +205,15 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         }
 
         return builder.getValue();
+    }
+
+    private void audit(ConfigForm configForm, EventTypeEnum eventType) {
+        AuditClientRequest request = AuditUtils.getAuditClientRequest();
+        request.setEventType(eventType.getTitle());
+        request.setObjectType(ObjectTypeEnum.APPLICATION_CONFIG.toString());
+        request.setObjectId(configForm.getCode());
+        request.setObjectName(ObjectTypeEnum.APPLICATION_CONFIG.getTitle());
+        request.setContext(AuditUtils.getContext(configForm));
+        auditClient.add(request);
     }
 }

@@ -13,7 +13,7 @@ public interface ConfigValueService {
 
     void saveValue(String appCode, String code, String value);
 
-    void saveAllValues(String appCode, Map<String, String> data);
+    void saveAllValues(String appCode, Map<String, String> updatedData, Map<String, String> deletedData);
 
     void deleteValue(String appCode, String code);
 

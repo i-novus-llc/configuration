@@ -2,6 +2,7 @@ package ru.i_novus.config.web.provider;
 
 import net.n2oapp.framework.api.metadata.SourceMetadata;
 import net.n2oapp.framework.api.metadata.aware.NamespaceUriAware;
+import net.n2oapp.framework.api.metadata.control.N2oHidden;
 import net.n2oapp.framework.api.metadata.control.N2oStandardField;
 import net.n2oapp.framework.api.metadata.control.plain.N2oCheckbox;
 import net.n2oapp.framework.api.metadata.control.plain.N2oInputText;
@@ -106,11 +107,11 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         }
 
         // Передача appCode
-        N2oInputText inputText = new N2oInputText();
-        inputText.setId("appCode");
-        inputText.setDefaultValue(context);
-        inputText.setVisible(false);
-        lineFieldSetList.add(inputText);
+        N2oHidden n2oHidden = new N2oHidden();
+        n2oHidden.setId("appCode");
+        n2oHidden.setDefaultValue(context);
+        n2oHidden.setVisible(false);
+        lineFieldSetList.add(n2oHidden);
         form.setItems(lineFieldSetList.toArray(NamespaceUriAware[]::new));
 
         N2oToolbar toolbar = new N2oToolbar();

@@ -28,6 +28,7 @@
         <field id="name" domain="string">
             <select/>
             <filters>
+                <eq filter-id="name">name={name}</eq>
                 <eq filter-id="systems*.id">code={systems*.id}</eq>
             </filters>
         </field>
