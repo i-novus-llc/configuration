@@ -133,9 +133,13 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public void saveApplicationConfig(String code, Map<String, Object> data) {
-        if (data.get("data") == null) return;
+        if (data.get("data") == null) {
+            deleteApplicationConfig(code);
+            return;
+        }
 
         Map<String, String> updatedKeyValues = new HashMap<>();
+        Map<String, String> deletedKeyValues = new HashMap<>();
 
         Map<String, String> commonApplicationConfigKeyValues =
                 configValueService.getKeyValueList(defaultAppCode);
@@ -143,10 +147,12 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         if (!code.equals(commonSystemCode)) {
             try {
                 applicationConfigKeyValues = configValueService.getKeyValueList(code);
+                deletedKeyValues = applicationConfigKeyValues;
             } catch (Exception ignored) {
             }
         } else {
             code = defaultAppCode;
+            deletedKeyValues = commonApplicationConfigKeyValues;
         }
 
         for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
@@ -156,6 +162,11 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
             String commonApplicationValue = commonApplicationConfigKeyValues.get(key);
             ConfigForm configForm = ConfigMapper.toConfigForm(configRepository.findByCode(key), value);
 
+            if (entry.getValue() == null || value.equals("")) {
+                audit(configForm, EventTypeEnum.APPLICATION_CONFIG_DELETE);
+                continue;
+            }
+
             if (applicationConfigValue == null &&
                     (commonApplicationValue == null || !commonApplicationValue.equals(value))) {
                 updatedKeyValues.put(key, value);
@@ -164,11 +175,10 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
                 updatedKeyValues.put(key, value);
                 audit(configForm, EventTypeEnum.APPLICATION_CONFIG_UPDATE);
             }
+            deletedKeyValues.remove(key);
         }
 
-        if (!updatedKeyValues.isEmpty()) {
-            configValueService.saveAllValues(code, updatedKeyValues);
-        }
+        configValueService.saveAllValues(code, updatedKeyValues, deletedKeyValues);
     }
 
     @Override

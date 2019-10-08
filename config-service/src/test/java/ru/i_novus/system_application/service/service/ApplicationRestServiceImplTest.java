@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -146,7 +146,7 @@ public class ApplicationRestServiceImplTest {
     public void saveApplicationConfigTest() {
         String appCode = "appCode";
 
-        IntStream.rangeClosed(1, 6).mapToObj(i -> {
+        IntStream.rangeClosed(0, 13).mapToObj(i -> {
             ConfigForm configForm = new ConfigForm();
             configForm.setCode("k" + i);
             configForm.setValueType(ValueTypeEnum.STRING);
@@ -154,25 +154,40 @@ public class ApplicationRestServiceImplTest {
             return configForm;
         }).forEach(configRestService::saveConfig);
 
-        Map<String, String> dataValue = Map.of(
-                "k1", "v1", "k2", "v2",
-                "k3", "v3", "k4", "v444",
-                "k5", "v555", "k6", "v666"
-        );
+        // 0 - проверка, что в случае отсутствия настройка создается
+        // 1, 2, 3 - проверка, что настройки в консуле не меняются
+        // 4, 5, 6 - проверка, что настройки обновляются
+        // 7, 8, 9, 10 - проверка, что null или "" значения настроек приводят к их удалению из консула
+        // 11, 12, 13 - проверка, что если настройки нет на входе она также будет удалена из консула
+        Map<String, String> dataValue = new HashMap<>(Map.of(
+                "k0", "v0",
+                "k1", "v1", "k2", "v2", "k3", "v3",
+                "k4", "v444", "k5", "v555", "k6", "v666",
+                "k8", "", "k10", ""
+        ));
+        dataValue.put("k7", null);
+        dataValue.put("k9", null);
         Map<String, Object> data = Map.of("data", dataValue);
 
         Map<String, String> commonApplicationConfigKeyValues = Map.of(
                 "k1", "v1", "k2", "v2",
-                "k4", "v4", "k5", "v5"
+                "k4", "v4", "k5", "v5",
+                "k7", "v7", "k8", "v8",
+                "k11", "v11", "k12", "v12"
         );
         Map<String, String> applicationConfigKeyValues = Map.of(
                 "k1", "v1", "k3", "v3",
-                "k4", "v4", "k6", "v6"
+                "k4", "v4", "k6", "v6",
+                "k7", "v7", "k9", "v9",
+                "k11", "v11", "k13", "v13"
         );
 
-        when(configValueService.getKeyValueList(defaultAppCode)).thenReturn(commonApplicationConfigKeyValues);
-        when(configValueService.getKeyValueList(appCode)).thenReturn(applicationConfigKeyValues);
-        configValueService = new MockedConfigValueService();
+        when(configValueService.getKeyValueList(defaultAppCode)).thenReturn(new HashMap<>(commonApplicationConfigKeyValues));
+        when(configValueService.getKeyValueList(appCode)).thenReturn(new HashMap<>(applicationConfigKeyValues));
+        doAnswer(inv -> {
+            new MockedConfigValueService().saveAllValues(inv.getArgument(0), inv.getArgument(1), inv.getArgument(2));
+            return null;
+        }).when(configValueService).saveAllValues(eq(appCode), anyMap(), anyMap());
 
         applicationRestService.saveApplicationConfig(appCode, data);
     }
@@ -185,6 +200,7 @@ public class ApplicationRestServiceImplTest {
         Map<String, Object> data = new HashMap<>();
         data.put("appCode", "appCode");
         data.put("data", null);
+        doNothing().when(configValueService).deleteAllValues("appCode");
         applicationRestService.saveApplicationConfig("appCode", data);
     }
 
