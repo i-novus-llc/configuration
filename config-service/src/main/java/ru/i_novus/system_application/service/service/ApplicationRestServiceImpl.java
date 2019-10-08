@@ -158,14 +158,12 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
             String key = ((String) entry.getKey()).replace("@", ".");
             String value = String.valueOf(entry.getValue());
+
+            if (entry.getValue() == null || value.equals("")) continue;
+
             String applicationConfigValue = applicationConfigKeyValues.get(key);
             String commonApplicationValue = commonApplicationConfigKeyValues.get(key);
             ConfigForm configForm = ConfigMapper.toConfigForm(configRepository.findByCode(key), value);
-
-            if (entry.getValue() == null || value.equals("")) {
-                audit(configForm, EventTypeEnum.APPLICATION_CONFIG_DELETE);
-                continue;
-            }
 
             if (applicationConfigValue == null &&
                     (commonApplicationValue == null || !commonApplicationValue.equals(value))) {
@@ -177,6 +175,11 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
             }
             deletedKeyValues.remove(key);
         }
+
+        deletedKeyValues.entrySet().stream().forEach(e ->
+                audit(ConfigMapper.toConfigForm(configRepository.findByCode(e.getKey()), e.getValue()),
+                        EventTypeEnum.APPLICATION_CONFIG_DELETE)
+        );
 
         configValueService.saveAllValues(code, updatedKeyValues, deletedKeyValues);
     }
