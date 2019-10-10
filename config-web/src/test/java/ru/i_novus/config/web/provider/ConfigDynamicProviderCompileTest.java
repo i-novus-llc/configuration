@@ -6,6 +6,7 @@ import net.n2oapp.framework.api.metadata.meta.action.Action;
 import net.n2oapp.framework.api.metadata.meta.action.invoke.InvokeAction;
 import net.n2oapp.framework.api.metadata.meta.action.link.LinkAction;
 import net.n2oapp.framework.api.metadata.meta.control.Checkbox;
+import net.n2oapp.framework.api.metadata.meta.control.Hidden;
 import net.n2oapp.framework.api.metadata.meta.control.InputText;
 import net.n2oapp.framework.api.metadata.meta.control.StandardField;
 import net.n2oapp.framework.api.metadata.meta.fieldset.FieldSet;
@@ -131,7 +132,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         FieldSet fieldSet = fieldsets.get(2);
         assertThat(fieldSet.getRows().size(), is(1));
         field = (StandardField) fieldSet.getRows().get(0).getCols().get(0).getFields().get(0);
-        assertThat(field.getControl(), instanceOf(InputText.class));
+        assertThat(field.getControl(), instanceOf(Hidden.class));
         assertThat(field.getId(), is("appCode"));
         assertThat(field.getVisible(), is(false));
         assertThat(dynamicPage.getModels().get(String.format("resolve['%s'].%s", widgetId, field.getId())).getValue(), is("appCode"));

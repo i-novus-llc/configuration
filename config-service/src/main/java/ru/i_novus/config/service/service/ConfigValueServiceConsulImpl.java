@@ -54,20 +54,11 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
     }
 
     @Override
-    public void saveAllValues(String appCode, Map<String, String> data) {
+    public void saveAllValues(String appCode, Map<String, String> updatedData, Map<String, String> deletedData) {
         List<Map<String, Map<String, String>>> list = new ArrayList<>();
 
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            Map<String, String> keyValueMap = new HashMap<>();
-            keyValueMap.put("Key", prefix + "/" + appCode + "/" + entry.getKey().replace(".", "/"));
-            keyValueMap.put("Value", new String(Base64.getEncoder().encode(entry.getValue().getBytes())));
-            keyValueMap.put("Verb", "set");
-
-            Map<String, Map<String, String>> map = new HashMap<>();
-            map.put("KV", keyValueMap);
-
-            list.add(map);
-        }
+        updatedData.entrySet().forEach(entry -> fillList(appCode, list, entry, "set"));
+        deletedData.entrySet().forEach(entry -> fillList(appCode, list, entry, "delete"));
 
         String fullUrl = url.substring(0, url.indexOf("kv")) + "txn";
 
@@ -86,5 +77,19 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     private String getFullUrl(String appCode, String code) {
         return url + appCode + "/" + code.replace(".", "/");
+    }
+
+    private void fillList(String appCode, List<Map<String, Map<String, String>>> list,
+                          Map.Entry<String, String> entry, String verb) {
+        String appConfigPrefixUrl = prefix + "/" + appCode + "/";
+        Map<String, String> keyValueMap = new HashMap<>();
+        keyValueMap.put("Key", appConfigPrefixUrl + entry.getKey().replace(".", "/"));
+        keyValueMap.put("Value", new String(Base64.getEncoder().encode(entry.getValue().getBytes())));
+        keyValueMap.put("Verb", verb);
+
+        Map<String, Map<String, String>> map = new HashMap<>();
+        map.put("KV", keyValueMap);
+
+        list.add(map);
     }
 }
