@@ -21,7 +21,7 @@
             </input-text>
             <input-text id="name" label="Наименование настройки"/>
             <row>
-                <input-select id="group" label="Группа настроек" required="true" query-id="config_group">
+                <input-select id="group" label="Группа настроек" query-id="config_group">
                     <pre-filters>
                         <like field-id="codes" value="{code}" />
                     </pre-filters>
