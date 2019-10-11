@@ -42,7 +42,7 @@
                 </columns>
 
                 <toolbar>
-                    <button id="create" label="Создать" color="primary" icon="fa fa-plus" model="filter">
+                    <button id="create" label="Создать" color="primary" model="filter">
                         <show-modal page-id="configItem" submit-operation-id="create" object-id="config"
                                     page-name="Создать настройку" upload="defaults"/>
                     </button>
