@@ -32,8 +32,7 @@
         </columns>
 
         <toolbar>
-            <button id="create" label="Создать" color="primary" icon="fa fa-plus"
-                    model="filter">
+            <button id="create" label="Создать" color="primary" model="filter">
                 <show-modal page-id="config_groupItem" submit-operation-id="create"
                             page-name="Создать группу настроек" upload="defaults"/>
             </button>
