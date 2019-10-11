@@ -1,5 +1,6 @@
 package ru.i_novus.config.web.provider;
 
+import net.n2oapp.framework.api.exception.N2oUserException;
 import net.n2oapp.framework.api.metadata.SourceMetadata;
 import net.n2oapp.framework.api.metadata.aware.NamespaceUriAware;
 import net.n2oapp.framework.api.metadata.control.N2oHidden;
@@ -25,11 +26,13 @@ import org.springframework.stereotype.Component;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.GroupedApplicationConfig;
 import ru.i_novus.config.api.model.ValueTypeEnum;
+import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ConfigDynamicProvider implements DynamicMetadataProvider {
@@ -57,7 +60,9 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         page.setObjectId("groupedConfig");
 
         if (!context.equals(commonSystemCode)) {
-            String appName = applicationRestService.getApplication(context).getName();
+            ApplicationResponse applicationResponse = Optional.ofNullable(applicationRestService.getApplication(context))
+                    .orElseThrow(() -> new N2oUserException("config.application.not.choose"));
+            String appName = applicationResponse.getName();
             page.setName(appName + " (" + context + ")");
         } else {
             page.setName("Общесистемные");
