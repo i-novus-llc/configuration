@@ -16,6 +16,7 @@ import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.EventTypeEnum;
 import ru.i_novus.config.api.model.ObjectTypeEnum;
+import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
@@ -140,10 +141,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         return new PageImpl<>(query.fetch(), criteria, total)
                 .map(e -> {
-                            ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
+                    GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
+                    ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
                             return ConfigMapper.toConfigResponse(
                                     e, application,
-                                    GroupMapper.toGroupForm(groupRepository.findOneGroupByConfigCodeStarts(e.getCode()))
+                                    groupEntity == null ? null : GroupMapper.toGroupForm(groupEntity)
                             );
                         }
                 );
@@ -155,8 +157,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
+        GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
 
-        return ConfigMapper.toConfigResponse(configEntity, application, GroupMapper.toGroupForm(groupEntity));
+        return ConfigMapper.toConfigResponse(configEntity, application, groupForm);
     }
 
     @Override

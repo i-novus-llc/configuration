@@ -14,7 +14,7 @@
 
     <properties>
         <rdm.version>1.81</rdm.version>
-        <audit.version>2.0</audit.version>
+        <audit.version>2.1</audit.version>
     </properties>
 
     <dependencies>
@@ -28,7 +28,6 @@
             <groupId>ru.i-novus.ms.audit</groupId>
             <artifactId>audit-client-spring-boot-starter</artifactId>
             <version>${audit.version}</version>
-            <type>pom</type>
         </dependency>
 
         <dependency>
