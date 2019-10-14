@@ -7,11 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.support.MessageSourceAccessor;
 import ru.i_novus.config.web.cache.ConfigCompileCacheOperation;
 import ru.i_novus.config.web.cache.ConfigModifiedClientCacheTemplate;
 import ru.i_novus.config.web.cache.ConfigSourceCacheOperation;
+
+import java.util.Locale;
 
 @SpringBootApplication
 public class ConfigWebApplication {
@@ -21,6 +25,9 @@ public class ConfigWebApplication {
 
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    MessageSource messageSource;
 
     @Bean
     public SourceCacheOperation getSourceCacheOperation() {
@@ -36,5 +43,10 @@ public class ConfigWebApplication {
     @Primary
     public ClientCacheTemplate getModifiedClientCacheTemplate() {
         return new ConfigModifiedClientCacheTemplate(cacheManager);
+    }
+
+    @Bean
+    public MessageSourceAccessor messageSourceAccessor() {
+        return new MessageSourceAccessor(messageSource, Locale.getDefault());
     }
 }
