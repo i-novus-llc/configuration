@@ -113,8 +113,8 @@ public class ConfigGroupServerLoaderTest {
 
         assertThat(repository.findAll().size(), is(2));
         assertThat(groupCodeRepository.findAll().size(), is(4));
-        configAssertEquals(groupForm1, repository.findByName("group1"));
-        configAssertEquals(groupForm2, repository.findByName("group2"));
+        configGroupAssertEquals(groupForm1, repository.findByName("group1"));
+        configGroupAssertEquals(groupForm2, repository.findByName("group2"));
     }
 
     /**
@@ -129,8 +129,8 @@ public class ConfigGroupServerLoaderTest {
 
         assertThat(repository.findAll().size(), is(2));
         assertThat(groupCodeRepository.findAll().size(), is(4));
-        configAssertEquals(groupForm1, repository.findByName("group1"));
-        configAssertEquals(groupForm2, repository.findByName("group2"));
+        configGroupAssertEquals(groupForm1, repository.findByName("group1"));
+        configGroupAssertEquals(groupForm2, repository.findByName("group2"));
     }
 
     /**
@@ -146,9 +146,9 @@ public class ConfigGroupServerLoaderTest {
 
         assertThat(repository.findAll().size(), is(3));
         assertThat(groupCodeRepository.findAll().size(), is(6));
-        configAssertEquals(groupForm1, repository.findByName("group1"));
-        configAssertEquals(groupForm2, repository.findByName("group2"));
-        configAssertEquals(groupForm3, repository.findByName("group3"));
+        configGroupAssertEquals(groupForm1, repository.findByName("group1"));
+        configGroupAssertEquals(groupForm2, repository.findByName("group2"));
+        configGroupAssertEquals(groupForm3, repository.findByName("group3"));
     }
 
     /**
@@ -163,9 +163,9 @@ public class ConfigGroupServerLoaderTest {
 
         assertThat(repository.findAll().size(), is(3));
         assertThat(groupCodeRepository.findAll().size(), is(6));
-        configAssertEquals(groupForm1, repository.findByName("group1"));
-        configAssertEquals(groupForm2, repository.findByName("group2"));
-        configAssertEquals(GroupFormBuilder.buildGroupForm3(), repository.findByName("group3"));
+        configGroupAssertEquals(groupForm1, repository.findByName("group1"));
+        configGroupAssertEquals(groupForm2, repository.findByName("group2"));
+        configGroupAssertEquals(GroupFormBuilder.buildGroupForm3(), repository.findByName("group3"));
     }
 
 
@@ -186,9 +186,9 @@ public class ConfigGroupServerLoaderTest {
 
         assertThat(repository.findAll().size(), is(3));
         assertThat(groupCodeRepository.findAll().size(), is(6));
-        configAssertEquals(groupForm1, repository.findByName("group1"));
-        configAssertEquals(GroupFormBuilder.buildGroupForm2(), repository.findByName("group2"));
-        configAssertEquals(GroupFormBuilder.buildGroupForm3(), repository.findByName("group3"));
+        configGroupAssertEquals(groupForm1, repository.findByName("group1"));
+        configGroupAssertEquals(GroupFormBuilder.buildGroupForm2(), repository.findByName("group2"));
+        configGroupAssertEquals(GroupFormBuilder.buildGroupForm3(), repository.findByName("group3"));
     }
 
     /**
@@ -207,12 +207,12 @@ public class ConfigGroupServerLoaderTest {
 
         assertThat(repository.findAll().size(), is(3));
         assertThat(groupCodeRepository.findAll().size(), is(6));
-        configAssertEquals(GroupFormBuilder.buildGroupForm1(), repository.findByName("group1"));
-        configAssertEquals(groupForm2, repository.findByName("group2"));
-        configAssertEquals(groupForm3, repository.findByName("group3"));
+        configGroupAssertEquals(GroupFormBuilder.buildGroupForm1(), repository.findByName("group1"));
+        configGroupAssertEquals(groupForm2, repository.findByName("group2"));
+        configGroupAssertEquals(groupForm3, repository.findByName("group3"));
     }
 
-    private void configAssertEquals(GroupForm expected, GroupEntity actual) {
+    private void configGroupAssertEquals(GroupForm expected, GroupEntity actual) {
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getDescription(), actual.getDescription());
         assertEquals(expected.getPriority(), actual.getPriority());
