@@ -91,8 +91,6 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
             throw new UserException("config.group.name.not.unique");
         }
 
-        groupForm.getCodes().forEach(groupEntity::setCode);
-
         GroupEntity savedGroupEntity = groupRepository.save(groupEntity);
         groupCodeRepository.saveAll(groupEntity.getCodes());
         audit(groupForm, EventTypeEnum.CONFIG_GROUP_CREATE);

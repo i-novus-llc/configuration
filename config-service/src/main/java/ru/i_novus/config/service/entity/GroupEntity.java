@@ -45,7 +45,7 @@ public class  GroupEntity {
     /**
      * Коды группы
      */
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<GroupCodeEntity> codes = new ArrayList<>();
 
 
