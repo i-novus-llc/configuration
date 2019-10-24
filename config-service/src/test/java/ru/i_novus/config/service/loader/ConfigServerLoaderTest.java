@@ -7,17 +7,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
 import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.service.entity.ConfigEntity;
 import ru.i_novus.config.service.loader.builders.ConfigFormBuilder;
 import ru.i_novus.config.service.repository.ConfigRepository;
-import ru.i_novus.config.service.service.ConfigRestServiceImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -72,27 +67,6 @@ public class ConfigServerLoaderTest {
     public void repositoryLoader() {
         BiConsumer<List<ConfigForm>, String> loader = (data, subject) -> {
             repositoryLoader.load(data, subject);
-        };
-        repository.deleteAll();
-        case1(loader);
-        case2(loader);
-        case3(loader);
-        case4(loader);
-        case5(loader);
-    }
-
-    /**
-     * Тест {@link ConfigRestServiceImpl}
-     */
-    @Test
-    public void restLoader() {
-        BiConsumer<List<ConfigForm>, String> loader = (data, subject) -> {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:" + port + "/api/loaders/" + subject + "/configs";
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<List<ConfigForm>> request = new HttpEntity<>(data, headers);
-            assertThat(restTemplate.postForEntity(url, request, String.class).getStatusCode().is2xxSuccessful(), is(true));
         };
         repository.deleteAll();
         case1(loader);

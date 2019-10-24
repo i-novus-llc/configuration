@@ -7,10 +7,10 @@ import ru.i_novus.config.service.mapper.ConfigMapper;
 
 public class ConfigLoaderMapper implements LoaderMapper<ConfigForm, ConfigEntity> {
     @Override
-    public ConfigEntity map(ConfigForm configForm, String s) {
+    public ConfigEntity map(ConfigForm configForm, String subject) {
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
-        if (!"application".equals(s))
-            configEntity.setApplicationCode(s);
+        if (!"application".equals(subject))
+            configEntity.setApplicationCode(subject);
         return configEntity;
     }
 }

@@ -30,7 +30,7 @@ public class ConfigGroupServerLoader implements ServerLoader<GroupForm> {
 
     @Override
     @Transactional
-    public void load(List<GroupForm> list, String s) {
+    public void load(List<GroupForm> list, String subject) {
         List<GroupForm> insertedGroupForms = new ArrayList<>(list);
         List<GroupEntity> updatedEntities = new ArrayList<>();
         Map<String, Integer> groupCodes = groupCodeRepository.findAll().stream()

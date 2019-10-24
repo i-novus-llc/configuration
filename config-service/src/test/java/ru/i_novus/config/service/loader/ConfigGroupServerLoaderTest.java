@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.ConfigServiceApplication;
 import ru.i_novus.config.api.model.GroupForm;
@@ -21,7 +20,6 @@ import ru.i_novus.config.service.entity.GroupEntity;
 import ru.i_novus.config.service.loader.builders.GroupFormBuilder;
 import ru.i_novus.config.service.repository.GroupCodeRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
-import ru.i_novus.config.service.service.ConfigGroupRestServiceImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,28 +58,6 @@ public class ConfigGroupServerLoaderTest {
     public void simpleLoader() {
         BiConsumer<List<GroupForm>, String> loader = (data, subject) -> {
             configLoader.load(data, subject);
-        };
-        repository.deleteAll();
-        case1(loader);
-        case2(loader);
-        case3(loader);
-        case4(loader);
-        case5(loader);
-        case6(loader);
-    }
-
-    /**
-     * Тест {@link ConfigGroupRestServiceImpl}
-     */
-    @Test
-    public void restLoader() {
-        BiConsumer<List<GroupForm>, String> loader = (data, subject) -> {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:" + port + "/api/loaders/" + subject + "/groups";
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<List<GroupForm>> request = new HttpEntity<>(data, headers);
-            assertThat(restTemplate.postForEntity(url, request, String.class).getStatusCode().is2xxSuccessful(), is(true));
         };
         repository.deleteAll();
         case1(loader);
@@ -182,7 +158,7 @@ public class ConfigGroupServerLoaderTest {
         try {
             loader.accept(data, "test");
             fail("Method should throw exception, but he didn't!");
-        } catch (UserException | HttpClientErrorException ignored) {}
+        } catch (UserException ignored) {}
 
         assertThat(repository.findAll().size(), is(3));
         assertThat(groupCodeRepository.findAll().size(), is(6));
