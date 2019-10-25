@@ -34,4 +34,6 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, Qu
         List<GroupEntity> groupEntities = findGroupsByConfigCodeStarts(code, new PageRequest(0, 1));
         return groupEntities.isEmpty() ? null : groupEntities.get(0);
     }
+
+    GroupEntity findByName(String name);
 }

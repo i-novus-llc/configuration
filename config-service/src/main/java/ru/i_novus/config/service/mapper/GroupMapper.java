@@ -13,6 +13,7 @@ public class GroupMapper {
         groupEntity.setName(groupForm.getName());
         groupEntity.setDescription(groupForm.getDescription());
         groupEntity.setPriority(groupForm.getPriority());
+        groupForm.getCodes().forEach(groupEntity::setCode);
         return groupEntity;
     }
 
