@@ -183,12 +183,15 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                 !configEntity.getApplicationCode().equals(configForm.getApplicationCode())) {
             String value;
             try {
-                value = configValueService.getValue(configEntity.getApplicationCode(), code);
-            } catch (Exception e) {
-                value = configValueService.getValue(defaultAppCode, code);
+                try {
+                    value = configValueService.getValue(configEntity.getApplicationCode(), code);
+                } catch (Exception e) {
+                    value = configValueService.getValue(defaultAppCode, code);
+                }
+                configValueService.saveValue(configForm.getApplicationCode(), code, value);
+                configValueService.deleteValue(configEntity.getApplicationCode(), code);
+            } catch (Exception ignored) {
             }
-            configValueService.saveValue(configForm.getApplicationCode(), code, value);
-            configValueService.deleteValue(configEntity.getApplicationCode(), code);
         }
 
         configEntity.setApplicationCode(configForm.getApplicationCode());
