@@ -105,7 +105,9 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         }
 
         for (Object[] obj : objectList) {
-            GroupForm groupForm = GroupMapper.toGroupForm((GroupEntity) obj[0]);
+            // проверяем принадлежит ли настройка какой-либо группе
+            // иначе создаем дефолтную группу
+            GroupForm groupForm = (obj[0] != null) ? GroupMapper.toGroupForm((GroupEntity) obj[0]) : new GroupForm();
             ConfigEntity configEntity = (ConfigEntity) obj[1];
 
             String value;
@@ -120,7 +122,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
             ConfigForm configForm = ConfigMapper.toConfigForm(configEntity, value);
 
             GroupedApplicationConfig existingGroupedApplicationConfig =
-                    result.stream().filter(i -> i.getId().equals(groupForm.getId())).findFirst().orElse(null);
+                    result.stream().filter(i -> Objects.equals(i.getId(), groupForm.getId())).findFirst().orElse(null);
             if (existingGroupedApplicationConfig != null) {
                 existingGroupedApplicationConfig.getConfigs().add(configForm);
             } else {

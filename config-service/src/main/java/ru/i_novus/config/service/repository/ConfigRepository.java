@@ -16,8 +16,8 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
     ConfigEntity findByCode(String code);
 
     @Query("SELECT g, c FROM ConfigEntity c " +
-            "INNER JOIN GroupCodeEntity gc ON strpos(c.code, gc.code) = 1 " +
-            "INNER JOIN GroupEntity g ON g.id = gc.group.id " +
+            "LEFT JOIN GroupCodeEntity gc ON c.code = gc.code OR strpos(c.code, gc.code || '.') = 1 " +
+            "LEFT JOIN GroupEntity g ON g.id = gc.group.id " +
             "WHERE c.applicationCode = :code OR c.applicationCode = null " +
             "GROUP BY g.id, c.code ORDER BY g.priority, c.code"
     )
