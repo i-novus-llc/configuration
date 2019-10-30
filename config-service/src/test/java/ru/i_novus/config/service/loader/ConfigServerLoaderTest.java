@@ -49,9 +49,7 @@ public class ConfigServerLoaderTest {
      */
     @Test
     public void simpleLoader() {
-        BiConsumer<List<ConfigForm>, String> loader = (data, subject) -> {
-            configLoader.load(data, subject);
-        };
+        BiConsumer<List<ConfigForm>, String> loader = configLoader::load;
         repository.deleteAll();
         case1(loader);
         case2(loader);
@@ -65,9 +63,7 @@ public class ConfigServerLoaderTest {
      */
     @Test
     public void repositoryLoader() {
-        BiConsumer<List<ConfigForm>, String> loader = (data, subject) -> {
-            repositoryLoader.load(data, subject);
-        };
+        BiConsumer<List<ConfigForm>, String> loader = repositoryLoader::load;
         repository.deleteAll();
         case1(loader);
         case2(loader);
@@ -147,7 +143,7 @@ public class ConfigServerLoaderTest {
         List<ConfigForm> data = Arrays.asList(configForm3, configForm4);
 
         loader.accept(data, "application");
-        List<ConfigEntity> all = repository.findAll();
+
         assertThat(repository.findByApplicationCode(null).size(), is(2));
         configAssertEquals(configForm3, repository.findById("code3").get());
         configAssertEquals(configForm4, repository.findById("code4").get());
