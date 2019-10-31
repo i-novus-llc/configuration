@@ -44,8 +44,6 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     private ApplicationRestService applicationRestService;
 
-    private String context;
-
     @Autowired
     public void setApplicationRestService(ApplicationRestService applicationRestService) {
         this.applicationRestService = applicationRestService;
@@ -58,7 +56,6 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     @Override
     public List<? extends SourceMetadata> read(String context) {
-        this.context = context;
         N2oStandardPage page = new N2oStandardPage();
         page.setObjectId("groupedConfig");
 
@@ -97,6 +94,11 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                         config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                     N2oInputText inputText = new N2oInputText();
                     fillElement(inputText, config);
+                    if (config.isCommonSystemValue() && !context.equals(commonSystemCode)) {
+                        inputText.setPlaceholder(config.getValue());
+                    } else {
+                        inputText.setDefaultValue(config.getValue());
+                    }
 
                     if (config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                         inputText.setDomain("integer");
@@ -106,6 +108,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                 } else if (config.getValueType().equals(ValueTypeEnum.BOOLEAN)) {
                     N2oCheckbox checkbox = new N2oCheckbox();
                     fillElement(checkbox, config);
+                    checkbox.setDefaultValue(config.getValue());
                     n2oFieldList.add(checkbox);
                 }
             }
@@ -154,10 +157,5 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         field.setLabel(config.getName());
         field.setHelp(config.getDescription());
         field.setDescription(config.getCode());
-        if (config.isCommonSystemValue() && !context.equals(commonSystemCode)) {
-            field.setPlaceholder(config.getValue());
-        } else {
-            field.setDefaultValue(config.getValue());
-        }
     }
 }
