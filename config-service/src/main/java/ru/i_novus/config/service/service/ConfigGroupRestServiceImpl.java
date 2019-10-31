@@ -21,7 +21,7 @@ import ru.i_novus.config.service.entity.QGroupEntity;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.GroupCodeRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
-import ru.i_novus.config.service.utils.AuditUtils;
+import ru.i_novus.config.service.utils.AuditHelper;
 import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
@@ -155,12 +155,12 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     private void audit(GroupForm groupForm, EventTypeEnum eventType) {
-        AuditClientRequest request = AuditUtils.getAuditClientRequest();
+        AuditClientRequest request = AuditHelper.getAuditClientRequest();
         request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.CONFIG_GROUP.toString());
         request.setObjectId(String.valueOf(groupForm.getId()));
         request.setObjectName(ObjectTypeEnum.CONFIG_GROUP.getTitle());
-        request.setContext(AuditUtils.getContext(groupForm));
+        request.setContext(AuditHelper.getContext(groupForm));
         auditClient.add(request);
     }
 }

@@ -94,6 +94,11 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                         config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                     N2oInputText inputText = new N2oInputText();
                     fillElement(inputText, config);
+                    if (config.isCommonSystemValue() && !context.equals(commonSystemCode)) {
+                        inputText.setPlaceholder(config.getValue());
+                    } else {
+                        inputText.setDefaultValue(config.getValue());
+                    }
 
                     if (config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                         inputText.setDomain("integer");
@@ -103,6 +108,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                 } else if (config.getValueType().equals(ValueTypeEnum.BOOLEAN)) {
                     N2oCheckbox checkbox = new N2oCheckbox();
                     fillElement(checkbox, config);
+                    checkbox.setDefaultValue(config.getValue());
                     n2oFieldList.add(checkbox);
                 }
             }
@@ -151,6 +157,5 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         field.setLabel(config.getName());
         field.setHelp(config.getDescription());
         field.setDescription(config.getCode());
-        field.setDefaultValue(config.getValue());
     }
 }
