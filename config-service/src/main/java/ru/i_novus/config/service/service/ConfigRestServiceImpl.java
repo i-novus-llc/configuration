@@ -20,7 +20,7 @@ import ru.i_novus.config.service.mapper.ConfigMapper;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
-import ru.i_novus.config.service.utils.AuditUtils;
+import ru.i_novus.config.service.utils.AuditHelper;
 import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
@@ -210,12 +210,12 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
-        AuditClientRequest request = AuditUtils.getAuditClientRequest();
+        AuditClientRequest request = AuditHelper.getAuditClientRequest();
         request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.CONFIG.toString());
         request.setObjectId(configEntity.getCode());
         request.setObjectName(ObjectTypeEnum.CONFIG.getTitle());
-        request.setContext(AuditUtils.getContext(configEntity));
+        request.setContext(AuditHelper.getContext(configEntity));
         auditClient.add(request);
     }
 }

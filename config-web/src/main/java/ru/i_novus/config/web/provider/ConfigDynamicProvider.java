@@ -44,6 +44,8 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     private ApplicationRestService applicationRestService;
 
+    private String context;
+
     @Autowired
     public void setApplicationRestService(ApplicationRestService applicationRestService) {
         this.applicationRestService = applicationRestService;
@@ -56,6 +58,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     @Override
     public List<? extends SourceMetadata> read(String context) {
+        this.context = context;
         N2oStandardPage page = new N2oStandardPage();
         page.setObjectId("groupedConfig");
 
@@ -151,6 +154,10 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         field.setLabel(config.getName());
         field.setHelp(config.getDescription());
         field.setDescription(config.getCode());
-        field.setDefaultValue(config.getValue());
+        if (config.isCommonSystemValue() && !context.equals(commonSystemCode)) {
+            field.setPlaceholder(config.getValue());
+        } else {
+            field.setDefaultValue(config.getValue());
+        }
     }
 }

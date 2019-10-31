@@ -26,6 +26,9 @@ public class ConfigForm {
     @ApiModelProperty("Значение настройки")
     private String value;
 
+    @ApiModelProperty("Общесистемное значение")
+    private boolean isCommonSystemValue;
+
     @ApiModelProperty("Код приложения")
     private String applicationCode;
 }
