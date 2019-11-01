@@ -23,7 +23,7 @@
             <row>
                 <input-select id="group" label="Группа настроек" query-id="config_group">
                     <pre-filters>
-                        <like field-id="codes" value="{code}" />
+                        <like field-id="codes" value="{code}"/>
                     </pre-filters>
                     <dependencies>
                         <enabling on="isCreateForm">isCreateForm</enabling>
@@ -40,6 +40,35 @@
                     </options>
                 </input-select>
             </row>
+
+            <input-text id="defaultValueString" label="Значение по умолчанию">
+                <dependencies>
+                    <set-value><![CDATA[
+                        defaultValue
+                        ]]>
+                    </set-value>
+                    <visibility on="valueType">valueType.id == 'STRING'</visibility>
+                </dependencies>
+            </input-text>
+            <input-text id="defaultValueNumber" domain="integer" label="Значение по умолчанию">
+                <dependencies>
+                    <set-value><![CDATA[
+                        defaultValue
+                        ]]>
+                    </set-value>
+                    <visibility on="valueType">valueType.id == 'NUMBER'</visibility>
+                </dependencies>
+            </input-text>
+            <checkbox id="defaultValueBoolean" label="Значение по умолчанию">
+                <dependencies>
+                    <set-value><![CDATA[
+                        defaultValue
+                        ]]>
+                    </set-value>
+                    <visibility on="valueType">valueType.id == 'BOOLEAN'</visibility>
+                </dependencies>
+            </checkbox>
+
             <input-text id="description" label="Описание"/>
             <hidden id="isCreateForm" default-value="true"/>
         </fields>
