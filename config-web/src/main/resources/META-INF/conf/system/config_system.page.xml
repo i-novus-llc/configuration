@@ -19,7 +19,7 @@
                     <column text-field-id="name" label="Наименование"/>
                     <column text-field-id="">
                         <toolbar>
-                            <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
+                            <button id="delete" label="Сбросить настройки" icon="fa fa-eraser" type="icon"
                                     confirm="true" confirm-title="Сбросить настройки приложения"
                                     confirm-text="Вы уверены, что хотите сбросить настройки приложения к значению по умолчанию?"
                                     visible="{typeof isSystem == 'undefined'}">
