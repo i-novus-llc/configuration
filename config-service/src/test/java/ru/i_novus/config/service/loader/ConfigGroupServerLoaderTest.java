@@ -56,9 +56,7 @@ public class ConfigGroupServerLoaderTest {
      */
     @Test
     public void simpleLoader() {
-        BiConsumer<List<GroupForm>, String> loader = (data, subject) -> {
-            configLoader.load(data, subject);
-        };
+        BiConsumer<List<GroupForm>, String> loader = configLoader::load;
         repository.deleteAll();
         case1(loader);
         case2(loader);

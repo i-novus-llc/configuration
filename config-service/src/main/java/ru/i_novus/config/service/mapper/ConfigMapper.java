@@ -14,6 +14,7 @@ public class ConfigMapper {
         configEntity.setName(configForm.getName());
         configEntity.setDescription(configForm.getDescription());
         configEntity.setValueType(configForm.getValueType());
+        configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setApplicationCode(configForm.getApplicationCode());
         return configEntity;
     }
@@ -24,6 +25,7 @@ public class ConfigMapper {
         configResponse.setName(configEntity.getName());
         configResponse.setDescription(configEntity.getDescription());
         configResponse.setValueType(configEntity.getValueType());
+        configResponse.setDefaultValue(configEntity.getDefaultValue());
         configResponse.setApplication(application);
         configResponse.setGroup(group);
         return configResponse;
@@ -36,6 +38,7 @@ public class ConfigMapper {
         configForm.setDescription(configEntity.getDescription());
         configForm.setValueType(configEntity.getValueType());
         configForm.setValue(value);
+        configForm.setDefaultValue(configEntity.getDefaultValue());
         configForm.setApplicationCode(configEntity.getApplicationCode());
         return configForm;
     }

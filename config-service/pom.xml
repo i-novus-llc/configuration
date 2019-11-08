@@ -13,8 +13,8 @@
     </parent>
 
     <properties>
-        <rdm.version>1.83</rdm.version>
-        <audit.version>2.3</audit.version>
+        <rdm.version>1.88</rdm.version>
+        <audit.version>2.31</audit.version>
     </properties>
 
     <dependencies>
