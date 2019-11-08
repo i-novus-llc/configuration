@@ -72,9 +72,9 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         form.setId("groupedConfigForm");
 
         N2oCustomRegion region = new N2oCustomRegion();
-        region.setWidgets(new N2oWidget[] {form});
+        region.setWidgets(new N2oWidget[]{form});
         N2oStandardPage.Layout layout = new N2oStandardPage.Layout();
-        layout.setRegions(new N2oRegion[] {region});
+        layout.setRegions(new N2oRegion[]{region});
         page.setRegions(layout);
 
         List<GroupedApplicationConfig> groupedApplicationConfigList = applicationRestService.getGroupedApplicationConfig(context);
@@ -93,22 +93,23 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                 if (config.getValueType().equals(ValueTypeEnum.STRING) ||
                         config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                     N2oInputText inputText = new N2oInputText();
-                    fillElement(inputText, config);
-                    if (config.isCommonSystemValue() && !context.equals(commonSystemCode)) {
-                        inputText.setPlaceholder(config.getValue());
-                    } else {
-                        inputText.setDefaultValue(config.getValue());
-                    }
 
-                    if (config.getValueType().equals(ValueTypeEnum.NUMBER)) {
+                    fillElement(inputText, config);
+                    inputText.setPlaceholder(config.getDefaultValue());
+                    inputText.setDefaultValue(config.getValue());
+
+                    if (config.getValueType().equals(ValueTypeEnum.NUMBER))
                         inputText.setDomain("integer");
-                    }
 
                     n2oFieldList.add(inputText);
                 } else if (config.getValueType().equals(ValueTypeEnum.BOOLEAN)) {
                     N2oCheckbox checkbox = new N2oCheckbox();
                     fillElement(checkbox, config);
-                    checkbox.setDefaultValue(config.getValue());
+                    if (config.getValue() != null) {
+                        checkbox.setDefaultValue(config.getValue());
+                    } else {
+                        checkbox.setDefaultValue(config.getDefaultValue());
+                    }
                     n2oFieldList.add(checkbox);
                 }
             }

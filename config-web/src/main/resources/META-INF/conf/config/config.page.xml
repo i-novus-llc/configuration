@@ -26,6 +26,7 @@
                     <column text-field-id="group.name" label="Группа настроек"/>
                     <column text-field-id="code" label="Код"/>
                     <column text-field-id="name" label="Наименование"/>
+                    <column text-field-id="defaultValue" label="Значение по умолчанию"/>
 
                     <column text-field-id="option">
                         <toolbar>

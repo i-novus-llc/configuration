@@ -45,4 +45,10 @@ public class ConfigEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "value_type", nullable = false)
     private ValueTypeEnum valueType;
+
+    /**
+     * Значение по умолчанию
+     */
+    @Column(name = "default_value")
+    private String defaultValue;
 }

@@ -95,12 +95,10 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         Map<String, String> commonApplicationConfigKeyValues = configValueService.getKeyValueList(defaultAppCode);
 
         Map<String, String> applicationConfigKeyValues = null;
-        boolean applicationConfigsNotExist = false;
         if (appCode != null) {
             try {
                 applicationConfigKeyValues = configValueService.getKeyValueList(appCode);
-            } catch (Exception e) {
-                applicationConfigsNotExist = true;
+            } catch (Exception ignored) {
             }
         }
 
@@ -111,20 +109,19 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
             ConfigEntity configEntity = (ConfigEntity) obj[1];
 
             String value;
-            boolean isCommonSystemValue = false;
 
-            if (appCode != null && !applicationConfigsNotExist) {
+            if (appCode != null) {
                 value = applicationConfigKeyValues.get(configEntity.getCode());
-                if (value == null) {
-                    value = commonApplicationConfigKeyValues.get(configEntity.getCode());
-                    isCommonSystemValue = true;
+                if (commonApplicationConfigKeyValues.containsKey(configEntity.getCode())) {
+                    String defaultValue = commonApplicationConfigKeyValues.get(configEntity.getCode());
+                    if (defaultValue != null) {
+                        configEntity.setDefaultValue(defaultValue);
+                    }
                 }
             } else {
                 value = commonApplicationConfigKeyValues.get(configEntity.getCode());
-                isCommonSystemValue = true;
             }
             ConfigForm configForm = ConfigMapper.toConfigForm(configEntity, value);
-            configForm.setCommonSystemValue(isCommonSystemValue);
 
             GroupedApplicationConfig existingGroupedApplicationConfig =
                     result.stream().filter(i -> Objects.equals(i.getId(), groupForm.getId())).findFirst().orElse(null);
