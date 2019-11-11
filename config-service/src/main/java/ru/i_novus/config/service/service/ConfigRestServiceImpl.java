@@ -137,8 +137,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         return new PageImpl<>(query.fetch(), criteria, total)
                 .map(e -> {
-                    GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
-                    ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
+                            GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
+                            ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
                             return ConfigMapper.toConfigResponse(
                                     e, application,
                                     groupEntity == null ? null : GroupMapper.toGroupForm(groupEntity)
@@ -185,11 +185,10 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             String value;
             try {
                 value = configValueService.getValue(configEntity.getApplicationCode(), code);
-            } catch (Exception e) {
-                value = configValueService.getValue(defaultAppCode, code);
+                configValueService.saveValue(configForm.getApplicationCode(), code, value);
+                configValueService.deleteValue(configEntity.getApplicationCode(), code);
+            } catch (Exception ignored) {
             }
-            configValueService.saveValue(configForm.getApplicationCode(), code, value);
-            configValueService.deleteValue(configEntity.getApplicationCode(), code);
         }
 
         configEntity.setApplicationCode(configForm.getApplicationCode());

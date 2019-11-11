@@ -92,9 +92,13 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         List<Object[]> objectList = configRepository.findGroupedConfigByAppCode(appCode);
         List<GroupedApplicationConfig> result = new ArrayList<>();
 
-        Map<String, String> commonApplicationConfigKeyValues = configValueService.getKeyValueList(defaultAppCode);
+        Map<String, String> commonApplicationConfigKeyValues = Collections.EMPTY_MAP;
+        try {
+            commonApplicationConfigKeyValues = configValueService.getKeyValueList(defaultAppCode);
+        } catch (Exception ignored) {
+        }
 
-        Map<String, String> applicationConfigKeyValues = null;
+        Map<String, String> applicationConfigKeyValues = Collections.EMPTY_MAP;
         if (appCode != null) {
             try {
                 applicationConfigKeyValues = configValueService.getKeyValueList(appCode);
@@ -145,8 +149,11 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         Map<String, String> updatedKeyValues = new HashMap<>();
         Map<String, String> deletedKeyValues = new HashMap<>();
 
-        Map<String, String> commonApplicationConfigKeyValues =
-                configValueService.getKeyValueList(defaultAppCode);
+        Map<String, String> commonApplicationConfigKeyValues = Collections.EMPTY_MAP;
+        try {
+            commonApplicationConfigKeyValues = configValueService.getKeyValueList(defaultAppCode);
+        } catch (Exception ignored) {
+        }
         Map<String, String> applicationConfigKeyValues = Collections.EMPTY_MAP;
         if (!code.equals(commonSystemCode)) {
             try {
@@ -194,8 +201,11 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         List<ConfigEntity> configEntities = configRepository.findByApplicationCode(code);
 
         for (ConfigEntity e : configEntities) {
-            String value = configValueService.getValue(code, e.getCode());
-            audit(ConfigMapper.toConfigForm(e, value), EventTypeEnum.APPLICATION_CONFIG_DELETE);
+            try {
+                String value = configValueService.getValue(code, e.getCode());
+                audit(ConfigMapper.toConfigForm(e, value), EventTypeEnum.APPLICATION_CONFIG_DELETE);
+            } catch (Exception ignored) {
+            }
         }
         configValueService.deleteAllValues(code);
     }
