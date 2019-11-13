@@ -74,6 +74,10 @@
             <select mapping="[valueType]"/>
         </field>
 
+        <field id="defaultValue" domain="string">
+            <select mapping="[defaultValue]"/>
+        </field>
+
         <field id="description" domain="string">
             <select/>
         </field>

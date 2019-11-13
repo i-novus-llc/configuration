@@ -22,4 +22,8 @@ public class SystemCriteria extends AbstractCriteria {
     @QueryParam("appCode")
     @ApiParam("Код приложения")
     private String appCode;
+
+    @QueryParam("hasApplications")
+    @ApiParam("Содержит ли приложения")
+    private Boolean hasApplications;
 }
