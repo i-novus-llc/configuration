@@ -101,6 +101,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         StandardField field = (StandardField) lineFieldSet.getRows().get(0).getCols().get(0).getFields().get(0);
         assertThat(field.getControl(), instanceOf(InputText.class));
         assertThat(field.getControl().getSrc(), is("InputText"));
+        assertThat(((InputText) field.getControl()).getPlaceholder(), is("default"));
         assertThat(field.getId(), is("data.test@code1"));
         assertThat(field.getLabel(), is("name1"));
         assertThat(field.getDescription(), is("test.code1"));
@@ -120,7 +121,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         lineFieldSet = (LineFieldSet) fieldsets.get(1);
         assertThat(lineFieldSet.getLabel(), is("group2"));
         assertLineFieldSetProperties(lineFieldSet);
-        assertThat(lineFieldSet.getRows().size(), is(1));
+        assertThat(lineFieldSet.getRows().size(), is(2));
         field = (StandardField) lineFieldSet.getRows().get(0).getCols().get(0).getFields().get(0);
         assertThat(field.getControl(), instanceOf(Checkbox.class));
         assertThat(((Checkbox)field.getControl()).getLabel(), is("name3"));
@@ -128,6 +129,15 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(field.getDescription(), is("test.code3"));
         assertThat(field.getHelp(), is("desc3"));
         assertThat(dynamicPage.getModels().get(String.format("resolve['%s'].%s", widgetId, field.getId())).getValue(), is(true));
+
+        field = (StandardField) lineFieldSet.getRows().get(1).getCols().get(0).getFields().get(0);
+        assertThat(field.getControl(), instanceOf(Checkbox.class));
+        assertThat(((Checkbox)field.getControl()).getLabel(), is("name4"));
+        assertThat(field.getId(), is("data.test@code4"));
+        assertThat(field.getDescription(), is("test.code4"));
+        assertThat(field.getHelp(), is("desc4"));
+        assertThat(dynamicPage.getModels().get(String.format("resolve['%s'].%s", widgetId, field.getId())).getValue(), is(false));
+
         // третий филдсет (скрытый)
         FieldSet fieldSet = fieldsets.get(2);
         assertThat(fieldSet.getRows().size(), is(1));

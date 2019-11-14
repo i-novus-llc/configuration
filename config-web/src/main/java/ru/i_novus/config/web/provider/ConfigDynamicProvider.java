@@ -110,8 +110,8 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                         checkbox.setDefaultValue(config.getValue());
                     } else {
                         checkbox.setDefaultValue(config.getDefaultValue());
+                        checkbox.setUnchecked(CheckboxDefaultValueEnum.FALSE);
                     }
-                    checkbox.setUnchecked(CheckboxDefaultValueEnum.FALSE);
                     n2oFieldList.add(checkbox);
                 }
             }
