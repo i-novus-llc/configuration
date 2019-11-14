@@ -8,8 +8,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
-import java.time.LocalDateTime;
-
 public class AuditHelper {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
@@ -17,7 +15,6 @@ public class AuditHelper {
     public static AuditClientRequest getAuditClientRequest() {
         // TODO - возможно придется добавить userId, sourceWorkstation, hostname
         AuditClientRequest request = new AuditClientRequest();
-        request.setEventDate(LocalDateTime.now());
         request.setUsername(getUsername());
         request.setSourceApplication("config-service");
         request.setAuditType((short) 1);
