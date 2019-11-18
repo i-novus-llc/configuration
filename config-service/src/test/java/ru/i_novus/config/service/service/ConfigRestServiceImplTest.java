@@ -24,6 +24,7 @@ import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.service.builders.ConfigFormBuilder;
 import ru.i_novus.ms.audit.client.AuditClient;
 
+import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -208,6 +209,14 @@ public class ConfigRestServiceImplTest {
     }
 
     /**
+     * Проверка, что получение настройки по несуществующему коду приводит к NotFoundException
+     */
+    @Test(expected = NotFoundException.class)
+    public void getConfigByNotExistsCodeTest() {
+        configRestService.getConfig("bad-code");
+    }
+
+    /**
      * Проверка, что настройка успешно сохраняется
      */
     @Test
@@ -255,9 +264,19 @@ public class ConfigRestServiceImplTest {
     }
 
     /**
+     * Проверка, что обновление настройки по несуществующему коду приводит к NotFoundException
+     */
+    @Test(expected = NotFoundException.class)
+    public void updateConfigByNotExistsCodeTest() {
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        configForm.setCode("bad-code");
+        configRestService.updateConfig(configForm.getCode(), configForm);
+    }
+
+    /**
      * Проверка, что удаление настройки по коду происходит корректно
      */
-    @Test(expected = RestException.class)
+    @Test(expected = NotFoundException.class)
     public void deleteConfigTest() {
         ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
 
@@ -268,13 +287,11 @@ public class ConfigRestServiceImplTest {
     }
 
     /**
-     * Проверка, что удаление настройки по несуществующему коду приводит к RestException
+     * Проверка, что удаление настройки по несуществующему коду приводит к NotFoundException
      */
-    @Test(expected = RestException.class)
-    public void deleteAlreadyDeletedConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
-
-        configRestService.deleteConfig(configForm.getCode());
+    @Test(expected = NotFoundException.class)
+    public void deleteConfigByNotExistsCodeTest() {
+        configRestService.deleteConfig("bad-code");
     }
 
     private void configAssertEquals(ConfigForm configForm, ConfigResponse configResponse) {

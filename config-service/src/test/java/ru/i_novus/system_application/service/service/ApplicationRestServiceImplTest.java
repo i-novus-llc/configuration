@@ -1,5 +1,6 @@
 package ru.i_novus.system_application.service.service;
 
+import net.n2oapp.platform.jaxrs.RestException;
 import net.n2oapp.platform.jaxrs.autoconfigure.EnableJaxRsProxyClient;
 import net.n2oapp.platform.test.autoconfigure.DefinePort;
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
@@ -25,6 +26,7 @@ import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 import ru.i_novus.system_application.service.service.builders.SimpleApplicationResponseBuilder;
 
+import javax.ws.rs.NotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,11 +142,27 @@ public class ApplicationRestServiceImplTest {
     }
 
     /**
+     * Проверка, что получение приложения по несуществующему коду приводит к NotFoundException
+     */
+    @Test(expected = NotFoundException.class)
+    public void getApplicationByNotExistsCodeTest() {
+        applicationRestService.getApplication("bad-code");
+    }
+
+    /**
+     * Проверка, что получение настроек приложения по несуществующему коду приводит к NotFoundException
+     */
+    @Test(expected = NotFoundException.class)
+    public void getGroupedApplicationConfigByNotExistsCodeTest() {
+        applicationRestService.getGroupedApplicationConfig("bad-code");
+    }
+
+    /**
      * Проверка, что в консул сохраняются ожидаемые данные
      */
     @Test
     public void saveApplicationConfigTest() {
-        String appCode = "appCode";
+        String appCode = "app-auth";
 
         IntStream.rangeClosed(0, 13).mapToObj(i -> {
             ConfigForm configForm = new ConfigForm();
@@ -193,15 +211,32 @@ public class ApplicationRestServiceImplTest {
     }
 
     /**
-     * Проверка, что в случае нулевых данных не возникает NullPointerException
+     * Проверка, что сохранение настроек приложения по несуществующему коду приводит к NotFoundException
      */
-    @Test
+    @Test(expected = NotFoundException.class)
+    public void saveApplicationConfigByNotExistsCodeTest() {
+        Map<String, Object> data = Map.of("data", Map.of());
+        applicationRestService.saveApplicationConfig("bad-code", data);
+    }
+
+    /**
+     * Проверка, что нулевые данные приводят к RestException
+     */
+    @Test(expected = RestException.class)
     public void saveApplicationConfigIfNullDataTest() {
         Map<String, Object> data = new HashMap<>();
-        data.put("appCode", "appCode");
+        data.put("appCode", "app-auth");
         data.put("data", null);
-        doNothing().when(configValueService).deleteAllValues("appCode");
-        applicationRestService.saveApplicationConfig("appCode", data);
+        doNothing().when(configValueService).deleteAllValues("app-auth");
+        applicationRestService.saveApplicationConfig("app-auth", data);
+    }
+
+    /**
+     * Проверка, что удаление настроек приложения по несуществующему коду приводит к NotFoundException
+     */
+    @Test(expected = NotFoundException.class)
+    public void deleteApplicationConfigByNotExistsCode() {
+        applicationRestService.deleteApplicationConfig("bad-code");
     }
 
     private void applicationAssertEquals(SimpleApplicationResponse simpleApplicationResponse, ApplicationResponse applicationResponse) {

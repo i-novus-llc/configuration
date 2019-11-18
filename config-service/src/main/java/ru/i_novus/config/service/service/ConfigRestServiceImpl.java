@@ -32,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -149,7 +150,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Override
     public ConfigResponse getConfig(String code) {
-        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
+        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
@@ -173,7 +174,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     @Transactional
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
-        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
+        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         configEntity.setName(configForm.getName());
         configEntity.setValueType(configForm.getValueType());
@@ -198,7 +199,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Override
     public void deleteConfig(String code) {
-        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
+        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         configRepository.deleteByCode(code);
         configValueService.deleteValue(configEntity.getApplicationCode(), code);
@@ -206,7 +207,15 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private ApplicationResponse getApplicationResponse(String code) {
-        return code == null ? ApplicationMapper.getCommonSystemApplication() : applicationRestService.getApplication(code);
+        if (code == null) return ApplicationMapper.getCommonSystemApplication();
+        ApplicationResponse applicationResponse;
+
+        try {
+            applicationResponse = applicationRestService.getApplication(code);
+        } catch (Exception e) {
+            applicationResponse = null;
+        }
+        return applicationResponse;
     }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {

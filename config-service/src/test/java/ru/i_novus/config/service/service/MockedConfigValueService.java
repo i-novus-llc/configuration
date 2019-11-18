@@ -21,7 +21,7 @@ public class MockedConfigValueService extends ConfigValueServiceConsulImpl {
                 "k11", "v11", "k13", "v13"
         );
 
-        assertEquals("appCode", appCode);
+        assertEquals("app-auth", appCode);
         assertEquals(expectedUpdatedData, updatedData);
         assertEquals(expectedDeletedData, deletedData);
     }
