@@ -3,6 +3,7 @@ package ru.i_novus.system_application.service.service;
 import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -28,6 +29,7 @@ import ru.i_novus.system_application.service.entity.QApplicationEntity;
 import ru.i_novus.system_application.service.mapper.ApplicationMapper;
 import ru.i_novus.system_application.service.repository.ApplicationRepository;
 
+import javax.ws.rs.NotFoundException;
 import java.util.*;
 
 /**
@@ -80,14 +82,16 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public ApplicationResponse getApplication(String code) {
-        ApplicationEntity applicationEntity = applicationRepository.findByCode(code);
-        return applicationEntity != null ? ApplicationMapper.toApplicationResponse(applicationEntity) : null;
+        ApplicationEntity applicationEntity = Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+        return ApplicationMapper.toApplicationResponse(applicationEntity);
     }
 
     @Override
     public List<GroupedApplicationConfig> getGroupedApplicationConfig(String appCode) {
         if (appCode.equals(commonSystemCode))
             appCode = null;
+        else
+            Optional.ofNullable(applicationRepository.findByCode(appCode)).orElseThrow(NotFoundException::new);
 
         List<Object[]> objectList = configRepository.findGroupedConfigByAppCode(appCode);
         List<GroupedApplicationConfig> result = new ArrayList<>();
@@ -141,9 +145,9 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public void saveApplicationConfig(String code, Map<String, Object> data) {
+        Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         if (data.get("data") == null) {
-            deleteApplicationConfig(code);
-            return;
+            throw new UserException("config.application.bad.data");
         }
 
         Map<String, String> updatedKeyValues = new HashMap<>();
@@ -198,6 +202,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public void deleteApplicationConfig(String code) {
+        Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         List<ConfigEntity> configEntities = configRepository.findByApplicationCode(code);
 
         for (ConfigEntity e : configEntities) {
