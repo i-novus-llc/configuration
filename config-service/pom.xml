@@ -13,8 +13,8 @@
     </parent>
 
     <properties>
-        <rdm.version>1.81</rdm.version>
-        <audit.version>2.1</audit.version>
+        <rdm.version>1.88</rdm.version>
+        <audit.version>2.3.2</audit.version>
     </properties>
 
     <dependencies>
@@ -82,6 +82,11 @@
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-jwt</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.n2oapp.platform</groupId>
+            <artifactId>n2o-platform-starter-loader-server</artifactId>
         </dependency>
 
 

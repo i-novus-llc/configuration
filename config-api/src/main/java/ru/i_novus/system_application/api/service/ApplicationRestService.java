@@ -38,7 +38,7 @@ public interface ApplicationRestService {
             @ApiResponse(code = 200, message = "Успешное получение приложения"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
-    public ApplicationResponse getApplication(@PathParam("code") @ApiParam(name = "Код приложения") String code);
+    public ApplicationResponse getApplication(@PathParam("code") @ApiParam(value = "Код приложения") String code);
 
     @GET
     @Path("/{code}/configs")
@@ -47,7 +47,7 @@ public interface ApplicationRestService {
             @ApiResponse(code = 200, message = "Успешное получение сгрупированных настроек приложения"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
-    List<GroupedApplicationConfig> getGroupedApplicationConfig(@PathParam("code") @ApiParam(name = "Код приложения") String code);
+    List<GroupedApplicationConfig> getGroupedApplicationConfig(@PathParam("code") @ApiParam(value = "Код приложения") String code);
 
     @POST
     @Path("/{code}/configs")
@@ -57,7 +57,7 @@ public interface ApplicationRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
-    void saveApplicationConfig(@PathParam("code") @ApiParam(name = "Код приложения") String code,
+    void saveApplicationConfig(@PathParam("code") @ApiParam(value = "Код приложения") String code,
                                @Valid @NotNull @ApiParam(name = "Пары значений (код настройки / значение)", required = true)
                                        Map<String, Object> data);
 
@@ -68,5 +68,5 @@ public interface ApplicationRestService {
             @ApiResponse(code = 200, message = "Удаление значений настроек приложения успешно выполнено"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
-    void deleteApplicationConfig(@PathParam("code") @ApiParam(name = "Код приложения") String code);
+    void deleteApplicationConfig(@PathParam("code") @ApiParam(value = "Код приложения") String code);
 }

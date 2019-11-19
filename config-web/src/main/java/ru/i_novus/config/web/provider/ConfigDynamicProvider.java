@@ -1,9 +1,11 @@
 package ru.i_novus.config.web.provider;
 
+import net.n2oapp.framework.api.exception.N2oUserException;
 import net.n2oapp.framework.api.metadata.SourceMetadata;
 import net.n2oapp.framework.api.metadata.aware.NamespaceUriAware;
 import net.n2oapp.framework.api.metadata.control.N2oHidden;
 import net.n2oapp.framework.api.metadata.control.N2oStandardField;
+import net.n2oapp.framework.api.metadata.control.plain.CheckboxDefaultValueEnum;
 import net.n2oapp.framework.api.metadata.control.plain.N2oCheckbox;
 import net.n2oapp.framework.api.metadata.control.plain.N2oInputText;
 import net.n2oapp.framework.api.metadata.event.action.N2oCloseAction;
@@ -25,11 +27,13 @@ import org.springframework.stereotype.Component;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.GroupedApplicationConfig;
 import ru.i_novus.config.api.model.ValueTypeEnum;
+import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ConfigDynamicProvider implements DynamicMetadataProvider {
@@ -57,7 +61,9 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         page.setObjectId("groupedConfig");
 
         if (!context.equals(commonSystemCode)) {
-            String appName = applicationRestService.getApplication(context).getName();
+            ApplicationResponse applicationResponse = Optional.ofNullable(applicationRestService.getApplication(context))
+                    .orElseThrow(() -> new N2oUserException("config.application.not.choose"));
+            String appName = applicationResponse.getName();
             page.setName(appName + " (" + context + ")");
         } else {
             page.setName("Общесистемные");
@@ -67,9 +73,9 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         form.setId("groupedConfigForm");
 
         N2oCustomRegion region = new N2oCustomRegion();
-        region.setWidgets(new N2oWidget[] {form});
+        region.setWidgets(new N2oWidget[]{form});
         N2oStandardPage.Layout layout = new N2oStandardPage.Layout();
-        layout.setRegions(new N2oRegion[] {region});
+        layout.setRegions(new N2oRegion[]{region});
         page.setRegions(layout);
 
         List<GroupedApplicationConfig> groupedApplicationConfigList = applicationRestService.getGroupedApplicationConfig(context);
@@ -88,16 +94,24 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                 if (config.getValueType().equals(ValueTypeEnum.STRING) ||
                         config.getValueType().equals(ValueTypeEnum.NUMBER)) {
                     N2oInputText inputText = new N2oInputText();
-                    fillElement(inputText, config);
 
-                    if (config.getValueType().equals(ValueTypeEnum.NUMBER)) {
+                    fillElement(inputText, config);
+                    inputText.setPlaceholder(config.getDefaultValue());
+                    inputText.setDefaultValue(config.getValue());
+
+                    if (config.getValueType().equals(ValueTypeEnum.NUMBER))
                         inputText.setDomain("integer");
-                    }
 
                     n2oFieldList.add(inputText);
                 } else if (config.getValueType().equals(ValueTypeEnum.BOOLEAN)) {
                     N2oCheckbox checkbox = new N2oCheckbox();
                     fillElement(checkbox, config);
+                    if (config.getValue() != null) {
+                        checkbox.setDefaultValue(config.getValue());
+                    } else {
+                        checkbox.setDefaultValue(config.getDefaultValue());
+                        checkbox.setUnchecked(CheckboxDefaultValueEnum.FALSE);
+                    }
                     n2oFieldList.add(checkbox);
                 }
             }
@@ -146,6 +160,5 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         field.setLabel(config.getName());
         field.setHelp(config.getDescription());
         field.setDescription(config.getCode());
-        field.setDefaultValue(config.getValue());
     }
 }

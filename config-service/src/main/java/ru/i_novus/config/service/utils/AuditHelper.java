@@ -1,5 +1,6 @@
 package ru.i_novus.config.service.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -7,16 +8,13 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
-import java.time.LocalDateTime;
-
-public class AuditUtils {
+public class AuditHelper {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public static AuditClientRequest getAuditClientRequest() {
         // TODO - возможно придется добавить userId, sourceWorkstation, hostname
         AuditClientRequest request = new AuditClientRequest();
-        request.setEventDate(LocalDateTime.now());
         request.setUsername(getUsername());
         request.setSourceApplication("config-service");
         request.setAuditType((short) 1);
@@ -42,7 +40,7 @@ public class AuditUtils {
         String context;
         try {
             context = objectMapper.writeValueAsString(obj);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             context = e.getMessage();
         }
         return context;

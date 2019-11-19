@@ -19,7 +19,7 @@
                     <column text-field-id="name" label="Наименование"/>
                     <column text-field-id="">
                         <toolbar>
-                            <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
+                            <button id="delete" label="Сбросить настройки" icon="fa fa-eraser" type="icon"
                                     confirm="true" confirm-title="Сбросить настройки приложения"
                                     confirm-text="Вы уверены, что хотите сбросить настройки приложения к значению по умолчанию?"
                                     visible="{typeof isSystem == 'undefined'}">
@@ -29,7 +29,7 @@
                     </column>
                 </columns>
                 <rows>
-                    <click>
+                    <click enabled="{!isSystem || isSystem &amp;&amp; code == '${config.common.system.code}'}">
                         <open-page page-id="configDynamic?{id}" route="/:code/update" detail-field-id="id"/>
                     </click>
                 </rows>

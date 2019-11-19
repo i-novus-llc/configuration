@@ -11,6 +11,9 @@
                 <param id="code" mapping="['code']"/>
                 <param id="name" mapping="['name']"/>
                 <param id="valueType.id" mapping="['valueType']"/>
+                <param id="defaultValueString" mapping="['defaultValue']" mapping-condition="defaultValueString != null"/>
+                <param id="defaultValueNumber" mapping="['defaultValue']" mapping-condition="defaultValueNumber != null"/>
+                <param id="defaultValueBoolean" mapping="['defaultValue']" mapping-condition="defaultValueBoolean != null" normalize="#this == 'true'"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>
@@ -24,6 +27,9 @@
                 <param id="code" mapping="['code']"/>
                 <param id="name" mapping="['name']"/>
                 <param id="valueType.id" mapping="['valueType']"/>
+                <param id="defaultValueString" mapping="['defaultValue']" mapping-condition="defaultValueString != null"/>
+                <param id="defaultValueNumber" mapping="['defaultValue']" mapping-condition="defaultValueNumber != null"/>
+                <param id="defaultValueBoolean" mapping="['defaultValue']" mapping-condition="defaultValueBoolean != null"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>

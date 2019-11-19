@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_columns_to_system
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V15_add_default_config_value_column.sql

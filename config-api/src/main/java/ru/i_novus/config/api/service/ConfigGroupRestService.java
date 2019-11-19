@@ -28,13 +28,13 @@ public interface ConfigGroupRestService {
             @ApiResponse(code = 200, message = "Успешное получение группы настроек"),
             @ApiResponse(code = 404, message = "Группа настроек не найдена")
     })
-    GroupForm getGroup(@PathParam("groupId") @ApiParam(name = "Идентификатор группы") Integer groupId);
+    GroupForm getGroup(@PathParam("groupId") @ApiParam(value = "Идентификатор группы") Integer groupId);
 
     @GET
     @Path("/byCode/{code}")
     @ApiOperation(value = "Получение групп настроек по коду настройки", response = GroupForm.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение групп настроек")
-    List<GroupForm> getGroupByConfigCode(@PathParam("code") @ApiParam(name = "Код настройки")String code);
+    List<GroupForm> getGroupByConfigCode(@PathParam("code") @ApiParam(value = "Код настройки")String code);
 
     @GET
     @Path("/")
@@ -60,7 +60,7 @@ public interface ConfigGroupRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Группа не найдена")
     })
-    void updateGroup(@PathParam("groupId") @ApiParam(name = "Идентификатор группы") Integer groupId,
+    void updateGroup(@PathParam("groupId") @ApiParam(value = "Идентификатор группы") Integer groupId,
                      @Valid @NotNull @ApiParam(name = "Обновленная группа настроек", required = true)
                              GroupForm groupForm);
 
@@ -71,5 +71,5 @@ public interface ConfigGroupRestService {
             @ApiResponse(code = 204, message = "Группа успешно удалена"),
             @ApiResponse(code = 404, message = "Группа не найдена")
     })
-    void deleteGroup(@PathParam("groupId") @ApiParam(name = "Идентификатор группы") Integer groupId);
+    void deleteGroup(@PathParam("groupId") @ApiParam(value = "Идентификатор группы") Integer groupId);
 }

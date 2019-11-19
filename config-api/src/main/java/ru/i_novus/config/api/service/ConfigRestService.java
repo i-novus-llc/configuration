@@ -28,7 +28,7 @@ public interface ConfigRestService {
             @ApiResponse(code = 200, message = "Успешное получение настройки"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
-    ConfigResponse getConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code);
+    ConfigResponse getConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code);
 
     @GET
     @Path("/")
@@ -55,7 +55,7 @@ public interface ConfigRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
-    void updateConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code,
+    void updateConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code,
                       @Valid @NotNull @ApiParam(name = "Обновленная настройка", required = true)
                               ConfigForm configForm);
 
@@ -66,5 +66,5 @@ public interface ConfigRestService {
             @ApiResponse(code = 200, message = "Настройка успешно удалена"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
-    void deleteConfig(@PathParam("code") @ApiParam(name = "Код настройки") String code);
+    void deleteConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code);
 }

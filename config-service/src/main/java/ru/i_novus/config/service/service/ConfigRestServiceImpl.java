@@ -12,11 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.EventTypeEnum;
-import ru.i_novus.config.api.model.ObjectTypeEnum;
-import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.*;
@@ -24,7 +20,7 @@ import ru.i_novus.config.service.mapper.ConfigMapper;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
-import ru.i_novus.config.service.utils.AuditUtils;
+import ru.i_novus.config.service.utils.AuditHelper;
 import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
@@ -36,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -141,8 +138,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         return new PageImpl<>(query.fetch(), criteria, total)
                 .map(e -> {
-                    GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
-                    ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
+                            GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
+                            ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
                             return ConfigMapper.toConfigResponse(
                                     e, application,
                                     groupEntity == null ? null : GroupMapper.toGroupForm(groupEntity)
@@ -153,7 +150,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Override
     public ConfigResponse getConfig(String code) {
-        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
+        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
@@ -177,10 +174,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     @Transactional
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
-        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
+        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         configEntity.setName(configForm.getName());
         configEntity.setValueType(configForm.getValueType());
+        configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setDescription(configForm.getDescription());
 
         if (configEntity.getApplicationCode() != null &&
@@ -188,11 +186,10 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             String value;
             try {
                 value = configValueService.getValue(configEntity.getApplicationCode(), code);
-            } catch (Exception e) {
-                value = configValueService.getValue(defaultAppCode, code);
+                configValueService.saveValue(configForm.getApplicationCode(), code, value);
+                configValueService.deleteValue(configEntity.getApplicationCode(), code);
+            } catch (Exception ignored) {
             }
-            configValueService.saveValue(configForm.getApplicationCode(), code, value);
-            configValueService.deleteValue(configEntity.getApplicationCode(), code);
         }
 
         configEntity.setApplicationCode(configForm.getApplicationCode());
@@ -202,7 +199,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Override
     public void deleteConfig(String code) {
-        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow();
+        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         configRepository.deleteByCode(code);
         configValueService.deleteValue(configEntity.getApplicationCode(), code);
@@ -210,16 +207,24 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private ApplicationResponse getApplicationResponse(String code) {
-        return code == null ? ApplicationMapper.getCommonSystemApplication() : applicationRestService.getApplication(code);
+        if (code == null) return ApplicationMapper.getCommonSystemApplication();
+        ApplicationResponse applicationResponse;
+
+        try {
+            applicationResponse = applicationRestService.getApplication(code);
+        } catch (Exception e) {
+            applicationResponse = null;
+        }
+        return applicationResponse;
     }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
-        AuditClientRequest request = AuditUtils.getAuditClientRequest();
+        AuditClientRequest request = AuditHelper.getAuditClientRequest();
         request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.CONFIG.toString());
         request.setObjectId(configEntity.getCode());
         request.setObjectName(ObjectTypeEnum.CONFIG.getTitle());
-        request.setContext(AuditUtils.getContext(configEntity));
+        request.setContext(AuditHelper.getContext(configEntity));
         auditClient.add(request);
     }
 }

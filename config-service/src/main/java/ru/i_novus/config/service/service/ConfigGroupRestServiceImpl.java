@@ -21,12 +21,13 @@ import ru.i_novus.config.service.entity.QGroupEntity;
 import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.repository.GroupCodeRepository;
 import ru.i_novus.config.service.repository.GroupRepository;
-import ru.i_novus.config.service.utils.AuditUtils;
+import ru.i_novus.config.service.utils.AuditHelper;
 import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public GroupForm getGroup(Integer groupId) {
-        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow();
+        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
         return GroupMapper.toGroupForm(groupEntity);
     }
 
@@ -91,8 +92,6 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
             throw new UserException("config.group.name.not.unique");
         }
 
-        groupForm.getCodes().forEach(groupEntity::setCode);
-
         GroupEntity savedGroupEntity = groupRepository.save(groupEntity);
         groupCodeRepository.saveAll(groupEntity.getCodes());
         audit(groupForm, EventTypeEnum.CONFIG_GROUP_CREATE);
@@ -103,7 +102,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Override
     @Transactional
     public void updateGroup(Integer groupId, @Valid @NotNull GroupForm groupForm) {
-        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow();
+        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
 
         if (groupCodeRepository.existsAtLeastOneCode(groupForm.getCodes(), groupEntity.getId())) {
             throw new UserException("config.group.codes.not.unique");
@@ -131,8 +130,9 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public void deleteGroup(Integer groupId) {
-        audit(getGroup(groupId), EventTypeEnum.CONFIG_GROUP_DELETE);
-        groupRepository.deleteById(groupId);
+        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
+        groupRepository.deleteById(groupEntity.getId());
+        audit(GroupMapper.toGroupForm(groupEntity), EventTypeEnum.CONFIG_GROUP_DELETE);
     }
 
     private Predicate toPredicate(GroupCriteria criteria) {
@@ -157,12 +157,12 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     private void audit(GroupForm groupForm, EventTypeEnum eventType) {
-        AuditClientRequest request = AuditUtils.getAuditClientRequest();
+        AuditClientRequest request = AuditHelper.getAuditClientRequest();
         request.setEventType(eventType.getTitle());
         request.setObjectType(ObjectTypeEnum.CONFIG_GROUP.toString());
         request.setObjectId(String.valueOf(groupForm.getId()));
         request.setObjectName(ObjectTypeEnum.CONFIG_GROUP.getTitle());
-        request.setContext(AuditUtils.getContext(groupForm));
+        request.setContext(AuditHelper.getContext(groupForm));
         auditClient.add(request);
     }
 }

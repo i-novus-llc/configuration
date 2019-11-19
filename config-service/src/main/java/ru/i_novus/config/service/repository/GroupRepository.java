@@ -26,7 +26,8 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, Qu
     Boolean existsByName(@Param("name") String name, @Param("groupId") Integer groupId);
 
     @Query(value = "SELECT g FROM GroupEntity g INNER JOIN GroupCodeEntity gc " +
-            "ON g.id = gc.group.id WHERE strpos(:code, gc.code) = 1 " +
+            "ON g.id = gc.group.id WHERE gc.code = :code OR " +
+            "strpos(:code, gc.code || '.') = 1 " +
             "GROUP BY g.id ORDER BY length(MAX(gc.code)) DESC")
     List<GroupEntity> findGroupsByConfigCodeStarts(@Param("code") String code, Pageable pageable);
 
@@ -34,4 +35,6 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, Qu
         List<GroupEntity> groupEntities = findGroupsByConfigCodeStarts(code, new PageRequest(0, 1));
         return groupEntities.isEmpty() ? null : groupEntities.get(0);
     }
+
+    GroupEntity findByName(String name);
 }

@@ -34,5 +34,5 @@ public interface SystemRestService {
             @ApiResponse(code = 200, message = "Успешное получение системы"),
             @ApiResponse(code = 404, message = "Система не найдена")
     })
-    public SystemResponse getSystem(@PathParam("code") @ApiParam(name = "Код системы") String code);
+    public SystemResponse getSystem(@PathParam("code") @ApiParam(value = "Код системы") String code);
 }

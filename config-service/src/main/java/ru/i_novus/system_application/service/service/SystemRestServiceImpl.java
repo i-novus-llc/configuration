@@ -19,8 +19,10 @@ import ru.i_novus.system_application.service.repository.SystemRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Реализация REST сервиса для получения систем
@@ -49,7 +51,10 @@ public class SystemRestServiceImpl implements SystemRestService {
         QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
 
         JPAQuery<SystemEntity> query = new JPAQuery<>(entityManager);
-        query.distinct().from(qSystemEntity).leftJoin(qSystemEntity.applications, qApplicationEntity);
+        query.distinct().from(qSystemEntity);
+        query = Boolean.TRUE.equals(criteria.getHasApplications()) ?
+                query.innerJoin(qSystemEntity.applications, qApplicationEntity) :
+                query.leftJoin(qSystemEntity.applications, qApplicationEntity);
 
         // TODO - фильтрует системы, но почему-то не фильтрует приложения
         if (criteria.getAppCode() != null) {
@@ -102,7 +107,7 @@ public class SystemRestServiceImpl implements SystemRestService {
 
     @Override
     public SystemResponse getSystem(String code) {
-        SystemEntity systemEntity = systemRepository.findByCode(code);
-        return systemEntity != null ? SystemMapper.toSystemResponse(systemEntity) : null;
+        SystemEntity systemEntity = Optional.ofNullable(systemRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+        return SystemMapper.toSystemResponse(systemEntity);
     }
 }
