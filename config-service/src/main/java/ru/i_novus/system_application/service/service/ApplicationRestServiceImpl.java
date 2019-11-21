@@ -223,6 +223,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         if (criteria.getSystemCode() != null) {
             builder.and(qApplicationEntity.system.code.eq(criteria.getSystemCode()));
         }
+        builder.and(qApplicationEntity.isDeleted.isFalse().or(qApplicationEntity.isDeleted.isNull()));
 
         return builder.getValue();
     }
