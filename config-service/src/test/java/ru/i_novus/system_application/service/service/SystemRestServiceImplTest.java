@@ -18,6 +18,7 @@ import ru.i_novus.system_application.api.model.SystemResponse;
 import ru.i_novus.system_application.api.service.SystemRestService;
 import ru.i_novus.system_application.service.service.builders.SimpleSystemResponseBuilder;
 
+import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -130,6 +131,14 @@ public class SystemRestServiceImplTest {
         SystemResponse systemResponse = systemRestService.getSystem(simpleSystemResponse.getCode());
 
         systemAssertEquals(simpleSystemResponse, systemResponse);
+    }
+
+    /**
+     * Проверка, что получение системы по несуществующему коду приводит к NotFoundException
+     */
+    @Test(expected = NotFoundException.class)
+    public void getSystemByNotExistsCodeTest() {
+        systemRestService.getSystem("bad-code");
     }
 
     private void systemAssertEquals(SimpleSystemResponse simpleSystemResponse, SystemResponse systemResponse) {

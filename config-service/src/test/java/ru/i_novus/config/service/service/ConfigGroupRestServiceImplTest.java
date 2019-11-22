@@ -19,6 +19,7 @@ import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.service.service.builders.GroupFormBuilder;
 import ru.i_novus.ms.audit.client.AuditClient;
 
+import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -125,13 +126,21 @@ public class ConfigGroupRestServiceImplTest {
     }
 
     /**
-     * Проверка, что группа настроек по некоторому заданному коду возвращается корректно
+     * Проверка, что группа настроек по некоторому заданному идентификатору возвращается корректно
      */
     @Test
     public void getGroupTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
 
         groupAssertEquals(groupForm, groupRestService.getGroup(101));
+    }
+
+    /**
+     * Проверка, что получение группы настроек по несуществующему идентификатору приводит к NotFoundException
+     */
+    @Test(expected = NotFoundException.class)
+    public void getGroupByNotExistsCodeTest() {
+        groupRestService.getGroup(999);
     }
 
     /**
@@ -204,12 +213,13 @@ public class ConfigGroupRestServiceImplTest {
     }
 
     /**
-     * Проверка, что обновление несуществующей группы настроек приводит к RestException
+     * Проверка, что обновление группы настроек с несуществующим идентификатором приводит к NotFoundException
      */
-    @Test(expected = RestException.class)
+    @Test(expected = NotFoundException.class)
     public void updateNotExistsGroupTest() {
         GroupForm groupForm = GroupFormBuilder.buildTestGroupForm();
-        groupRestService.updateGroup(0, groupForm);
+        groupForm.setId(999);
+        groupRestService.updateGroup(groupForm.getId(), groupForm);
     }
 
     /**
@@ -251,7 +261,7 @@ public class ConfigGroupRestServiceImplTest {
     /**
      * Проверка, что удаление группы настроек по идентификатору происходит корректно
      */
-    @Test(expected = RestException.class)
+    @Test(expected = NotFoundException.class)
     public void deleteGroupTest() {
         GroupForm groupForm = GroupFormBuilder.buildTestGroupForm();
         Integer groupId = groupRestService.saveGroup(groupForm);
@@ -259,6 +269,14 @@ public class ConfigGroupRestServiceImplTest {
         groupRestService.deleteGroup(groupId);
 
         groupRestService.getGroup(groupId);
+    }
+
+    /**
+     * Проверка, что удаление группы настроек по несуществующему идентификатору приводит к NotFoundException
+     */
+    @Test(expected = NotFoundException.class)
+    public void deleteGroupByNotExistsCodeTest() {
+        groupRestService.deleteGroup(999);
     }
 
     private void groupAssertEquals(GroupForm expected, GroupForm actual) {

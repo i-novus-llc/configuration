@@ -8,8 +8,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
-import java.time.LocalDateTime;
-
 public class AuditHelper {
 
     private static ObjectMapper objectMapper = new ObjectMapper();

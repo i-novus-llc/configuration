@@ -84,7 +84,8 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
         String appConfigPrefixUrl = prefix + "/" + appCode + "/";
         Map<String, String> keyValueMap = new HashMap<>();
         keyValueMap.put("Key", appConfigPrefixUrl + entry.getKey().replace(".", "/"));
-        keyValueMap.put("Value", new String(Base64.getEncoder().encode(entry.getValue().getBytes())));
+        if (verb.equals("set"))
+            keyValueMap.put("Value", new String(Base64.getEncoder().encode(entry.getValue().getBytes())));
         keyValueMap.put("Verb", verb);
 
         Map<String, Map<String, String>> map = new HashMap<>();

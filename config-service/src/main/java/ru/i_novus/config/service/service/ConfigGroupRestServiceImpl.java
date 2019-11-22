@@ -27,6 +27,7 @@ import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public GroupForm getGroup(Integer groupId) {
-        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow();
+        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
         return GroupMapper.toGroupForm(groupEntity);
     }
 
@@ -101,7 +102,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Override
     @Transactional
     public void updateGroup(Integer groupId, @Valid @NotNull GroupForm groupForm) {
-        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow();
+        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
 
         if (groupCodeRepository.existsAtLeastOneCode(groupForm.getCodes(), groupEntity.getId())) {
             throw new UserException("config.group.codes.not.unique");
@@ -129,8 +130,9 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public void deleteGroup(Integer groupId) {
-        audit(getGroup(groupId), EventTypeEnum.CONFIG_GROUP_DELETE);
-        groupRepository.deleteById(groupId);
+        GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
+        groupRepository.deleteById(groupEntity.getId());
+        audit(GroupMapper.toGroupForm(groupEntity), EventTypeEnum.CONFIG_GROUP_DELETE);
     }
 
     private Predicate toPredicate(GroupCriteria criteria) {

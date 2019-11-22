@@ -29,8 +29,7 @@
                 <param id="valueType.id" mapping="['valueType']"/>
                 <param id="defaultValueString" mapping="['defaultValue']" mapping-condition="valueType.id == 'STRING'"/>
                 <param id="defaultValueNumber" mapping="['defaultValue']" mapping-condition="valueType.id == 'NUMBER'"/>
-                <param id="defaultValueBoolean" mapping="['defaultValue']"
-                       mapping-condition="valueType.id == 'BOOLEAN'"/>
+                <param id="defaultValueBoolean" mapping="['defaultValue']" mapping-condition="valueType.id == 'BOOLEAN'"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>
