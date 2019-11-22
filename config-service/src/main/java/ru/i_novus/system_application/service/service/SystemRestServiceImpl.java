@@ -65,6 +65,8 @@ public class SystemRestServiceImpl implements SystemRestService {
         if (systemCodes != null && !systemCodes.isEmpty()) {
             query.where(qSystemEntity.code.in(systemCodes));
         }
+
+        query.where(qSystemEntity.isDeleted.isFalse().or(qSystemEntity.isDeleted.isNull()));
         query.orderBy(qSystemEntity.code.asc());
 
         // настройка пагинации в зависимости от наличия общесистемных

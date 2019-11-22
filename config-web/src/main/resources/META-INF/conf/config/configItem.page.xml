@@ -62,7 +62,7 @@
             <checkbox id="defaultValueBoolean" label="Значение по умолчанию">
                 <dependencies>
                     <set-value><![CDATA[
-                        defaultValue
+                        defaultValue == 'true'
                         ]]>
                     </set-value>
                     <visibility on="valueType">valueType.id == 'BOOLEAN'</visibility>

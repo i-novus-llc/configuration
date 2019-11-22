@@ -17,7 +17,6 @@ public class AuditHelper {
     public static AuditClientRequest getAuditClientRequest() {
         // TODO - возможно придется добавить userId, sourceWorkstation, hostname
         AuditClientRequest request = new AuditClientRequest();
-        request.setEventDate(LocalDateTime.now());
         request.setUsername(getUsername());
         request.setSourceApplication("config-service");
         request.setAuditType((short) 1);
