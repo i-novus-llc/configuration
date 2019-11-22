@@ -148,7 +148,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         if (!code.equals(commonSystemCode))
             Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         if (data.get("data") == null) {
-            throw new UserException("config.application.bad.data");
+            return;
         }
 
         Map<String, String> updatedKeyValues = new HashMap<>();

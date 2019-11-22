@@ -60,8 +60,12 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         page.setObjectId("groupedConfig");
 
         if (!context.equals(commonSystemCode)) {
-            ApplicationResponse applicationResponse = Optional.ofNullable(applicationRestService.getApplication(context))
-                    .orElseThrow(() -> new N2oUserException("config.application.not.choose"));
+            ApplicationResponse applicationResponse;
+            try {
+                applicationResponse = applicationRestService.getApplication(context);
+            } catch (Exception e) {
+                throw new N2oUserException("config.application.not.choose");
+            }
             String appName = applicationResponse.getName();
             page.setName(appName + " (" + context + ")");
         } else {
