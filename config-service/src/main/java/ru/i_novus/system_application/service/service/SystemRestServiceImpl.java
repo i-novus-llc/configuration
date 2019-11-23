@@ -1,6 +1,7 @@
 package ru.i_novus.system_application.service.service;
 
 import com.querydsl.jpa.impl.JPAQuery;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -23,6 +24,7 @@ import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Реализация REST сервиса для получения систем
@@ -56,7 +58,6 @@ public class SystemRestServiceImpl implements SystemRestService {
                 query.innerJoin(qSystemEntity.applications, qApplicationEntity) :
                 query.leftJoin(qSystemEntity.applications, qApplicationEntity);
 
-        // TODO - фильтрует системы, но почему-то не фильтрует приложения
         if (criteria.getAppCode() != null) {
             query = new JPAQuery<>(entityManager);
             query.distinct().from(qSystemEntity).innerJoin(qSystemEntity.applications, qApplicationEntity)
@@ -69,6 +70,7 @@ public class SystemRestServiceImpl implements SystemRestService {
         }
 
         query.where(qSystemEntity.isDeleted.isFalse().or(qSystemEntity.isDeleted.isNull()));
+        query.where(qApplicationEntity.isDeleted.isFalse().or(qApplicationEntity.isDeleted.isNull()));
         query.orderBy(qSystemEntity.code.asc());
 
         // настройка пагинации в зависимости от наличия общесистемных
@@ -85,7 +87,20 @@ public class SystemRestServiceImpl implements SystemRestService {
         }
         long total = query.fetchCount();
 
-        Page<SystemResponse> systemResponsePage = new PageImpl<>(query.fetch(), criteria, total)
+        // в независимости от условий и фильтраций jpa для каждой системы выводит все ее приложения
+        // поэтому проводим дополнительную фильтрацию, чтобы не выводить устаревшие приложения и приложения,
+        // имеющие не подходящий критерию код
+        List<SystemEntity> systemEntities = query.fetch();
+        for (SystemEntity systemEntity : systemEntities) {
+            systemEntity.setApplications(
+                    systemEntity.getApplications().stream()
+                            .filter(a -> !Boolean.TRUE.equals(a.getIsDeleted()) &&
+                                    (criteria.getAppCode() == null || StringUtils.containsIgnoreCase(a.getCode(), criteria.getAppCode()))
+                            ).collect(Collectors.toList())
+            );
+        }
+
+        Page<SystemResponse> systemResponsePage = new PageImpl<>(systemEntities, criteria, total)
                 .map(SystemMapper::toSystemResponse);
         ArrayList<SystemResponse> systemResponses = new ArrayList<>(systemResponsePage.getContent());
 
