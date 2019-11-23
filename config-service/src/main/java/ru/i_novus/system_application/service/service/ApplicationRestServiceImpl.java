@@ -145,9 +145,10 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public void saveApplicationConfig(String code, Map<String, Object> data) {
-        Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+        if (!code.equals(commonSystemCode))
+            Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         if (data.get("data") == null) {
-            throw new UserException("config.application.bad.data");
+            return;
         }
 
         Map<String, String> updatedKeyValues = new HashMap<>();

@@ -5,7 +5,6 @@ import net.n2oapp.framework.api.metadata.SourceMetadata;
 import net.n2oapp.framework.api.metadata.aware.NamespaceUriAware;
 import net.n2oapp.framework.api.metadata.control.N2oHidden;
 import net.n2oapp.framework.api.metadata.control.N2oStandardField;
-import net.n2oapp.framework.api.metadata.control.plain.CheckboxDefaultValueEnum;
 import net.n2oapp.framework.api.metadata.control.plain.N2oCheckbox;
 import net.n2oapp.framework.api.metadata.control.plain.N2oInputText;
 import net.n2oapp.framework.api.metadata.event.action.N2oCloseAction;
@@ -61,8 +60,12 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         page.setObjectId("groupedConfig");
 
         if (!context.equals(commonSystemCode)) {
-            ApplicationResponse applicationResponse = Optional.ofNullable(applicationRestService.getApplication(context))
-                    .orElseThrow(() -> new N2oUserException("config.application.not.choose"));
+            ApplicationResponse applicationResponse;
+            try {
+                applicationResponse = applicationRestService.getApplication(context);
+            } catch (Exception e) {
+                throw new N2oUserException("config.application.not.choose");
+            }
             String appName = applicationResponse.getName();
             page.setName(appName + " (" + context + ")");
         } else {
@@ -110,7 +113,6 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                         checkbox.setDefaultValue(config.getValue());
                     } else {
                         checkbox.setDefaultValue(config.getDefaultValue());
-                        checkbox.setUnchecked(CheckboxDefaultValueEnum.FALSE);
                     }
                     n2oFieldList.add(checkbox);
                 }

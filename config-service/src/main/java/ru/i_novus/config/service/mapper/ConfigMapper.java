@@ -3,18 +3,22 @@ package ru.i_novus.config.service.mapper;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.config.service.entity.ConfigEntity;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 public class ConfigMapper {
-    
+
     public static ConfigEntity toConfigEntity(ConfigForm configForm) {
         ConfigEntity configEntity = new ConfigEntity();
         configEntity.setCode(configForm.getCode());
         configEntity.setName(configForm.getName());
         configEntity.setDescription(configForm.getDescription());
         configEntity.setValueType(configForm.getValueType());
-        configEntity.setDefaultValue(configForm.getDefaultValue());
+        if (configForm.getValueType().equals(ValueTypeEnum.BOOLEAN) && configForm.getDefaultValue() == null)
+            configEntity.setDefaultValue("false");
+        else
+            configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setApplicationCode(configForm.getApplicationCode());
         return configEntity;
     }
