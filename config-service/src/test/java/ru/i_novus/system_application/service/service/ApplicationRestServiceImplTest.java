@@ -220,18 +220,6 @@ public class ApplicationRestServiceImplTest {
     }
 
     /**
-     * Проверка, что нулевые данные приводят к RestException
-     */
-    @Test(expected = RestException.class)
-    public void saveApplicationConfigIfNullDataTest() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("appCode", "app-auth");
-        data.put("data", null);
-        doNothing().when(configValueService).deleteAllValues("app-auth");
-        applicationRestService.saveApplicationConfig("app-auth", data);
-    }
-
-    /**
      * Проверка, что удаление настроек приложения по несуществующему коду приводит к NotFoundException
      */
     @Test(expected = NotFoundException.class)
