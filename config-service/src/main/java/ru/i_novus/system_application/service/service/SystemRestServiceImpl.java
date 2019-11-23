@@ -69,6 +69,7 @@ public class SystemRestServiceImpl implements SystemRestService {
         }
 
         query.where(qSystemEntity.isDeleted.isFalse().or(qSystemEntity.isDeleted.isNull()));
+        query.where(qApplicationEntity.isDeleted.isFalse().or(qApplicationEntity.isDeleted.isNull()));
         query.orderBy(qSystemEntity.code.asc());
 
         // настройка пагинации в зависимости от наличия общесистемных
