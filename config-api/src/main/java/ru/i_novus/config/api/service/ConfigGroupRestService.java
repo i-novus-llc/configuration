@@ -46,7 +46,7 @@ public interface ConfigGroupRestService {
     @Path("/")
     @ApiOperation(value = "Добавление группы настроек")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Сохранение группы успешно выполнено"),
+            @ApiResponse(code = 200, message = "Сохранение группы успешно выполнено"),
             @ApiResponse(code = 400, message = "Некорректный запрос")
     })
     Integer saveGroup(@Valid @NotNull @ApiParam(name = "Новая группа настроек", required = true)
@@ -56,7 +56,7 @@ public interface ConfigGroupRestService {
     @Path("/{groupId}")
     @ApiOperation(value = "Изменение группы настроек")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Изменение группы успешно выполнено"),
+            @ApiResponse(code = 200, message = "Изменение группы успешно выполнено"),
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Группа не найдена")
     })
@@ -68,7 +68,7 @@ public interface ConfigGroupRestService {
     @Path("/{groupId}")
     @ApiOperation(value = "Удаление группы настроек")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Группа успешно удалена"),
+            @ApiResponse(code = 200, message = "Группа успешно удалена"),
             @ApiResponse(code = 404, message = "Группа не найдена")
     })
     void deleteGroup(@PathParam("groupId") @ApiParam(value = "Идентификатор группы") Integer groupId);
