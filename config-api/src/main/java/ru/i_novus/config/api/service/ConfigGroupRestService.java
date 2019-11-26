@@ -31,12 +31,6 @@ public interface ConfigGroupRestService {
     GroupForm getGroup(@PathParam("groupId") @ApiParam(value = "Идентификатор группы") Integer groupId);
 
     @GET
-    @Path("/byCode/{code}")
-    @ApiOperation(value = "Получение групп настроек по коду настройки", response = GroupForm.class, responseContainer = "List")
-    @ApiResponse(code = 200, message = "Успешное получение групп настроек")
-    List<GroupForm> getGroupByConfigCode(@PathParam("code") @ApiParam(value = "Код настройки")String code);
-
-    @GET
     @Path("/")
     @ApiOperation(value = "Получение групп настроек", response = GroupForm.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение групп настроек")
