@@ -3,7 +3,6 @@ package ru.i_novus.system_application.service.service;
 import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -33,7 +32,7 @@ import javax.ws.rs.NotFoundException;
 import java.util.*;
 
 /**
- * Реализация REST сервиса для получения приложений
+ * Реализация REST сервиса для работы с приложениями
  */
 @Service
 @Primary

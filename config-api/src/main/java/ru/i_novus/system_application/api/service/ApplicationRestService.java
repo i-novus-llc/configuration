@@ -15,7 +15,7 @@ import java.util.Map;
 
 
 /**
- * Интерфейс API для получения приложений
+ * Интерфейс API для работы с приложениями
  */
 @Valid
 @Path("/applications/")
@@ -29,7 +29,7 @@ public interface ApplicationRestService {
     @ApiOperation(value = "Получение всех приложений", response = ApplicationResponse.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка приложений")
     public Page<ApplicationResponse> getAllApplication(@ApiParam(name = "Критерии поиска приложений")
-                                                           @BeanParam ApplicationCriteria criteria);
+                                                       @BeanParam ApplicationCriteria criteria);
 
     @GET
     @Path("/{code}")

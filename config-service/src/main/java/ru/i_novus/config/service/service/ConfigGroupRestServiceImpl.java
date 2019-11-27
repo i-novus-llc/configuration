@@ -65,6 +65,13 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     @Override
+    public List<GroupForm> getGroupByConfigCode(String code) {
+        return groupRepository.findGroupsByConfigCode(code).stream()
+                .map(GroupMapper::toGroupForm)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Page<GroupForm> getAllGroup(GroupCriteria criteria) {
         criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "id"));
         Page<GroupEntity> groupEntities = groupRepository.findAll(toPredicate(criteria), criteria);
