@@ -15,10 +15,17 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
 
     ConfigEntity findByCode(String code);
 
-    @Query("SELECT g, c FROM ConfigEntity c " +
-            "LEFT JOIN GroupCodeEntity gc ON c.code = gc.code OR strpos(c.code, gc.code || '.') = 1 " +
-            "LEFT JOIN GroupEntity g ON g.id = gc.group.id " +
-            "WHERE c.applicationCode = :code OR c.applicationCode = null " +
+    @Query(nativeQuery = true, value =
+            "SELECT g.id, g.name AS g_name, c.code, c.name AS c_name, c.description, c.value_type, c.default_value, c.application_code " +
+            "FROM configuration.config c " +
+            "INNER JOIN (SELECT * FROM ( " +
+            "SELECT ROW_NUMBER() OVER (PARTITION BY c.code ORDER BY LENGTH(gc.code) DESC) AS rn, c.code, gc.group_id " +
+            "FROM configuration.config c LEFT JOIN configuration.config_group_code gc " +
+            "ON c.code = gc.code OR strpos(c.code, gc.code || '.') = 1 " +
+            "WHERE c.application_code IS NULL OR c.application_code = CAST(?1 AS TEXT)) x " +
+            "WHERE x.rn <= 1) x " +
+            "ON c.code = x.code " +
+            "LEFT JOIN configuration.config_group g ON g.id = x.group_id " +
             "GROUP BY g.id, c.code ORDER BY g.priority, c.code"
     )
     List<Object[]> findGroupedConfigByAppCode(@Param("code") String code);
