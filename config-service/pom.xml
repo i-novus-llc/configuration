@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <rdm.version>1.100-SNAPSHOT</rdm.version>
+        <rdm.version>1.100</rdm.version>
         <audit.version>2.4</audit.version>
     </properties>
 
