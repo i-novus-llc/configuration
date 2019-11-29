@@ -17,6 +17,7 @@ public class GroupedApplicationConfigBuilder {
         configForm1.setDescription("desc1");
         configForm1.setValueType(ValueTypeEnum.STRING);
         configForm1.setValue("text");
+        configForm1.setDefaultValue("default");
         ConfigForm configForm2 = new ConfigForm();
         configForm2.setCode("test.code2");
         configForm2.setName("name2");
@@ -29,6 +30,11 @@ public class GroupedApplicationConfigBuilder {
         configForm3.setDescription("desc3");
         configForm3.setValueType(ValueTypeEnum.BOOLEAN);
         configForm3.setValue("true");
+        ConfigForm configForm4 = new ConfigForm();
+        configForm4.setCode("test.code4");
+        configForm4.setName("name4");
+        configForm4.setDescription("desc4");
+        configForm4.setValueType(ValueTypeEnum.BOOLEAN);
 
         GroupedApplicationConfig groupedApplicationConfig1 = new GroupedApplicationConfig();
         groupedApplicationConfig1.setId(1);
@@ -37,7 +43,7 @@ public class GroupedApplicationConfigBuilder {
         GroupedApplicationConfig groupedApplicationConfig2 = new GroupedApplicationConfig();
         groupedApplicationConfig2.setId(2);
         groupedApplicationConfig2.setName("group2");
-        groupedApplicationConfig2.setConfigs(Arrays.asList(configForm3));
+        groupedApplicationConfig2.setConfigs(Arrays.asList(configForm3, configForm4));
 
         List<GroupedApplicationConfig> groupedApplicationConfigs = new ArrayList<>();
         groupedApplicationConfigs.add(groupedApplicationConfig1);

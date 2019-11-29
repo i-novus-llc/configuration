@@ -59,7 +59,7 @@
                     <visibility on="valueType">valueType.id == 'NUMBER'</visibility>
                 </dependencies>
             </input-text>
-            <checkbox id="defaultValueBoolean" label="Значение по умолчанию">
+            <checkbox id="defaultValueBoolean" label="Значение по умолчанию" unchecked="false">
                 <dependencies>
                     <set-value><![CDATA[
                         defaultValue == 'true'

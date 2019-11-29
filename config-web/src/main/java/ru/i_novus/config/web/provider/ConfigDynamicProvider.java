@@ -5,6 +5,7 @@ import net.n2oapp.framework.api.metadata.SourceMetadata;
 import net.n2oapp.framework.api.metadata.aware.NamespaceUriAware;
 import net.n2oapp.framework.api.metadata.control.N2oHidden;
 import net.n2oapp.framework.api.metadata.control.N2oStandardField;
+import net.n2oapp.framework.api.metadata.control.plain.CheckboxDefaultValueEnum;
 import net.n2oapp.framework.api.metadata.control.plain.N2oCheckbox;
 import net.n2oapp.framework.api.metadata.control.plain.N2oInputText;
 import net.n2oapp.framework.api.metadata.event.action.N2oCloseAction;
@@ -94,25 +95,26 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
             ArrayList<NamespaceUriAware> n2oFieldList = new ArrayList<>();
             for (ConfigForm config : groupedApplicationConfig.getConfigs()) {
-                if (config.getValueType().equals(ValueTypeEnum.STRING) ||
-                        config.getValueType().equals(ValueTypeEnum.NUMBER)) {
+                if (ValueTypeEnum.STRING.equals(config.getValueType()) ||
+                        ValueTypeEnum.NUMBER.equals(config.getValueType())) {
                     N2oInputText inputText = new N2oInputText();
 
                     fillElement(inputText, config);
                     inputText.setPlaceholder(config.getDefaultValue());
                     inputText.setDefaultValue(config.getValue());
 
-                    if (config.getValueType().equals(ValueTypeEnum.NUMBER))
+                    if (ValueTypeEnum.NUMBER.equals(config.getValueType()))
                         inputText.setDomain("integer");
 
                     n2oFieldList.add(inputText);
-                } else if (config.getValueType().equals(ValueTypeEnum.BOOLEAN)) {
+                } else if (ValueTypeEnum.BOOLEAN.equals(config.getValueType())) {
                     N2oCheckbox checkbox = new N2oCheckbox();
                     fillElement(checkbox, config);
                     if (config.getValue() != null) {
                         checkbox.setDefaultValue(config.getValue());
                     } else {
                         checkbox.setDefaultValue(config.getDefaultValue());
+                        checkbox.setUnchecked(CheckboxDefaultValueEnum.FALSE);
                     }
                     n2oFieldList.add(checkbox);
                 }

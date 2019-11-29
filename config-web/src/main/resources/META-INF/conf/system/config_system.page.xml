@@ -29,7 +29,7 @@
                     </column>
                 </columns>
                 <rows>
-                    <click>
+                    <click enabled="{!isSystem || isSystem &amp;&amp; code == '${config.common.system.code}'}">
                         <open-page page-id="configDynamic?{id}" route="/:code/update" detail-field-id="id"/>
                     </click>
                 </rows>
