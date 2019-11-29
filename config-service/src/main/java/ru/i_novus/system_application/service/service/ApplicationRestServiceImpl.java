@@ -110,25 +110,32 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         }
 
         for (Object[] obj : objectList) {
-            // проверяем принадлежит ли настройка какой-либо группе
-            // иначе создаем дефолтную группу
-            GroupForm groupForm = (obj[0] != null) ? GroupMapper.toGroupForm((GroupEntity) obj[0]) : new GroupForm();
-            ConfigEntity configEntity = (ConfigEntity) obj[1];
+            GroupForm groupForm = new GroupForm();
+            if (obj[0] != null) {
+                groupForm.setId((Integer) obj[0]);
+                groupForm.setName((String) obj[1]);
+            }
+            ConfigForm configForm = new ConfigForm();
+            configForm.setCode((String) obj[2]);
+            configForm.setName((String) obj[3]);
+            configForm.setDescription((String) obj[4]);
+            configForm.setValueType(ValueTypeEnum.valueOf((String) obj[5]));
+            configForm.setDefaultValue((String) obj[6]);
+            configForm.setApplicationCode((String) obj[7]);
 
             String value;
-
             if (appCode != null) {
-                value = applicationConfigKeyValues.get(configEntity.getCode());
-                if (commonApplicationConfigKeyValues.containsKey(configEntity.getCode())) {
-                    String defaultValue = commonApplicationConfigKeyValues.get(configEntity.getCode());
+                value = applicationConfigKeyValues.get(configForm.getCode());
+                if (commonApplicationConfigKeyValues.containsKey(configForm.getCode())) {
+                    String defaultValue = commonApplicationConfigKeyValues.get(configForm.getCode());
                     if (defaultValue != null) {
-                        configEntity.setDefaultValue(defaultValue);
+                        configForm.setDefaultValue(defaultValue);
                     }
                 }
             } else {
-                value = commonApplicationConfigKeyValues.get(configEntity.getCode());
+                value = commonApplicationConfigKeyValues.get(configForm.getCode());
             }
-            ConfigForm configForm = ConfigMapper.toConfigForm(configEntity, value);
+            configForm.setValue(value);
 
             GroupedApplicationConfig existingGroupedApplicationConfig =
                     result.stream().filter(i -> Objects.equals(i.getId(), groupForm.getId())).findFirst().orElse(null);

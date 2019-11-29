@@ -12,8 +12,6 @@ public class GroupedApplicationConfigMapper {
         GroupedApplicationConfig groupedApplicationConfig = new GroupedApplicationConfig();
         groupedApplicationConfig.setId(groupForm.getId());
         groupedApplicationConfig.setName(groupForm.getName());
-        groupedApplicationConfig.setDescription(groupForm.getDescription());
-        groupedApplicationConfig.setPriority(groupForm.getPriority());
         groupedApplicationConfig.setConfigs(configFormList);
         return groupedApplicationConfig;
     }

@@ -18,12 +18,6 @@ public class GroupedApplicationConfig {
     @ApiModelProperty("Наименование группы")
     private String name;
 
-    @ApiModelProperty("Описание группы")
-    private String description;
-
-    @ApiModelProperty("Приоритет группы")
-    private Integer priority;
-
     @ApiModelProperty("Настройки, принадлежащие группе")
     private List<ConfigForm> configs;
 }
