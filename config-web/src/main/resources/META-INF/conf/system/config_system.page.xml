@@ -9,7 +9,7 @@
                     <row>
                         <input-text id="appCode" label="Код приложения" domain="string"/>
                         <input-select id="systems" label="Система" query-id="config_system"
-                                      placeholder="Все" type="multi"/>
+                                      placeholder="Все" type="multi" search-field-id="name"/>
                         <search-buttons id="search"/>
                     </row>
                 </filters>

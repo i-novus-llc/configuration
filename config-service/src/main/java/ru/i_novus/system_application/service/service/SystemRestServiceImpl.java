@@ -64,6 +64,10 @@ public class SystemRestServiceImpl implements SystemRestService {
                     .on(qApplicationEntity.code.containsIgnoreCase(criteria.getAppCode()));
         }
 
+        if (criteria.getName() != null) {
+            query.where(qSystemEntity.name.containsIgnoreCase(criteria.getName()));
+        }
+
         List<String> systemCodes = criteria.getCodes();
         if (systemCodes != null && !systemCodes.isEmpty()) {
             query.where(qSystemEntity.code.in(systemCodes));
@@ -73,9 +77,12 @@ public class SystemRestServiceImpl implements SystemRestService {
         query.where(qApplicationEntity.isDeleted.isFalse().or(qApplicationEntity.isDeleted.isNull()));
         query.orderBy(qSystemEntity.code.asc());
 
+        CommonSystemResponse commonSystemResponse = new CommonSystemResponse();
+
         // настройка пагинации в зависимости от наличия общесистемных
-        if (criteria.getAppCode() == null && (criteria.getCodes() == null || criteria.getCodes().isEmpty() ||
-                criteria.getCodes().contains(commonSystemCode))) {
+        if (criteria.getAppCode() == null &&
+                (criteria.getName() == null || StringUtils.containsIgnoreCase(commonSystemResponse.getName(), criteria.getName())) &&
+                (criteria.getCodes() == null || criteria.getCodes().isEmpty() || criteria.getCodes().contains(commonSystemCode))) {
             if (criteria.getPageNumber() == 0) {
                 query.limit(criteria.getPageSize() - 1);
             } else {
@@ -105,9 +112,9 @@ public class SystemRestServiceImpl implements SystemRestService {
         ArrayList<SystemResponse> systemResponses = new ArrayList<>(systemResponsePage.getContent());
 
         long totalElements = systemResponsePage.getTotalElements();
-        CommonSystemResponse commonSystemResponse = new CommonSystemResponse();
 
         if (criteria.getAppCode() == null &&
+                (criteria.getName() == null || StringUtils.containsIgnoreCase(commonSystemResponse.getName(), criteria.getName())) &&
                 ((criteria.getCodes() == null || criteria.getCodes().isEmpty()) ||
                         (criteria.getCodes() != null && criteria.getCodes().contains(commonSystemCode)))
         ) {
