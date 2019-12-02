@@ -19,6 +19,10 @@ public class SystemCriteria extends AbstractCriteria {
     @ApiParam("Коды систем")
     private List<String> codes;
 
+    @QueryParam("name")
+    @ApiParam("Имя системы")
+    private String name;
+
     @QueryParam("appCode")
     @ApiParam("Код приложения")
     private String appCode;

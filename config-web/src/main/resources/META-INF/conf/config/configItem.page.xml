@@ -3,7 +3,8 @@
     <form query-id="config" object-id="config">
         <fields>
             <row>
-                <input-select id="systemName" label="Система" required="true" query-id="config_system"/>
+                <input-select id="systemName" label="Система" required="true"
+                              query-id="config_system" search-field-id="name"/>
                 <input-select id="applicationName" label="Приложение" query-id="config_application">
                     <pre-filters>
                         <eq field-id="systemCode" value="{systemName.id}"/>
