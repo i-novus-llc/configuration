@@ -49,11 +49,11 @@ public interface ApplicationRestService {
     })
     List<GroupedApplicationConfig> getGroupedApplicationConfig(@PathParam("code") @ApiParam(value = "Код приложения") String code);
 
-    @POST
+    @PUT
     @Path("/{code}/configs")
     @ApiOperation(value = "Изменение значений настроек приложения")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Изменение значений настроек приложения успешно выполнено"),
+            @ApiResponse(code = 204, message = "Изменение значений настроек приложения успешно выполнено"),
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
@@ -65,7 +65,7 @@ public interface ApplicationRestService {
     @Path("/{code}/configs")
     @ApiOperation(value = "Удаление значений настроек приложения")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Удаление значений настроек приложения успешно выполнено"),
+            @ApiResponse(code = 204, message = "Удаление значений настроек приложения успешно выполнено"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
     void deleteApplicationConfig(@PathParam("code") @ApiParam(value = "Код приложения") String code);

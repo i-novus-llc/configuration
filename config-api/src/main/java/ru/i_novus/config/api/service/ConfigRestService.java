@@ -51,7 +51,7 @@ public interface ConfigRestService {
     @Path("/{code}")
     @ApiOperation(value = "Изменение настройки")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Изменение настройки успешно выполнено"),
+            @ApiResponse(code = 204, message = "Изменение настройки успешно выполнено"),
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
@@ -63,7 +63,7 @@ public interface ConfigRestService {
     @Path("/{code}")
     @ApiOperation(value = "Удаление настройки")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Настройка успешно удалена"),
+            @ApiResponse(code = 204, message = "Настройка успешно удалена"),
             @ApiResponse(code = 404, message = "Настройка не найдена")
     })
     void deleteConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code);
