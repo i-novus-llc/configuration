@@ -24,8 +24,7 @@ public interface SystemRestService {
     @Path("/")
     @ApiOperation(value = "Получение всех систем", response = SystemResponse.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка систем")
-    public Page<SystemResponse> getAllSystem(@ApiParam(name = "Критерии поиска систем")
-                                                 @BeanParam SystemCriteria criteria);
+    public Page<SystemResponse> getAllSystem(@BeanParam SystemCriteria criteria);
 
     @GET
     @Path("/{code}")

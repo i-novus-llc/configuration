@@ -28,8 +28,7 @@ public interface ApplicationRestService {
     @Path("/")
     @ApiOperation(value = "Получение всех приложений", response = ApplicationResponse.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка приложений")
-    public Page<ApplicationResponse> getAllApplication(@ApiParam(name = "Критерии поиска приложений")
-                                                       @BeanParam ApplicationCriteria criteria);
+    public Page<ApplicationResponse> getAllApplication(@BeanParam ApplicationCriteria criteria);
 
     @GET
     @Path("/{code}")
