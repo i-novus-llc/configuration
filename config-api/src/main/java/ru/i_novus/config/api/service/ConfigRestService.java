@@ -34,8 +34,7 @@ public interface ConfigRestService {
     @Path("/")
     @ApiOperation(value = "Получение всех настроек", response = ConfigResponse.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка настроек")
-    Page<ConfigResponse> getAllConfig(@ApiParam(name = "Критерии поиска настроек")
-                                      @BeanParam ConfigCriteria criteria);
+    Page<ConfigResponse> getAllConfig(@BeanParam ConfigCriteria criteria);
 
     @POST
     @Path("/")
