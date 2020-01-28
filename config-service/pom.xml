@@ -11,7 +11,7 @@
     </parent>
 
     <properties>
-        <rdm.version>1.101</rdm.version>
+        <rdm.version>1.116</rdm.version>
         <audit.version>2.4</audit.version>
     </properties>
 
@@ -109,6 +109,11 @@
         <dependency>
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
         </dependency>
 
         <!-- Test -->
