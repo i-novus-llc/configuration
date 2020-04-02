@@ -11,7 +11,7 @@
     </parent>
 
     <properties>
-        <rdm.version>1.116</rdm.version>
+        <rdm.version>1.128.2</rdm.version>
         <audit.version>2.4</audit.version>
     </properties>
 
