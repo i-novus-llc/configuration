@@ -20,12 +20,21 @@
 
     <modules>
         <module>config-api</module>
-        <module>config-service</module>
         <module>config-web</module>
-	    <module>config-webapp</module>
     </modules>
 
     <profiles>
+        <profile>
+            <id>build-all-modules</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>config-service</module>
+                <module>config-webapp</module>
+            </modules>
+        </profile>
+
         <profile>
             <id>production</id>
             <activation>
