@@ -32,7 +32,7 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, Qu
     List<GroupEntity> findGroupsByConfigCodeStarts(@Param("code") String code, Pageable pageable);
 
     default GroupEntity findOneGroupByConfigCodeStarts(String code) {
-        List<GroupEntity> groupEntities = findGroupsByConfigCodeStarts(code, new PageRequest(0, 1));
+        List<GroupEntity> groupEntities = findGroupsByConfigCodeStarts(code, PageRequest.of(0, 1));
         return groupEntities.isEmpty() ? null : groupEntities.get(0);
     }
 
