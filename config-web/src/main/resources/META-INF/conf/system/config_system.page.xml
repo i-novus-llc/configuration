@@ -4,8 +4,8 @@
 
     <regions>
         <region place="single">
-            <table id="system_table" query-id="config_system" selected="false" route="/systems">
-                <filters search-buttons="false">
+            <table id="system_table" query-id="config_system" selected="false" route="/systems" children="expand">
+                <filters>
                     <row>
                         <input-text id="appCode" label="Код приложения" domain="string"/>
                         <input-select id="systems" label="Система" query-id="config_system"

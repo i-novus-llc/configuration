@@ -5,7 +5,7 @@
     <regions>
         <region place="single">
             <table id="group_table" query-id="config_group">
-                <filters search-buttons="false">
+                <filters>
                     <row>
                         <input-text id="code" label="Код группы" domain="string"/>
                         <input-text id="name" label="Наименование группы" domain="string"/>

@@ -5,7 +5,7 @@
     <regions>
         <region place="single">
             <table id="config_table" query-id="config" route="/systems">
-                <filters search-buttons="false">
+                <filters>
                     <row>
                         <input-text id="code" label="Код настройки" domain="string"/>
                         <input-text id="name" label="Наименование настройки" domain="string"/>
