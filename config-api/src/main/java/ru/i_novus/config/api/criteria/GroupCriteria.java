@@ -4,8 +4,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiParam;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Sort;
 
 import javax.ws.rs.QueryParam;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,4 +22,9 @@ public class GroupCriteria extends AbstractCriteria {
     @QueryParam("code")
     @ApiParam("Код группы")
     private String code;
+
+    @Override
+    protected List<Sort.Order> getDefaultOrders() {
+        return Arrays.asList(new Sort.Order(Sort.Direction.ASC, "id"));
+    }
 }

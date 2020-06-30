@@ -7,14 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.ConfigEntity;
-import ru.i_novus.config.service.entity.GroupEntity;
 import ru.i_novus.config.service.mapper.ConfigMapper;
-import ru.i_novus.config.service.mapper.GroupMapper;
 import ru.i_novus.config.service.mapper.GroupedApplicationConfigMapper;
 import ru.i_novus.config.service.repository.ConfigRepository;
 import ru.i_novus.config.service.utils.AuditHelper;
@@ -73,8 +70,6 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Override
     public Page<ApplicationResponse> getAllApplication(ApplicationCriteria criteria) {
-        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "code"));
-
         return applicationRepository.findAll(toPredicate(criteria), criteria)
                 .map(ApplicationMapper::toApplicationResponse);
     }

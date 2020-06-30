@@ -1,8 +1,8 @@
 package ru.i_novus.config.web.provider;
 
 import net.n2oapp.framework.api.exception.N2oUserException;
+import net.n2oapp.framework.api.metadata.SourceComponent;
 import net.n2oapp.framework.api.metadata.SourceMetadata;
-import net.n2oapp.framework.api.metadata.aware.NamespaceUriAware;
 import net.n2oapp.framework.api.metadata.control.N2oHidden;
 import net.n2oapp.framework.api.metadata.control.N2oStandardField;
 import net.n2oapp.framework.api.metadata.control.plain.CheckboxDefaultValueEnum;
@@ -31,9 +31,8 @@ import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ConfigDynamicProvider implements DynamicMetadataProvider {
@@ -72,19 +71,18 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         } else {
             page.setName("Общесистемные");
         }
+        page.setShowTitle(true);
 
         N2oForm form = new N2oForm();
         form.setId("groupedConfigForm");
 
         N2oCustomRegion region = new N2oCustomRegion();
         region.setWidgets(new N2oWidget[]{form});
-        N2oStandardPage.Layout layout = new N2oStandardPage.Layout();
-        layout.setRegions(new N2oRegion[]{region});
-        page.setRegions(layout);
+        page.setRegions(new N2oRegion[]{region});
 
         List<GroupedApplicationConfig> groupedApplicationConfigList = applicationRestService.getGroupedApplicationConfig(context);
 
-        ArrayList<NamespaceUriAware> lineFieldSetList = new ArrayList<>();
+        ArrayList<SourceComponent> lineFieldSetList = new ArrayList<>();
         for (GroupedApplicationConfig groupedApplicationConfig : groupedApplicationConfigList) {
             N2oLineFieldSet lineFieldSet = new N2oLineFieldSet();
             lineFieldSet.setCollapsible(true);
@@ -93,7 +91,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
             lineFieldSet.setFieldLabelAlign(N2oFieldSet.FieldLabelAlign.left);
             lineFieldSet.setLabelWidth("50%");
 
-            ArrayList<NamespaceUriAware> n2oFieldList = new ArrayList<>();
+            ArrayList<SourceComponent> n2oFieldList = new ArrayList<>();
             for (ConfigForm config : groupedApplicationConfig.getConfigs()) {
                 if (ValueTypeEnum.STRING.equals(config.getValueType()) ||
                         ValueTypeEnum.NUMBER.equals(config.getValueType())) {
@@ -120,7 +118,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
                 }
             }
 
-            lineFieldSet.setItems(n2oFieldList.toArray(NamespaceUriAware[]::new));
+            lineFieldSet.setItems(n2oFieldList.toArray(SourceComponent[]::new));
             lineFieldSetList.add(lineFieldSet);
         }
 
@@ -130,7 +128,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         n2oHidden.setDefaultValue(context);
         n2oHidden.setVisible(false);
         lineFieldSetList.add(n2oHidden);
-        form.setItems(lineFieldSetList.toArray(NamespaceUriAware[]::new));
+        form.setItems(lineFieldSetList.toArray(SourceComponent[]::new));
 
         N2oToolbar toolbar = new N2oToolbar();
         toolbar.setPlace("bottomRight");
@@ -156,7 +154,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         toolbar.setItems(new ToolbarItem[]{saveButton, cancelButton});
         page.setToolbars(new N2oToolbar[]{toolbar});
 
-        return Arrays.asList(page);
+        return Collections.singletonList(page);
     }
 
     private void fillElement(N2oStandardField field, ConfigForm config) {

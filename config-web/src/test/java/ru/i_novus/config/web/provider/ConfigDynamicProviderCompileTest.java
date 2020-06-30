@@ -1,20 +1,24 @@
 package ru.i_novus.config.web.provider;
 
+import net.n2oapp.framework.api.metadata.global.view.action.control.Target;
 import net.n2oapp.framework.api.metadata.global.view.page.N2oPage;
-import net.n2oapp.framework.api.metadata.meta.Page;
 import net.n2oapp.framework.api.metadata.meta.action.Action;
 import net.n2oapp.framework.api.metadata.meta.action.invoke.InvokeAction;
-import net.n2oapp.framework.api.metadata.meta.action.link.LinkAction;
+import net.n2oapp.framework.api.metadata.meta.action.link.LinkActionImpl;
 import net.n2oapp.framework.api.metadata.meta.control.Checkbox;
 import net.n2oapp.framework.api.metadata.meta.control.Hidden;
 import net.n2oapp.framework.api.metadata.meta.control.InputText;
 import net.n2oapp.framework.api.metadata.meta.control.StandardField;
 import net.n2oapp.framework.api.metadata.meta.fieldset.FieldSet;
 import net.n2oapp.framework.api.metadata.meta.fieldset.LineFieldSet;
+import net.n2oapp.framework.api.metadata.meta.page.Page;
+import net.n2oapp.framework.api.metadata.meta.page.SimplePage;
+import net.n2oapp.framework.api.metadata.meta.page.StandardPage;
 import net.n2oapp.framework.api.metadata.meta.widget.Widget;
 import net.n2oapp.framework.api.metadata.meta.widget.form.Form;
 import net.n2oapp.framework.api.metadata.meta.widget.table.Table;
-import net.n2oapp.framework.api.metadata.meta.widget.toolbar.Button;
+import net.n2oapp.framework.api.metadata.meta.widget.toolbar.AbstractButton;
+import net.n2oapp.framework.api.metadata.meta.widget.toolbar.PerformButton;
 import net.n2oapp.framework.config.N2oApplicationBuilder;
 import net.n2oapp.framework.config.metadata.compile.context.PageContext;
 import net.n2oapp.framework.config.metadata.pack.N2oAllDataPack;
@@ -34,6 +38,8 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -71,9 +77,9 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
 
     @Test
     public void testDynamicPage() {
-        Page page = compile("/ru/i_novus/config/web/provider/configDynamicObject.page.xml")
+        SimplePage page = (SimplePage) compile("/ru/i_novus/config/web/provider/configDynamicObject.page.xml")
                 .get(new PageContext("configDynamicObject", "/"));
-        Widget widget = page.getWidgets().get("__system_table");
+        Widget widget = page.getWidget();
         assertThat(widget, instanceOf(Table.class));
         Table table = (Table) widget;
         assertThat(table.getComponent().getCells().size(), is(2));
@@ -81,7 +87,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(table.getComponent().getCells().get(1).getId(), is("name"));
 
         // динамическая страница
-        Page dynamicPage = routeAndGet("/systems/appCode/update", Page.class);
+        StandardPage dynamicPage = (StandardPage)routeAndGet("/systems/appCode/update", Page.class);
         assertThat(dynamicPage.getId(), is("systems_appCode_update"));
         assertThat(dynamicPage.getPageProperty().getTitle(), is("appName (appCode)"));
         assertThat(dynamicPage.getObject().getId(), is("groupedConfig"));
@@ -150,17 +156,17 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
 
         // кнопки
         assertThat(dynamicPage.getToolbar().getGroup(0).getId(), is("bottomRight0"));
-        List<Button> buttons = dynamicPage.getToolbar().getGroup(0).getButtons();
+        List<AbstractButton> buttons = dynamicPage.getToolbar().getGroup(0).getButtons();
         assertThat(buttons.size(), is(2));
-        Button button = buttons.get(0);
+        AbstractButton button = buttons.get(0);
         assertThat(button.getId(), is("save"));
         assertThat(button.getColor(), is("primary"));
         assertThat(button.getLabel(), is("Сохранить"));
-        assertThat(button.getActionId(), is("save"));
+        assertThat(((InvokeAction)button.getAction()).getOperationId(), is("save"));
         button = buttons.get(1);
         assertThat(button.getId(), is("cancel"));
         assertThat(button.getLabel(), is("Отмена"));
-        assertThat(button.getActionId(), is("cancel"));
+        assertThat(((PerformButton)button).getUrl(), is("/systems/appCode"));
 
         // действия (actions)
         Map<String, Action> actions = dynamicPage.getActions();
@@ -168,15 +174,17 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(actions.get("save"), instanceOf(InvokeAction.class));
         // save
         InvokeAction action = (InvokeAction) actions.get("save");
-        assertThat(action.getId(), is("save"));
-        assertThat(action.getSrc(), is("perform"));
+        assertThat(action.getPayload().getPageId(), is("systems_appCode_update"));
+        assertThat(action.getMeta(), notNullValue());
         assertThat(action.getObjectId(), is("groupedConfig"));
         assertThat(action.getOperationId(), is("save"));
         // cancel
-        LinkAction linkAction = (LinkAction) actions.get("cancel");
-        assertThat(linkAction.getId(), is("cancel"));
-        assertThat(linkAction.getSrc(), is("link"));
-        assertThat(linkAction.getOptions().getPath(), is("/systems/appCode"));
+        LinkActionImpl linkAction = (LinkActionImpl) actions.get("cancel");
+        assertThat(linkAction.getUrl(), is("/systems/appCode"));
+        assertThat(linkAction.getTarget(), is(Target.application));
+        assertThat(linkAction.getObjectId(), nullValue());
+        assertThat(linkAction.getOperationId(), nullValue());
+        assertThat(linkAction.getPageId(), nullValue());
     }
 
     private void assertLineFieldSetProperties(LineFieldSet lineFieldSet) {

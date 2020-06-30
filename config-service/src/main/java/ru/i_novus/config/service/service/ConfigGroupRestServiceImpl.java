@@ -7,7 +7,6 @@ import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.GroupCriteria;
@@ -73,9 +72,8 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public Page<GroupForm> getAllGroup(GroupCriteria criteria) {
-        criteria.getOrders().add(new Sort.Order(Sort.Direction.ASC, "id"));
-        Page<GroupEntity> groupEntities = groupRepository.findAll(toPredicate(criteria), criteria);
-
+        Predicate predicate = toPredicate(criteria);
+        Page<GroupEntity> groupEntities = groupRepository.findAll(predicate == null ? new BooleanBuilder() : predicate, criteria);
         return groupEntities.map(GroupMapper::toGroupForm);
     }
 
