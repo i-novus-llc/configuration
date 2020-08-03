@@ -38,6 +38,7 @@
                         <option id="STRING" name="Строка"/>
                         <option id="NUMBER" name="Число"/>
                         <option id="BOOLEAN" name="Чекбокс"/>
+                        <option id="REFBOOK" name="Справочник"/>
                     </options>
                 </input-select>
             </row>
@@ -69,6 +70,15 @@
                     <visibility on="valueType">valueType.id == 'BOOLEAN'</visibility>
                 </dependencies>
             </checkbox>
+            <input-text id="defaultValueRefbook" label="Значение по умолчанию">
+                <dependencies>
+                    <set-value><![CDATA[
+                        defaultValue
+                        ]]>
+                    </set-value>
+                    <visibility on="valueType">valueType.id == 'REFBOOK'</visibility>
+                </dependencies>
+            </input-text>
 
             <input-text id="description" label="Описание"/>
             <hidden id="isCreateForm" default-value="true"/>

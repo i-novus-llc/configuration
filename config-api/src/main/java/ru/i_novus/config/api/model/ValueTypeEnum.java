@@ -6,5 +6,6 @@ package ru.i_novus.config.api.model;
 public enum ValueTypeEnum {
     NUMBER,
     STRING,
-    BOOLEAN
+    BOOLEAN,
+    REFBOOK
 }
