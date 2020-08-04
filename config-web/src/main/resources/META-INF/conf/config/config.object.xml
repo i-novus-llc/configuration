@@ -14,7 +14,7 @@
                 <param id="defaultValueString" mapping="['defaultValue']" mapping-condition="valueType.id == 'STRING'"/>
                 <param id="defaultValueNumber" mapping="['defaultValue']" mapping-condition="valueType.id == 'NUMBER'"/>
                 <param id="defaultValueBoolean" mapping="['defaultValue']" mapping-condition="valueType.id == 'BOOLEAN'"/>
-                <param id="defaultValueRefbook" mapping="['defaultValue']" mapping-condition="valueType.id == 'REFBOOK'"/>
+                <param id="refBookValue" mapping="['refBookValue']"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>
@@ -31,7 +31,7 @@
                 <param id="defaultValueString" mapping="['defaultValue']" mapping-condition="valueType.id == 'STRING'"/>
                 <param id="defaultValueNumber" mapping="['defaultValue']" mapping-condition="valueType.id == 'NUMBER'"/>
                 <param id="defaultValueBoolean" mapping="['defaultValue']" mapping-condition="valueType.id == 'BOOLEAN'"/>
-                <param id="defaultValueRefbook" mapping="['defaultValue']" mapping-condition="valueType.id == 'REFBOOK'"/>
+                <param id="refBookValue" mapping="['refBookValue']"/>
                 <param id="description" mapping="['description']"/>
             </in-parameters>
         </operation>

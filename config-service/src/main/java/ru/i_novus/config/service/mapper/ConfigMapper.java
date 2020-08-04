@@ -16,6 +16,7 @@ public class ConfigMapper {
         configEntity.setValueType(configForm.getValueType());
         configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setApplicationCode(configForm.getApplicationCode());
+        configEntity.setRefBookValue(configForm.getRefBookValue());
         return configEntity;
     }
 
@@ -28,6 +29,7 @@ public class ConfigMapper {
         configResponse.setDefaultValue(configEntity.getDefaultValue());
         configResponse.setApplication(application);
         configResponse.setGroup(group);
+        configResponse.setRefBookValue(configEntity.getRefBookValue());
         return configResponse;
     }
 

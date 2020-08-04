@@ -27,6 +27,9 @@ public class ConfigResponse {
     @ApiModelProperty("Значение по умолчанию")
     private String defaultValue;
 
+    @ApiModelProperty("Значения справочника")
+    private String refBookValue;
+
     @ApiModelProperty("Приложение")
     private ApplicationResponse application;
 

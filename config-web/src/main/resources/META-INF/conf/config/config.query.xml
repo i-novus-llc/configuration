@@ -82,6 +82,10 @@
             <select/>
         </field>
 
+        <field id="refBookValue" domain="string">
+            <select mapping="[refBookValue]"/>
+        </field>
+
     </fields>
 
 </query>

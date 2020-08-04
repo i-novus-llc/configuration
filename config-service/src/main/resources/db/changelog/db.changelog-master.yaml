@@ -20,4 +20,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/V15_add_default_config_value_column.yaml
   - include:
+      file: db/changelog/V16_add_ref_book_value_column.yaml
+  - include:
       file: quartz-db/changelog/quartz-init.xml

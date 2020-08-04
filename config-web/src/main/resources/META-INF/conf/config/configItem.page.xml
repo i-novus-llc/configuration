@@ -70,12 +70,8 @@
                     <visibility on="valueType">valueType.id == 'BOOLEAN'</visibility>
                 </dependencies>
             </checkbox>
-            <input-text id="defaultValueRefbook" label="Значение по умолчанию">
+            <input-text id="refBookValue" label="Значения справочника">
                 <dependencies>
-                    <set-value><![CDATA[
-                        defaultValue
-                        ]]>
-                    </set-value>
                     <visibility on="valueType">valueType.id == 'REFBOOK'</visibility>
                 </dependencies>
             </input-text>

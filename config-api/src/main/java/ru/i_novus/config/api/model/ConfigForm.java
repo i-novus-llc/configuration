@@ -29,6 +29,9 @@ public class ConfigForm {
     @ApiModelProperty("Значение по умолчанию")
     private String defaultValue;
 
+    @ApiModelProperty("Значения справочника")
+    private String refBookValue;
+
     @ApiModelProperty("Код приложения")
     private String applicationCode;
 }
