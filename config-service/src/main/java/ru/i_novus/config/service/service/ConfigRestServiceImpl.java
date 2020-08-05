@@ -180,6 +180,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         configEntity.setValueType(configForm.getValueType());
         configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setDescription(configForm.getDescription());
+        configEntity.setRefBookValue(configForm.getRefBookValue());
 
         if (configEntity.getApplicationCode() != null &&
                 !configEntity.getApplicationCode().equals(configForm.getApplicationCode())) {
