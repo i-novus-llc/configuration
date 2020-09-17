@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
+
 @Component
 public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
@@ -56,6 +58,9 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
     @Override
     public List<? extends SourceMetadata> read(String context) {
+        if (context.contains("{") || context.contains("}"))
+            return singletonList(new N2oStandardPage());
+
         N2oStandardPage page = new N2oStandardPage();
         page.setObjectId("groupedConfig");
 
