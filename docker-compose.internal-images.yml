@@ -3,7 +3,7 @@ version: "3.6"
 services:
 
   config-service:
-    image: 538721144237.dkr.ecr.eu-west-1.amazonaws.com/config/config-service:${TAG:-latest}
+    image: ${DOCKER_REGISTRY}/config/config-service:${TAG:-latest}
 
   config-web:
-    image: 538721144237.dkr.ecr.eu-west-1.amazonaws.com/config/config-web:${TAG:-latest}
+    image: ${DOCKER_REGISTRY}/config/config-web:${TAG:-latest}
