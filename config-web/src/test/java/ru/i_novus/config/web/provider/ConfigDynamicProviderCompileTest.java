@@ -1,6 +1,7 @@
 package ru.i_novus.config.web.provider;
 
 import net.n2oapp.framework.api.metadata.global.view.action.control.Target;
+import net.n2oapp.framework.api.metadata.global.view.page.BasePageUtil;
 import net.n2oapp.framework.api.metadata.global.view.page.N2oPage;
 import net.n2oapp.framework.api.metadata.meta.action.Action;
 import net.n2oapp.framework.api.metadata.meta.action.invoke.InvokeAction;
@@ -32,8 +33,10 @@ import org.junit.Test;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -94,7 +97,8 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
 
         // проверка филдсетов
         String widgetId = "systems_appCode_update_groupedConfigForm";
-        Form form = (Form) dynamicPage.getWidgets().get(widgetId);
+
+        Form form = (Form) BasePageUtil.getCompiledWidgets(dynamicPage).get(0);
         List<FieldSet> fieldsets = form.getComponent().getFieldsets();
         assertThat(fieldsets.size(), is(3));
         // первый филдсет

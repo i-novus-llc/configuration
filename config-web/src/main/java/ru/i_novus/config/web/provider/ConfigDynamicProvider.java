@@ -82,8 +82,8 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         form.setId("groupedConfigForm");
 
         N2oCustomRegion region = new N2oCustomRegion();
-        region.setWidgets(new N2oWidget[]{form});
-        page.setRegions(new N2oRegion[]{region});
+        region.setContent(new N2oWidget[]{form});
+        page.setItems(new N2oRegion[]{region});
 
         List<GroupedApplicationConfig> groupedApplicationConfigList = applicationRestService.getGroupedApplicationConfig(context);
 
