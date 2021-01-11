@@ -30,7 +30,9 @@
                 </columns>
                 <rows>
                     <click enabled="{typeof isSystem == 'undefined' || !isSystem || isSystem == null || isSystem &amp;&amp; code == '${config.common.system.code}'}">
-                        <open-page page-id="configDynamic?{id}" route="/:code/update" detail-field-id="id"/>
+                        <open-page page-id="configDynamic?{code}" route="/:code/update" detail-field-id="id">
+                            <path-param name="code" value="{code}"/>
+                        </open-page>
                     </click>
                 </rows>
             </table>
