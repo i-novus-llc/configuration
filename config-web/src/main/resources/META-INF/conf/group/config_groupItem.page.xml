@@ -6,7 +6,7 @@
                         description="Введите коды группы через пробел"/>
             <output-text id="codes" visible="false">
                 <dependencies>
-                    <set-value on="codesStr">codesStr.trim().split(' ');</set-value>
+                    <set-value on="codesStr">codesStr.trim().split(' ')</set-value>
                 </dependencies>
             </output-text>
             <input-text id="name" label="Наименование группы" required="true"/>
