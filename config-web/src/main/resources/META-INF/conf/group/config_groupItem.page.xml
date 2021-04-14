@@ -13,5 +13,8 @@
             <input-text id="description" label="Описание"/>
             <input-text id="priority" label="Приоритет" domain="integer"/>
         </fields>
+        <pre-filters>
+            <eq field-id="id" param="config_group_id"/>
+        </pre-filters>
     </form>
 </simple-page>
