@@ -33,14 +33,18 @@
 
                 <rows>
                     <click>
-                        <show-modal page-id="config_groupItem" detail-field-id="id" object-id="config_group"
-                                    submit-operation-id="update" page-name="Изменить группу настроек"/>
+                        <show-modal page-id="config_groupItem" object-id="config_group"
+                                    route="/:config_group_id/update"
+                                    submit-operation-id="update" page-name="Изменить группу настроек">
+                            <path-param name="config_group_id" value="{id}"/>
+                        </show-modal>
                     </click>
                 </rows>
 
                 <toolbar>
                     <button id="create" label="Создать" color="primary" model="filter">
                         <show-modal page-id="config_groupItem" submit-operation-id="create" object-id="config_group"
+                                    route="/create"
                                     page-name="Создать группу настроек" upload="defaults"/>
                     </button>
                 </toolbar>

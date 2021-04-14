@@ -94,7 +94,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
             lineFieldSet.setLabel(groupedApplicationConfig.getName());
             lineFieldSet.setFieldLabelLocation(N2oFieldSet.FieldLabelLocation.left);
             lineFieldSet.setFieldLabelAlign(N2oFieldSet.FieldLabelAlign.left);
-            lineFieldSet.setLabelWidth("50%");
+            lineFieldSet.setFieldLabelWidth("50%");
 
             ArrayList<SourceComponent> n2oFieldList = new ArrayList<>();
             for (ConfigForm config : groupedApplicationConfig.getConfigs()) {
@@ -131,7 +131,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
         N2oHidden n2oHidden = new N2oHidden();
         n2oHidden.setId("appCode");
         n2oHidden.setDefaultValue(context);
-        n2oHidden.setVisible(false);
+        n2oHidden.setVisible("false");
         lineFieldSetList.add(n2oHidden);
         form.setItems(lineFieldSetList.toArray(SourceComponent[]::new));
 
