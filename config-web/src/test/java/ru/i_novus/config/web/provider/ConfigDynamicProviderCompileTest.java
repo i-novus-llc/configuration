@@ -33,10 +33,8 @@ import org.junit.Test;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -90,7 +88,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(table.getComponent().getCells().get(1).getId(), is("name"));
 
         // динамическая страница
-        StandardPage dynamicPage = (StandardPage)routeAndGet("/systems/appCode/update", Page.class);
+        StandardPage dynamicPage = (StandardPage) routeAndGet("/systems/appCode/update", Page.class);
         assertThat(dynamicPage.getId(), is("systems_appCode_update"));
         assertThat(dynamicPage.getPageProperty().getTitle(), is("appName (appCode)"));
         assertThat(dynamicPage.getObject().getId(), is("groupedConfig"));
@@ -112,7 +110,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(field.getControl(), instanceOf(InputText.class));
         assertThat(field.getControl().getSrc(), is("InputText"));
         assertThat(((InputText) field.getControl()).getPlaceholder(), is("default"));
-        assertThat(field.getId(), is("data.test@code1"));
+        assertThat(field.getId(), is("data.test__code1"));
         assertThat(field.getLabel(), is("name1"));
         assertThat(field.getDescription(), is("test.code1"));
         assertThat(field.getHelp(), is("desc1"));
@@ -121,7 +119,7 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         field = (StandardField) lineFieldSet.getRows().get(1).getCols().get(0).getFields().get(0);
         assertThat(field.getControl(), instanceOf(InputText.class));
         assertThat(field.getControl().getSrc(), is("InputNumber"));
-        assertThat(field.getId(), is("data.test@code2"));
+        assertThat(field.getId(), is("data.test__code2"));
         assertThat(field.getLabel(), is("name2"));
         assertThat(field.getDescription(), is("test.code2"));
         assertThat(field.getHelp(), is("desc2"));
@@ -134,16 +132,16 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(lineFieldSet.getRows().size(), is(2));
         field = (StandardField) lineFieldSet.getRows().get(0).getCols().get(0).getFields().get(0);
         assertThat(field.getControl(), instanceOf(Checkbox.class));
-        assertThat(((Checkbox)field.getControl()).getLabel(), is("name3"));
-        assertThat(field.getId(), is("data.test@code3"));
+        assertThat(((Checkbox) field.getControl()).getLabel(), is("name3"));
+        assertThat(field.getId(), is("data.test__code3"));
         assertThat(field.getDescription(), is("test.code3"));
         assertThat(field.getHelp(), is("desc3"));
         assertThat(dynamicPage.getModels().get(String.format("resolve['%s'].%s", widgetId, field.getId())).getValue(), is(true));
 
         field = (StandardField) lineFieldSet.getRows().get(1).getCols().get(0).getFields().get(0);
         assertThat(field.getControl(), instanceOf(Checkbox.class));
-        assertThat(((Checkbox)field.getControl()).getLabel(), is("name4"));
-        assertThat(field.getId(), is("data.test@code4"));
+        assertThat(((Checkbox) field.getControl()).getLabel(), is("name4"));
+        assertThat(field.getId(), is("data.test__code4"));
         assertThat(field.getDescription(), is("test.code4"));
         assertThat(field.getHelp(), is("desc4"));
         assertThat(dynamicPage.getModels().get(String.format("resolve['%s'].%s", widgetId, field.getId())).getValue(), is(false));
@@ -166,11 +164,11 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(button.getId(), is("save"));
         assertThat(button.getColor(), is("primary"));
         assertThat(button.getLabel(), is("Сохранить"));
-        assertThat(((InvokeAction)button.getAction()).getOperationId(), is("save"));
+        assertThat(((InvokeAction) button.getAction()).getOperationId(), is("save"));
         button = buttons.get(1);
         assertThat(button.getId(), is("cancel"));
         assertThat(button.getLabel(), is("Отмена"));
-        assertThat(((PerformButton)button).getUrl(), is("/systems/appCode"));
+        assertThat(((PerformButton) button).getUrl(), is("/systems/appCode"));
 
         // действия (actions)
         Map<String, Action> actions = dynamicPage.getActions();

@@ -173,7 +173,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         }
 
         for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
-            String key = ((String) entry.getKey()).replace("@", ".");
+            String key = ((String) entry.getKey()).replace("__", ".");
             String value = String.valueOf(entry.getValue());
 
             if (entry.getValue() == null || value.equals("")) continue;
