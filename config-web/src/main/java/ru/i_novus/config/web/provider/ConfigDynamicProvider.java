@@ -163,7 +163,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
     }
 
     private void fillElement(N2oStandardField field, ConfigForm config) {
-        field.setId("data." + config.getCode().replace(".", "@"));
+        field.setId("data." + config.getCode().replace(".", "__"));
         field.setLabel(config.getName());
         field.setHelp(config.getDescription());
         field.setDescription(config.getCode());
