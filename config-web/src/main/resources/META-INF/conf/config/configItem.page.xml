@@ -10,7 +10,7 @@
                         <eq field-id="systemCode" value="{systemName.id}"/>
                     </pre-filters>
                     <dependencies>
-                        <enabling on="systemName">systemName.id != 'common-system'</enabling>
+                        <enabling on="systemName">systemName.id != 'common_system'</enabling>
                         <set-value on="systemName" apply-on-init="false">null</set-value>
                     </dependencies>
                 </input-select>

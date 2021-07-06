@@ -15,7 +15,7 @@ public class ConfigCompileCacheOperation extends CompileCacheOperation {
     public Object execute(CompileContext context, DataSet data, Supplier supplier, CompileProcessor compileProcessor,
                           BindProcessor bindProcessor, ValidateProcessor validateProcessor) {
         String key = context.getSourceId(bindProcessor);
-        return (key.startsWith("configDynamic")) ?
+        return key.startsWith("configDynamic") ?
                 supplier.get() :
                 super.execute(context, data, supplier, compileProcessor, bindProcessor, validateProcessor);
     }

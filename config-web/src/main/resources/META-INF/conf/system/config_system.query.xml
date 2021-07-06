@@ -22,7 +22,7 @@
         </field>
 
         <field id="codeStr" domain="string">
-            <select mapping="[code]" normalize="#this == 'common-system' ? null : #this"/>
+            <select mapping="[code]" normalize="#this == 'common_system' ? null : #this"/>
         </field>
 
         <field id="name" domain="string">
