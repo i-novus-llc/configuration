@@ -6,6 +6,7 @@ import lombok.Data;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Data
 @ApiModel("Выходные данные настройки")
@@ -28,7 +29,7 @@ public class ConfigResponse {
     private String defaultValue;
 
     @ApiModelProperty("Значения справочника")
-    private String refBookValue;
+    private List<String> refBookValue;
 
     @ApiModelProperty("Приложение")
     private ApplicationResponse application;

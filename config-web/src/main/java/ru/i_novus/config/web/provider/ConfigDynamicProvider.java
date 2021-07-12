@@ -124,7 +124,8 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
             }
 
             lineFieldSet.setItems(n2oFieldList.toArray(SourceComponent[]::new));
-            lineFieldSetList.add(lineFieldSet);
+            if (lineFieldSet.getItems().length != 0)
+                lineFieldSetList.add(lineFieldSet);
         }
 
         // Передача appCode

@@ -70,11 +70,12 @@
                     <visibility on="valueType">valueType.id == 'BOOLEAN'</visibility>
                 </dependencies>
             </checkbox>
-            <input-text id="refBookValue" label="Значения справочника">
+            <auto-complete id="refBookValue" label="Значения справочника" tags="true"
+                           description="Для добавления введите новое значение и нажмите Enter">
                 <dependencies>
                     <visibility on="valueType">valueType.id == 'REFBOOK'</visibility>
                 </dependencies>
-            </input-text>
+            </auto-complete>
 
             <input-text id="description" label="Описание"/>
             <hidden id="isCreateForm" default-value="true"/>

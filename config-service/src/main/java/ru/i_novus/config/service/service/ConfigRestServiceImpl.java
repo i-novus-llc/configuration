@@ -160,6 +160,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     @Override
+    @Transactional
     public void saveConfig(@Valid @NotNull ConfigForm configForm) {
         if (configRepository.existsByCode(configForm.getCode())) {
             throw new UserException("config.code.not.unique");
@@ -180,7 +181,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         configEntity.setValueType(configForm.getValueType());
         configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setDescription(configForm.getDescription());
-        configEntity.setRefBookValue(configForm.getRefBookValue());
+        if (configForm.getRefBookValue() != null)
+            configEntity.setRefBookValue(String.join(",", configForm.getRefBookValue()));
 
         if (configEntity.getApplicationCode() != null &&
                 !configEntity.getApplicationCode().equals(configForm.getApplicationCode())) {
@@ -199,6 +201,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     @Override
+    @Transactional
     public void deleteConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 

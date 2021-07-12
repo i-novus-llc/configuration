@@ -127,6 +127,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     @Override
+    @Transactional
     public void deleteGroup(Integer groupId) {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
         groupRepository.deleteById(groupEntity.getId());
