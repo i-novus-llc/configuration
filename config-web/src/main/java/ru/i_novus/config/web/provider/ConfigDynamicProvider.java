@@ -63,6 +63,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
         N2oStandardPage page = new N2oStandardPage();
         page.setObjectId("groupedConfig");
+        context = context.replace("__", "-");
 
         if (!context.equals(commonSystemCode)) {
             ApplicationResponse applicationResponse;
