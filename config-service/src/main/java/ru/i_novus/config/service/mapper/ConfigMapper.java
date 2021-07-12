@@ -14,6 +14,10 @@ public class ConfigMapper {
     public static ConfigEntity toConfigEntity(ConfigForm configForm) {
         ConfigEntity configEntity = new ConfigEntity();
         configEntity.setCode(configForm.getCode());
+        return toConfigEntity(configEntity, configForm);
+    }
+
+    public static ConfigEntity toConfigEntity(ConfigEntity configEntity, ConfigForm configForm) {
         configEntity.setName(configForm.getName());
         configEntity.setDescription(configForm.getDescription());
         configEntity.setValueType(configForm.getValueType());

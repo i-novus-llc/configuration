@@ -175,14 +175,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     @Transactional
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
-        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-
-        configEntity.setName(configForm.getName());
-        configEntity.setValueType(configForm.getValueType());
-        configEntity.setDefaultValue(configForm.getDefaultValue());
-        configEntity.setDescription(configForm.getDescription());
-        if (configForm.getRefBookValue() != null)
-            configEntity.setRefBookValue(String.join(",", configForm.getRefBookValue()));
+        ConfigEntity configEntity = ConfigMapper.toConfigEntity(
+                Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new),
+                configForm);
 
         if (configEntity.getApplicationCode() != null &&
                 !configEntity.getApplicationCode().equals(configForm.getApplicationCode())) {
@@ -195,7 +190,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             }
         }
 
-        configEntity.setApplicationCode(configForm.getApplicationCode());
         configRepository.save(configEntity);
         audit(configEntity, EventTypeEnum.CONFIG_UPDATE);
     }
