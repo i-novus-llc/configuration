@@ -1,46 +1,48 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<object xmlns="http://n2oapp.net/framework/config/schema/object-3.0">
+<object xmlns="http://n2oapp.net/framework/config/schema/object-4.0">
     <operations>
 
         <operation id="create">
             <invocation>
                 <rest method="POST">${config.service.url}/</rest>
             </invocation>
-            <in-parameters>
-                <param id="applicationName.id" mapping="['applicationCode']"/>
-                <param id="code" mapping="['code']"/>
-                <param id="name" mapping="['name']"/>
-                <param id="valueType.id" mapping="['valueType']"/>
-                <param id="defaultValueString" mapping="['defaultValue']" mapping-condition="valueType.id == 'STRING'"/>
-                <param id="defaultValueNumber" mapping="['defaultValue']" mapping-condition="valueType.id == 'NUMBER'"/>
-                <param id="defaultValueBoolean" mapping="['defaultValue']" mapping-condition="valueType.id == 'BOOLEAN'"/>
-                <param id="description" mapping="['description']"/>
-            </in-parameters>
+            <in>
+                <field id="applicationName.id" mapping="['applicationCode']"/>
+                <field id="code" mapping="['code']"/>
+                <field id="name" mapping="['name']"/>
+                <field id="valueType.id" mapping="['valueType']"/>
+                <field id="defaultValueString" mapping="['defaultValue']" enabled="valueType.id == 'STRING'"/>
+                <field id="defaultValueNumber" mapping="['defaultValue']" enabled="valueType.id == 'NUMBER'"/>
+                <field id="defaultValueBoolean" mapping="['defaultValue']" enabled="valueType.id == 'BOOLEAN'"/>
+                <field id="refBookValue" mapping="['refBookValue']"/>
+                <field id="description" mapping="['description']"/>
+            </in>
         </operation>
 
         <operation id="update">
             <invocation>
                 <rest method="PUT">${config.service.url}/{code}</rest>
             </invocation>
-            <in-parameters>
-                <param id="applicationName.id" mapping="['applicationCode']"/>
-                <param id="code" mapping="['code']"/>
-                <param id="name" mapping="['name']"/>
-                <param id="valueType.id" mapping="['valueType']"/>
-                <param id="defaultValueString" mapping="['defaultValue']" mapping-condition="valueType.id == 'STRING'"/>
-                <param id="defaultValueNumber" mapping="['defaultValue']" mapping-condition="valueType.id == 'NUMBER'"/>
-                <param id="defaultValueBoolean" mapping="['defaultValue']" mapping-condition="valueType.id == 'BOOLEAN'"/>
-                <param id="description" mapping="['description']"/>
-            </in-parameters>
+            <in>
+                <field id="applicationName.id" mapping="['applicationCode']"/>
+                <field id="code" mapping="['code']"/>
+                <field id="name" mapping="['name']"/>
+                <field id="valueType.id" mapping="['valueType']"/>
+                <field id="defaultValueString" mapping="['defaultValue']" enabled="valueType.id == 'STRING'"/>
+                <field id="defaultValueNumber" mapping="['defaultValue']" enabled="valueType.id == 'NUMBER'"/>
+                <field id="defaultValueBoolean" mapping="['defaultValue']" enabled="valueType.id == 'BOOLEAN'"/>
+                <field id="refBookValue" mapping="['refBookValue']"/>
+                <field id="description" mapping="['description']"/>
+            </in>
         </operation>
 
         <operation id="delete">
             <invocation>
                 <rest method="DELETE">${config.service.url}/{code}</rest>
             </invocation>
-            <in-parameters>
-                <param id="code" mapping="['code']"/>
-            </in-parameters>
+            <in>
+                <field id="code" mapping="['code']"/>
+            </in>
         </operation>
 
     </operations>

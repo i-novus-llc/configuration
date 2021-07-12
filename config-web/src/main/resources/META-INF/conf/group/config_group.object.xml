@@ -1,40 +1,38 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<object xmlns="http://n2oapp.net/framework/config/schema/object-3.0">
+<object xmlns="http://n2oapp.net/framework/config/schema/object-4.0">
     <operations>
-
         <operation id="create">
             <invocation>
                 <rest method="POST">${config.service.url}/groups/</rest>
             </invocation>
-            <in-parameters>
-                <param id="codes" mapping="['codes']" domain="string[]"/>
-                <param id="name" mapping="['name']"/>
-                <param id="description" mapping="['description']"/>
-                <param id="priority" mapping="['priority']"/>
-            </in-parameters>
+            <in>
+                <field id="codes" mapping="['codes']" domain="string[]"/>
+                <field id="name" mapping="['name']"/>
+                <field id="description" mapping="['description']"/>
+                <field id="priority" mapping="['priority']"/>
+            </in>
         </operation>
 
         <operation id="update">
             <invocation>
                 <rest method="PUT">${config.service.url}/groups/{id}</rest>
             </invocation>
-            <in-parameters>
-                <param id="id" mapping="['id']"/>
-                <param id="codes" mapping="['codes']" domain="string[]"/>
-                <param id="name" mapping="['name']"/>
-                <param id="description" mapping="['description']"/>
-                <param id="priority" mapping="['priority']"/>
-            </in-parameters>
+            <in>
+                <field id="id" mapping="['id']"/>
+                <field id="codes" mapping="['codes']" domain="string[]"/>
+                <field id="name" mapping="['name']"/>
+                <field id="description" mapping="['description']"/>
+                <field id="priority" mapping="['priority']"/>
+            </in>
         </operation>
 
         <operation id="delete">
             <invocation>
                 <rest method="DELETE">${config.service.url}/groups/{id}</rest>
             </invocation>
-            <in-parameters>
-                <param id="id" mapping="['id']"/>
-            </in-parameters>
+            <in>
+                <field id="id" mapping="['id']"/>
+            </in>
         </operation>
-
     </operations>
 </object>

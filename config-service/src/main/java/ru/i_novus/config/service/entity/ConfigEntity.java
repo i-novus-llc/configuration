@@ -51,4 +51,10 @@ public class ConfigEntity {
      */
     @Column(name = "default_value")
     private String defaultValue;
+
+    /**
+     * Значения справочника
+     */
+    @Column(name = "ref_book_value")
+    private String refBookValue;
 }
