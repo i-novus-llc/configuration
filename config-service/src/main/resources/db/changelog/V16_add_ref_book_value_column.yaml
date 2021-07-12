@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_columns_to_config
+      author: rsafin
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V16_add_ref_book_value_column.sql

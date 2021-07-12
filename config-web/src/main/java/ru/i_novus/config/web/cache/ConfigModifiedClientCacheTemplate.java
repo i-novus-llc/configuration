@@ -13,7 +13,7 @@ public class ConfigModifiedClientCacheTemplate extends ModifiedClientCacheTempla
 
     @Override
     protected long getLastModifiedFromServer(HttpServletRequest req) {
-        return req.getPathInfo().matches(".+/systems/([A-Za-z0-9\\_]+)/update$") ?
+        return req.getPathInfo().matches(".*/systems/([A-Za-z0-9\\_]+)/update$") ?
                 -1 :
                 super.getLastModifiedFromServer(req);
     }

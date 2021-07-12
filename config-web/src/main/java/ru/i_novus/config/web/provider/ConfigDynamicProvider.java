@@ -63,6 +63,7 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
 
         N2oStandardPage page = new N2oStandardPage();
         page.setObjectId("groupedConfig");
+        context = context.replace("__", "-");
 
         if (!context.equals(commonSystemCode)) {
             ApplicationResponse applicationResponse;
@@ -124,7 +125,8 @@ public class ConfigDynamicProvider implements DynamicMetadataProvider {
             }
 
             lineFieldSet.setItems(n2oFieldList.toArray(SourceComponent[]::new));
-            lineFieldSetList.add(lineFieldSet);
+            if (lineFieldSet.getItems().length != 0)
+                lineFieldSetList.add(lineFieldSet);
         }
 
         // Передача appCode

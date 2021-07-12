@@ -6,16 +6,25 @@ import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.service.entity.ConfigEntity;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class ConfigMapper {
 
     public static ConfigEntity toConfigEntity(ConfigForm configForm) {
         ConfigEntity configEntity = new ConfigEntity();
         configEntity.setCode(configForm.getCode());
+        return toConfigEntity(configEntity, configForm);
+    }
+
+    public static ConfigEntity toConfigEntity(ConfigEntity configEntity, ConfigForm configForm) {
         configEntity.setName(configForm.getName());
         configEntity.setDescription(configForm.getDescription());
         configEntity.setValueType(configForm.getValueType());
         configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setApplicationCode(configForm.getApplicationCode());
+        if (configForm.getRefBookValue() != null)
+            configEntity.setRefBookValue(String.join(",", configForm.getRefBookValue()));
         return configEntity;
     }
 
@@ -28,6 +37,8 @@ public class ConfigMapper {
         configResponse.setDefaultValue(configEntity.getDefaultValue());
         configResponse.setApplication(application);
         configResponse.setGroup(group);
+        if (configEntity.getRefBookValue() != null)
+            configResponse.setRefBookValue(Arrays.stream(configEntity.getRefBookValue().split(",")).collect(Collectors.toList()));
         return configResponse;
     }
 

@@ -10,8 +10,9 @@ public class ApplicationSystemUtil {
         if (children == null || children.isEmpty())
             return null;
         for (Object item : children) {
-            ((DataSet)item).put("id", ((DataSet)item).get("code"));
-            ((DataSet)item).put("codeStr", ((DataSet)item).get("code"));
+            ((DataSet) item).put("id", ((DataSet) item).get("code"));
+            ((DataSet) item).put("codeStr", ((DataSet) item).get("code"));
+            ((DataSet) item).put("code", ((String) ((DataSet) item).get("code")).replace("-", "__"));
         }
         return children;
     }

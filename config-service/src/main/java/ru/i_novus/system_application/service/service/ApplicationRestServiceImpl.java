@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.service.entity.ConfigEntity;
@@ -145,6 +146,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     }
 
     @Override
+    @Transactional
     public void saveApplicationConfig(String code, Map<String, Object> data) {
         if (!code.equals(commonSystemCode))
             Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
@@ -203,6 +205,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     }
 
     @Override
+    @Transactional
     public void deleteApplicationConfig(String code) {
         Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         List<ConfigEntity> configEntities = configRepository.findByApplicationCode(code);
