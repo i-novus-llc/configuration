@@ -1,6 +1,9 @@
 package ru.i_novus.config.service.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.service.ConfigValueService;
@@ -62,7 +65,7 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
         String fullUrl = url.substring(0, url.indexOf("kv")) + "txn";
 
-        restTemplate.put(fullUrl, list);
+        restTemplate.put(fullUrl, new HttpEntity<>(list, headers()));
     }
 
     @Override
@@ -92,5 +95,11 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
         map.put("KV", keyValueMap);
 
         list.add(map);
+    }
+
+    private HttpHeaders headers() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
     }
 }

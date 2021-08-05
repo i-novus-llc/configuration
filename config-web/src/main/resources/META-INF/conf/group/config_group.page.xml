@@ -1,55 +1,51 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
+<page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
       name="Группы настроек" object-id="config_group">
-
     <regions>
-        <region place="single">
-            <table id="group_table" query-id="config_group">
-                <filters>
-                    <row>
-                        <input-text id="code" label="Код группы" domain="string"/>
-                        <input-text id="name" label="Наименование группы" domain="string"/>
-                        <search-buttons id="search"/>
-                    </row>
-                </filters>
+        <table id="group_table" query-id="config_group">
+            <filters>
+                <row>
+                    <input-text id="code" label="Код группы" domain="string"/>
+                    <input-text id="name" label="Наименование группы" domain="string"/>
+                    <search-buttons id="search"/>
+                </row>
+            </filters>
 
-                <columns>
-                    <column text-field-id="codes" label="Код группы">
-                        <list color="secondary" size="5"/>
-                    </column>
-                    <column text-field-id="name" label="Наименование группы"/>
-                    <column text-field-id="description" label="Описание"/>
+            <columns>
+                <column text-field-id="codes" label="Код группы">
+                    <list color="secondary" size="5"/>
+                </column>
+                <column text-field-id="name" label="Наименование группы"/>
+                <column text-field-id="description" label="Описание"/>
 
-                    <column text-field-id="option">
-                        <toolbar>
-                            <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
-                                    confirm="true" confirm-title="Удалить группу настроек"
-                                    confirm-text="Вы уверены, что хотите удалить группу настроек?">
-                                <invoke operation-id="delete"/>
-                            </button>
-                        </toolbar>
-                    </column>
-                </columns>
+                <column text-field-id="option">
+                    <toolbar>
+                        <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
+                                confirm="true" confirm-title="Удалить группу настроек"
+                                confirm-text="Вы уверены, что хотите удалить группу настроек?">
+                            <invoke operation-id="delete"/>
+                        </button>
+                    </toolbar>
+                </column>
+            </columns>
 
-                <rows>
-                    <click>
-                        <show-modal page-id="config_groupItem" object-id="config_group"
-                                    route="/:config_group_id/update"
-                                    submit-operation-id="update" page-name="Изменить группу настроек">
-                            <path-param name="config_group_id" value="{id}"/>
-                        </show-modal>
-                    </click>
-                </rows>
+            <rows>
+                <click>
+                    <show-modal page-id="config_groupItem" object-id="config_group"
+                                route="/:config_group_id/update"
+                                submit-operation-id="update" page-name="Изменить группу настроек">
+                        <path-param name="config_group_id" value="{id}"/>
+                    </show-modal>
+                </click>
+            </rows>
 
-                <toolbar>
-                    <button id="create" label="Создать" color="primary" model="filter">
-                        <show-modal page-id="config_groupItem" submit-operation-id="create" object-id="config_group"
-                                    route="/create"
-                                    page-name="Создать группу настроек" upload="defaults"/>
-                    </button>
-                </toolbar>
-            </table>
-        </region>
+            <toolbar>
+                <button id="create" label="Создать" color="primary" model="filter">
+                    <show-modal page-id="config_groupItem" submit-operation-id="create" object-id="config_group"
+                                route="/create"
+                                page-name="Создать группу настроек" upload="defaults"/>
+                </button>
+            </toolbar>
+        </table>
     </regions>
-
 </page>
