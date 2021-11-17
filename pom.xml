@@ -4,7 +4,7 @@
 
     <groupId>ru.i-novus.config</groupId>
     <artifactId>config</artifactId>
-    <version>1.5.4-SNAPSHOT</version>
+    <version>1.5.4</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -50,7 +50,7 @@
         <connection>scm:git:https://git.i-novus.ru/platform/configuration.git</connection>
         <url>https://git.i-novus.ru/platform/configuration</url>
         <developerConnection>scm:git:https://git.i-novus.ru/platform/configuration.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>1.5.4</tag>
     </scm>
 
 </project>
