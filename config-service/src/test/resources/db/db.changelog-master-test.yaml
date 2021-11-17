@@ -1,5 +1,5 @@
 databaseChangeLog:
   - include:
-      file: classpath:/db/changelog/db.changelog-master.yaml
+      file: classpath:/db/db.changelog-master.yaml
   - include:
       file: db/changelog/insert_test_data.yaml
