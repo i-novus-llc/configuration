@@ -2,8 +2,8 @@ version: "3.6"
 
 services:
 
-  config-service:
-    image: ${DOCKER_REGISTRY}/config/config-service:${TAG:-latest}
+  config-backend:
+    image: ${DOCKER_REGISTRY}/config/config-backend:${TAG:-latest}
 
   config-web:
     image: ${DOCKER_REGISTRY}/config/config-web:${TAG:-latest}
