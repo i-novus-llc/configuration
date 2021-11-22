@@ -12,10 +12,6 @@
         <version>1.5.5-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>ru.i-novus.config</groupId>
