@@ -2,11 +2,11 @@ version: "3.6"
 
 services:
 
-  config-service:
+  config-backend:
     build:
-      context: config-service
+      context: config-backend
       args:
-        JAR_FILE: target/config-service.jar
+        JAR_FILE: target/config-backend.jar
 
   config-web:
     build:
