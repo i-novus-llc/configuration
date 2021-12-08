@@ -11,20 +11,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigValueService;
+import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupedApplicationConfigMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
-import ru.i_novus.configuration.config.utils.AuditHelper;
 import ru.i_novus.configuration.system_application.entity.ApplicationEntity;
+import ru.i_novus.configuration.system_application.entity.QApplicationEntity;
 import ru.i_novus.configuration.system_application.mapper.ApplicationMapper;
 import ru.i_novus.configuration.system_application.repository.ApplicationRepository;
-import ru.i_novus.ms.audit.client.AuditClient;
-import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
-import ru.i_novus.configuration.system_application.entity.QApplicationEntity;
 
 import javax.ws.rs.NotFoundException;
 import java.util.*;
@@ -43,7 +41,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     @Autowired
     private ConfigRepository configRepository;
     @Autowired
-    private AuditClient auditClient;
+    private AuditService auditService;
 
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
@@ -217,12 +215,6 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     }
 
     private void audit(ConfigForm configForm, EventTypeEnum eventType) {
-        AuditClientRequest request = AuditHelper.getAuditClientRequest();
-        request.setEventType(eventType.getTitle());
-        request.setObjectType(ObjectTypeEnum.APPLICATION_CONFIG.toString());
-        request.setObjectId(configForm.getCode());
-        request.setObjectName(ObjectTypeEnum.APPLICATION_CONFIG.getTitle());
-        request.setContext(AuditHelper.getContext(configForm));
-        auditClient.add(request);
+        auditService.audit(eventType.getTitle(), configForm, configForm.getCode(), ObjectTypeEnum.APPLICATION_CONFIG.getTitle());
     }
 }

@@ -12,7 +12,6 @@
 
     <properties>
         <rdm.version>1.130</rdm.version>
-        <audit.version>2.4.15</audit.version>
     </properties>
 
     <dependencies>
@@ -20,12 +19,6 @@
             <groupId>ru.i-novus.config</groupId>
             <artifactId>config-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.i-novus.ms.audit</groupId>
-            <artifactId>audit-client-spring-boot-starter</artifactId>
-            <version>${audit.version}</version>
         </dependency>
 
         <dependency>

@@ -1,24 +1,40 @@
-package ru.i_novus.configuration.config.utils;
+package ru.i_novus.configuration.audit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import ru.i_novus.config.api.util.AuditService;
+import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
-public class AuditHelper {
+public class AuditServiceImpl implements AuditService {
+
+    @Autowired(required = false)
+    private AuditClient auditClient;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static AuditClientRequest getAuditClientRequest() {
-        // TODO - возможно придется добавить userId, sourceWorkstation, hostname
+
+    public void audit(String action, Object object, String objectId, String objectName) {
         AuditClientRequest request = new AuditClientRequest();
+        request.setEventType(action);
+        request.setObjectType(object.getClass().getSimpleName());
+        request.setObjectId(objectId);
+        try {
+            request.setContext(objectMapper.writeValueAsString(object));
+        } catch (JsonProcessingException e) {
+            request.setContext(object.toString());
+        }
+        request.setObjectName(objectName);
+        request.setAuditType((short) 1);
         request.setUsername(getUsername());
         request.setSourceApplication("config-service");
-        request.setAuditType((short) 1);
-        return request;
+
+        auditClient.add(request);
     }
 
     private static String getUsername() {
@@ -34,15 +50,5 @@ public class AuditHelper {
         if (principal instanceof String)
             return (String) principal;
         return defaultName;
-    }
-
-    public static String getContext(Object obj) {
-        String context;
-        try {
-            context = objectMapper.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            context = e.getMessage();
-        }
-        return context;
     }
 }

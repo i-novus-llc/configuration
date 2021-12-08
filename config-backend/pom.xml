@@ -10,11 +10,21 @@
         <version>1.5.6-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <audit.version>2.4.15</audit.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>ru.i-novus.config</groupId>
             <artifactId>config-service</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.i-novus.ms.audit</groupId>
+            <artifactId>audit-client-spring-boot-starter</artifactId>
+            <version>${audit.version}</version>
         </dependency>
     </dependencies>
 

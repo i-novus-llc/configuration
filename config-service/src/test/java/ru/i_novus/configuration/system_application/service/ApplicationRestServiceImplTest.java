@@ -13,9 +13,9 @@ import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
+import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.service.MockedConfigValueService;
 import ru.i_novus.configuration.system_application.service.builders.SimpleApplicationResponseBuilder;
-import ru.i_novus.ms.audit.client.AuditClient;
 import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
 import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
@@ -45,7 +45,7 @@ public class ApplicationRestServiceImplTest {
     private ConfigValueService configValueService;
 
     @MockBean
-    private AuditClient auditClient;
+    private AuditService auditService;
 
     @Autowired
     private ConfigRestService configRestService;
