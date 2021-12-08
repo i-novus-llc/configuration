@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.system_application.scheduled;
+package ru.i_novus.configuration.scheduled;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

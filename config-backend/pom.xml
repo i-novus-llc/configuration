@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>config-backend</artifactId>
@@ -12,6 +13,7 @@
 
     <properties>
         <audit.version>2.4.15</audit.version>
+        <rdm.version>1.130</rdm.version>
     </properties>
 
     <dependencies>
@@ -25,6 +27,17 @@
             <groupId>ru.i-novus.ms.audit</groupId>
             <artifactId>audit-client-spring-boot-starter</artifactId>
             <version>${audit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.inovus.ms.rdm</groupId>
+            <artifactId>rdm-sync-spring-boot-starter</artifactId>
+            <version>${rdm.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.n2oapp.platform</groupId>
+            <artifactId>n2o-platform-starter-quartz</artifactId>
         </dependency>
     </dependencies>
 
