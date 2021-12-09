@@ -3,7 +3,6 @@ package ru.i_novus.config.web.provider;
 import net.n2oapp.framework.api.metadata.global.view.action.control.Target;
 import net.n2oapp.framework.api.metadata.global.view.page.BasePageUtil;
 import net.n2oapp.framework.api.metadata.global.view.page.N2oPage;
-import net.n2oapp.framework.api.metadata.meta.action.Action;
 import net.n2oapp.framework.api.metadata.meta.action.invoke.InvokeAction;
 import net.n2oapp.framework.api.metadata.meta.action.link.LinkActionImpl;
 import net.n2oapp.framework.api.metadata.meta.control.Checkbox;
@@ -34,7 +33,6 @@ import ru.i_novus.system_application.api.model.ApplicationResponse;
 import ru.i_novus.system_application.api.service.ApplicationRestService;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -171,17 +169,14 @@ public class ConfigDynamicProviderCompileTest extends SourceCompileTestBase {
         assertThat(((PerformButton) button).getUrl(), is("/systems/appCode"));
 
         // действия (actions)
-        Map<String, Action> actions = dynamicPage.getActions();
-        assertThat(actions.size(), is(2));
-        assertThat(actions.get("save"), instanceOf(InvokeAction.class));
         // save
-        InvokeAction action = (InvokeAction) actions.get("save");
+        InvokeAction action = (InvokeAction) buttons.get(0).getAction();
         assertThat(action.getPayload().getPageId(), is("systems_appCode_update"));
         assertThat(action.getMeta(), notNullValue());
         assertThat(action.getObjectId(), is("groupedConfig"));
         assertThat(action.getOperationId(), is("save"));
         // cancel
-        LinkActionImpl linkAction = (LinkActionImpl) actions.get("cancel");
+        LinkActionImpl linkAction = (LinkActionImpl) buttons.get(1).getAction();
         assertThat(linkAction.getUrl(), is("/systems/appCode"));
         assertThat(linkAction.getTarget(), is(Target.application));
         assertThat(linkAction.getObjectId(), nullValue());
