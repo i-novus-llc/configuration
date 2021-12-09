@@ -13,7 +13,7 @@ import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
 public class AuditServiceImpl implements AuditService {
 
-    @Autowired(required = false)
+    @Autowired
     private AuditClient auditClient;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
