@@ -12,8 +12,8 @@ import ru.i_novus.TestApp;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
+import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.service.builders.GroupFormBuilder;
-import ru.i_novus.ms.audit.client.AuditClient;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ public class ConfigGroupRestServiceImplTest {
     private ConfigGroupRestService groupRestService;
 
     @MockBean
-    private AuditClient auditClient;
+    private AuditService auditService;
 
     /**
      * Проверка, что список групп настроек возвращается корректно

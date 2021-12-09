@@ -17,8 +17,8 @@ import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
+import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.service.builders.ConfigFormBuilder;
-import ru.i_novus.ms.audit.client.AuditClient;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class ConfigRestServiceImplTest {
     private ConfigValueService configValueService;
 
     @MockBean
-    private AuditClient auditClient;
+    private AuditService auditService;
 
     @Value("${config.common.system.code}")
     private String commonSystemCode;

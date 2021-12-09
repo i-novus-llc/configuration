@@ -15,15 +15,13 @@ import ru.i_novus.config.api.model.EventTypeEnum;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.model.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
+import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.GroupEntity;
 import ru.i_novus.configuration.config.entity.QGroupCodeEntity;
 import ru.i_novus.configuration.config.entity.QGroupEntity;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.GroupCodeRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
-import ru.i_novus.configuration.config.utils.AuditHelper;
-import ru.i_novus.ms.audit.client.AuditClient;
-import ru.i_novus.ms.audit.client.model.AuditClientRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -42,7 +40,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Autowired
     private GroupCodeRepository groupCodeRepository;
     @Autowired
-    private AuditClient auditClient;
+    private AuditService auditService;
     @Autowired
     private MessageSourceAccessor messageAccessor;
 
@@ -142,12 +140,6 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     private void audit(GroupForm groupForm, EventTypeEnum eventType) {
-        AuditClientRequest request = AuditHelper.getAuditClientRequest();
-        request.setEventType(eventType.getTitle());
-        request.setObjectType(ObjectTypeEnum.CONFIG_GROUP.toString());
-        request.setObjectId(String.valueOf(groupForm.getId()));
-        request.setObjectName(ObjectTypeEnum.CONFIG_GROUP.getTitle());
-        request.setContext(AuditHelper.getContext(groupForm));
-        auditClient.add(request);
+        auditService.audit(eventType.getTitle(), groupForm, String.valueOf(groupForm.getId()), ObjectTypeEnum.CONFIG_GROUP.getTitle());
     }
 }

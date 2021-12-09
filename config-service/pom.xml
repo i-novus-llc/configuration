@@ -10,28 +10,11 @@
         <version>1.5.6-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <rdm.version>1.130</rdm.version>
-        <audit.version>2.4.15</audit.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>ru.i-novus.config</groupId>
             <artifactId>config-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.i-novus.ms.audit</groupId>
-            <artifactId>audit-client-spring-boot-starter</artifactId>
-            <version>${audit.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.inovus.ms.rdm</groupId>
-            <artifactId>rdm-sync-spring-boot-starter</artifactId>
-            <version>${rdm.version}</version>
         </dependency>
 
         <dependency>

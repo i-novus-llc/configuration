@@ -16,18 +16,16 @@ import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
+import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.*;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
-import ru.i_novus.configuration.config.utils.AuditHelper;
-import ru.i_novus.ms.audit.client.AuditClient;
-import ru.i_novus.ms.audit.client.model.AuditClientRequest;
-import ru.i_novus.system_application.api.model.ApplicationResponse;
-import ru.i_novus.system_application.api.service.ApplicationRestService;
 import ru.i_novus.configuration.system_application.entity.QApplicationEntity;
 import ru.i_novus.configuration.system_application.mapper.ApplicationMapper;
+import ru.i_novus.system_application.api.model.ApplicationResponse;
+import ru.i_novus.system_application.api.service.ApplicationRestService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -52,7 +50,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Autowired
     private GroupRepository groupRepository;
     @Autowired
-    private AuditClient auditClient;
+    private AuditService auditService;
     @Autowired
     private MessageSourceAccessor messageAccessor;
 
@@ -197,12 +195,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
-        AuditClientRequest request = AuditHelper.getAuditClientRequest();
-        request.setEventType(eventType.getTitle());
-        request.setObjectType(ObjectTypeEnum.CONFIG.toString());
-        request.setObjectId(configEntity.getCode());
-        request.setObjectName(ObjectTypeEnum.CONFIG.getTitle());
-        request.setContext(AuditHelper.getContext(configEntity));
-        auditClient.add(request);
+        auditService.audit(eventType.getTitle(), configEntity, configEntity.getCode(), ObjectTypeEnum.CONFIG.getTitle());
     }
 }

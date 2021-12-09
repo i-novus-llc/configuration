@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.system_application.scheduled;
+package ru.i_novus.configuration.scheduled;
 
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
