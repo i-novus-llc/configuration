@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
-@ApiModel("Прикладная система")
+@ApiModel("Система")
 public class SystemResponse {
 
     @NotBlank(message = "Отсутствует код системы")

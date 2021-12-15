@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel("Простая версия приложения")
+@ApiModel("Приложение")
 public class SimpleApplicationResponse {
 
     @ApiModelProperty("Код приложения")

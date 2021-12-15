@@ -7,7 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-@ApiModel("Простая версия прикладной системы")
+@ApiModel("Система")
 public class SimpleSystemResponse {
 
     @NotBlank(message = "Отсутствует код системы")

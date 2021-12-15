@@ -1,12 +1,12 @@
 package ru.i_novus.configuration.system_application.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Сущность Система
@@ -14,27 +14,22 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "system", schema = "rdm")
 public class SystemEntity implements Serializable {
 
     /**
-     * Идентификатор системы
+     * Код системы
      */
     @Id
-    @Column(name = "id", nullable = false)
-    private UUID id;
+    @Column(name = "code", nullable = false)
+    private String code;
 
     /**
      * Признак удаления
      */
     @Column(name = "is_deleted")
     private Boolean isDeleted;
-
-    /**
-     * Код системы
-     */
-    @Column(name = "code", nullable = false)
-    private String code;
 
     /**
      * Наименование системы
@@ -53,4 +48,9 @@ public class SystemEntity implements Serializable {
      */
     @OneToMany(mappedBy = "system", fetch = FetchType.EAGER)
     private List<ApplicationEntity> applications;
+
+
+    public SystemEntity(String code) {
+        this.code = code;
+    }
 }

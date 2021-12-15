@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * Сущность Приложение
@@ -17,23 +16,17 @@ import java.util.UUID;
 public class ApplicationEntity implements Serializable {
 
     /**
-     * Идентификатор приложения
+     * Код приложения
      */
     @Id
-    @Column(name = "id", nullable = false)
-    private UUID id;
+    @Column(name = "code", nullable = false)
+    private String code;
 
     /**
      * Признак удаления
      */
     @Column(name = "is_deleted")
     private Boolean isDeleted;
-
-    /**
-     * Код приложения
-     */
-    @Column(name = "code", nullable = false)
-    private String code;
 
     /**
      * Наименование приложения
