@@ -8,7 +8,6 @@ public class LoaderApplicationBuilder {
         SimpleApplicationResponse application = new SimpleApplicationResponse();
         application.setCode("app1");
         application.setName("name1");
-        application.setSystemCode("system-auth");
         return application;
     }
 
@@ -16,7 +15,6 @@ public class LoaderApplicationBuilder {
         SimpleApplicationResponse application = new SimpleApplicationResponse();
         application.setCode("app2");
         application.setName("name2");
-        application.setSystemCode("test");
         return application;
     }
 
@@ -24,7 +22,6 @@ public class LoaderApplicationBuilder {
         SimpleApplicationResponse application = new SimpleApplicationResponse();
         application.setCode("app2");
         application.setName("name2-new");
-        application.setSystemCode("system-security");
         return application;
     }
 
@@ -32,7 +29,6 @@ public class LoaderApplicationBuilder {
         SimpleApplicationResponse application = new SimpleApplicationResponse();
         application.setCode("app3");
         application.setName("name3");
-        application.setSystemCode("test");
         return application;
     }
 }

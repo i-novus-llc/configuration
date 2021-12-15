@@ -52,7 +52,6 @@ public class ApplicationServerLoaderTest {
         case3(loader);
         case4(loader);
         case5(loader);
-        repository.deleteAll();
     }
 
     /**
@@ -126,7 +125,6 @@ public class ApplicationServerLoaderTest {
         SimpleApplicationResponse application3 = LoaderApplicationBuilder.buildApplication3();
         SimpleApplicationResponse tmp = LoaderApplicationBuilder.buildApplication2();
         application3.setName(tmp.getName());
-        application3.setSystemCode(tmp.getSystemCode());
         List<SimpleApplicationResponse> data = Arrays.asList(application2, application3);
 
         loader.accept(data, "test");
@@ -140,6 +138,5 @@ public class ApplicationServerLoaderTest {
     private void applicationAssertEquals(SimpleApplicationResponse expected, ApplicationEntity actual) {
         assertEquals(expected.getCode(), actual.getCode());
         assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getSystemCode(), actual.getSystem().getCode());
     }
 }

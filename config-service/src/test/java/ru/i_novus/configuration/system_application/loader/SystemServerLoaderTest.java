@@ -52,7 +52,6 @@ public class SystemServerLoaderTest {
         case3(loader);
         case4(loader);
         case5(loader);
-        repository.deleteAll();
     }
 
     /**

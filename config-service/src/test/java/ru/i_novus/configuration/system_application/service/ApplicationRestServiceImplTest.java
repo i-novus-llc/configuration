@@ -33,8 +33,7 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = TestApp.class,
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableEmbeddedPg
 public class ApplicationRestServiceImplTest {
 

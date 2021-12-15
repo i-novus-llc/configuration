@@ -4,7 +4,6 @@ import net.n2oapp.platform.loader.server.repository.RepositoryServerLoader;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 import ru.i_novus.configuration.system_application.entity.ApplicationEntity;
-import ru.i_novus.configuration.system_application.entity.SystemEntity;
 import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
 
 /**
@@ -19,7 +18,6 @@ public class ApplicationServerLoader extends RepositoryServerLoader<SimpleApplic
             ApplicationEntity entity = new ApplicationEntity();
             entity.setCode(model.getCode());
             entity.setName(model.getName());
-            entity.setSystem(new SystemEntity(model.getSystemCode()));
             return entity;
         });
     }
