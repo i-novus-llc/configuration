@@ -1,8 +1,3 @@
-INSERT INTO rdm.system (code, name) VALUES
-                ('system-auth', 'system auth'),
-                ('system-security', 'system security'),
-                ('test', 'test');
-
 INSERT INTO rdm.application (code, name, system_code) VALUES
                 ('app-auth', 'auth', 'system-auth'),
                 ('app-security', 'security', 'system-security'),

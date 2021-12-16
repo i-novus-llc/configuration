@@ -2,7 +2,7 @@ package ru.i_novus.config.web.configuration;
 
 import net.n2oapp.platform.jaxrs.autoconfigure.EnableJaxRsProxyClient;
 import org.springframework.context.annotation.Configuration;
-import ru.i_novus.system_application.api.service.ApplicationRestService;
+import ru.i_novus.config.api.service.ApplicationRestService;
 
 @Configuration
 @EnableJaxRsProxyClient(

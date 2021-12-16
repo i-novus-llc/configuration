@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: delete_system_table
+      author: ilebedenko
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V18_delete_system_table.sql

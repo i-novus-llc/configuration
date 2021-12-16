@@ -21,7 +21,6 @@ import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.service.builders.ConfigFormBuilder;
 
 import javax.ws.rs.NotFoundException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -126,26 +125,6 @@ public class ConfigRestServiceImplTest {
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setGroupIds(Collections.singletonList(102));
-
-        List<ConfigResponse> configResponses =
-                configRestService.getAllConfig(criteria).getContent();
-
-        assertEquals(2, configResponses.size());
-        configAssertEquals(configForm2, configResponses.get(0));
-        configAssertEquals(configForm, configResponses.get(1));
-    }
-
-    /**
-     * Проверка, что фильтрация настроек по именам систем работает корректно
-     */
-    @Test
-    public void getAllConfigBySystemNameTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm2();
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm3();
-
-
-        ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setSystemCodes(Arrays.asList("system-security", commonSystemCode));
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();

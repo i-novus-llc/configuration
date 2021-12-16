@@ -22,10 +22,10 @@ import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
-import ru.i_novus.configuration.system_application.entity.QApplicationEntity;
-import ru.i_novus.configuration.system_application.mapper.ApplicationMapper;
-import ru.i_novus.system_application.api.model.ApplicationResponse;
-import ru.i_novus.system_application.api.service.ApplicationRestService;
+import ru.i_novus.config.api.model.CommonSystemResponse;
+import ru.i_novus.configuration.config.entity.QApplicationEntity;
+import ru.i_novus.config.api.model.ApplicationResponse;
+import ru.i_novus.config.api.service.ApplicationRestService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -95,22 +95,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             query.where(qConfigEntity.name.containsIgnoreCase(criteria.getName()));
         }
 
-        List<String> systemCodes = criteria.getSystemCodes();
-        if (systemCodes != null && !systemCodes.isEmpty()) {
-            BooleanBuilder exists = new BooleanBuilder().and(JPAExpressions.selectOne().from(qApplicationEntity)
-                    .where(new BooleanBuilder()
-                            .and(qConfigEntity.applicationCode.eq(qApplicationEntity.code))
-                            .and(qApplicationEntity.system.code.in(systemCodes)))
-                    .exists());
-
-            if (systemCodes.contains(commonSystemCode)) {
-                exists.or(qConfigEntity.applicationCode.isNull());
-            }
-
-            query.where(exists);
-        }
-
-        query.orderBy(qApplicationEntity.system.code.asc().nullsFirst(), qConfigEntity.code.asc())
+        query.orderBy(qConfigEntity.applicationCode.asc().nullsFirst(), qConfigEntity.code.asc())
                 .limit(criteria.getPageSize())
                 .offset(criteria.getOffset());
         long total = query.fetchCount();
@@ -183,7 +168,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     }
 
     private ApplicationResponse getApplicationResponse(String code) {
-        if (code == null) return ApplicationMapper.getCommonSystemApplication();
+        if (code == null)
+            return new CommonSystemResponse();
         ApplicationResponse applicationResponse;
 
         try {
