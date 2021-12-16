@@ -5,27 +5,25 @@
         <table id="config_table" query-id="config" route="/systems">
             <filters>
                 <row>
-                    <input-text id="code" label="Код настройки" domain="string"/>
                     <input-text id="name" label="Наименование настройки" domain="string"/>
-                    <input-select id="systems" label="Система" query-id="config_system"
+                    <input-text id="code" label="Код настройки" domain="string"/>
+                    <input-select id="groups" label="Группа настроек" query-id="config_group"
                                   placeholder="Все" type="multi" search-field-id="name"/>
                 </row>
                 <row>
-                    <input-select id="groups" label="Группа настроек" query-id="config_group"
-                                  placeholder="Все" type="multi" search-field-id="name"/>
+                    <col size="4">
+                        <input-select id="applications" label="Компонент системы" query-id="config_application"
+                                      placeholder="Все" type="multi" search-field-id="name"/>
+                    </col>
                     <search-buttons id="search"/>
                     <input-select id="hidden" visible="false"/>
                 </row>
             </filters>
-
             <columns>
-                <column text-field-id="systemName.name" label="Система"/>
-                <column text-field-id="application.name" label="Приложение"/>
+                <column text-field-id="application.name" label="Компонент системы"/>
                 <column text-field-id="group.name" label="Группа настроек"/>
                 <column text-field-id="code" label="Код"/>
-                <column text-field-id="name" label="Наименование"/>
-                <column text-field-id="defaultValue" label="Значение по умолчанию"/>
-
+                <column text-field-id="name" label="Наименование настройки"/>
                 <column text-field-id="option">
                     <toolbar>
                         <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"

@@ -110,6 +110,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             query.where(exists);
         }
 
+        List<String> applicationCodes = criteria.getApplicationCodes();
+        if (applicationCodes != null && !applicationCodes.isEmpty()) {
+            query.where(qConfigEntity.applicationCode.in(criteria.getApplicationCodes()));
+        }
+
         query.orderBy(qApplicationEntity.system.code.asc().nullsFirst(), qConfigEntity.code.asc())
                 .limit(criteria.getPageSize())
                 .offset(criteria.getOffset());

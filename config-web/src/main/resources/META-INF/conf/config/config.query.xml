@@ -17,8 +17,11 @@
             </filters>
         </field>
 
-        <field id="application" domain="object">
+        <field id="application" domain="string[]">
             <select mapping="[application]"/>
+            <filters>
+                <eq filter-id="applications*.id">applicationCode={applications*.id}</eq>
+            </filters>
         </field>
 
         <field id="application.id" domain="string">

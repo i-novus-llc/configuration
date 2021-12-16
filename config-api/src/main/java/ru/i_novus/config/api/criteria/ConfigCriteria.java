@@ -31,6 +31,10 @@ public class ConfigCriteria extends AbstractCriteria {
     @ApiParam("Коды систем")
     private List<String> systemCodes;
 
+    @QueryParam("applicationCode")
+    @ApiParam("Компоненты систем")
+    private List<String> applicationCodes;
+
     @Override
     protected List<Sort.Order> getDefaultOrders() {
         return Collections.emptyList();
