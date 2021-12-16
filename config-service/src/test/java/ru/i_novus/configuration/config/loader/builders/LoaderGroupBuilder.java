@@ -4,9 +4,9 @@ import ru.i_novus.config.api.model.GroupForm;
 
 import java.util.Arrays;
 
-public class GroupFormBuilder {
+public class LoaderGroupBuilder {
 
-    public static GroupForm buildGroupForm1() {
+    public static GroupForm buildGroup1() {
         GroupForm groupForm = new GroupForm();
         groupForm.setName("group1");
         groupForm.setDescription("desc1");
@@ -15,7 +15,7 @@ public class GroupFormBuilder {
         return groupForm;
     }
 
-    public static GroupForm buildGroupForm2() {
+    public static GroupForm buildGroup2() {
         GroupForm groupForm = new GroupForm();
         groupForm.setName("group2");
         groupForm.setDescription("desc2");
@@ -24,7 +24,7 @@ public class GroupFormBuilder {
         return groupForm;
     }
 
-    public static GroupForm buildGroupForm2Updated() {
+    public static GroupForm buildGroup2Updated() {
         GroupForm groupForm = new GroupForm();
         groupForm.setName("group2");
         groupForm.setDescription("desc2-new");
@@ -33,7 +33,7 @@ public class GroupFormBuilder {
         return groupForm;
     }
 
-    public static GroupForm buildGroupForm3() {
+    public static GroupForm buildGroup3() {
         GroupForm groupForm = new GroupForm();
         groupForm.setName("group3");
         groupForm.setDescription("desc3");

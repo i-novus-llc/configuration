@@ -3,9 +3,9 @@ package ru.i_novus.configuration.config.loader.builders;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ValueTypeEnum;
 
-public class ConfigFormBuilder {
+public class LoaderConfigBuilder {
 
-    public static ConfigForm buildConfigForm1() {
+    public static ConfigForm buildConfig1() {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("code1");
         configForm.setName("name1");
@@ -14,7 +14,7 @@ public class ConfigFormBuilder {
         return configForm;
     }
 
-    public static ConfigForm buildConfigForm2() {
+    public static ConfigForm buildConfig2() {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("code2");
         configForm.setName("name2");
@@ -23,7 +23,7 @@ public class ConfigFormBuilder {
         return configForm;
     }
 
-    public static ConfigForm buildConfigForm2Updated() {
+    public static ConfigForm buildConfig2Updated() {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("code2");
         configForm.setName("name2-new");
@@ -32,7 +32,7 @@ public class ConfigFormBuilder {
         return configForm;
     }
 
-    public static ConfigForm buildConfigForm3() {
+    public static ConfigForm buildConfig3() {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("code3");
         configForm.setName("name3");
@@ -41,7 +41,7 @@ public class ConfigFormBuilder {
         return configForm;
     }
 
-    public static ConfigForm buildConfigForm4() {
+    public static ConfigForm buildConfig4() {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("code4");
         configForm.setName("name4");

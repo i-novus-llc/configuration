@@ -22,4 +22,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/V16_add_ref_book_value_column.yaml
   - include:
+      file: db/changelog/V17_update_system_application_tables.yaml
+  - include:
       file: quartz-db/changelog/quartz-init.xml
