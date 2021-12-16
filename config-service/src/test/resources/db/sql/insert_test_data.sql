@@ -1,7 +1,7 @@
-INSERT INTO rdm.application (code, name, system_code) VALUES
-                ('app-auth', 'auth', 'system-auth'),
-                ('app-security', 'security', 'system-security'),
-                ('app-test-security', 'test security', 'system-security');
+INSERT INTO rdm.application (code, name) VALUES
+                ('app-auth', 'auth'),
+                ('app-security', 'security'),
+                ('app-test-security', 'test security');
 
 INSERT INTO configuration.config_group (id, name) VALUES
                 (101, 'Authentication settings'),

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.*;
+import ru.i_novus.config.api.service.ApplicationRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
@@ -22,10 +23,6 @@ import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
-import ru.i_novus.config.api.model.CommonSystemResponse;
-import ru.i_novus.configuration.config.entity.QApplicationEntity;
-import ru.i_novus.config.api.model.ApplicationResponse;
-import ru.i_novus.config.api.service.ApplicationRestService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -169,9 +166,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     private ApplicationResponse getApplicationResponse(String code) {
         if (code == null)
-            return new CommonSystemResponse();
-        ApplicationResponse applicationResponse;
+            return new ApplicationResponse();
 
+        ApplicationResponse applicationResponse;
         try {
             applicationResponse = applicationRestService.getApplication(code);
         } catch (Exception e) {
