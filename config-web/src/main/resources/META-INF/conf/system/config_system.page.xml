@@ -1,38 +1,28 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
-      name="Настройка приложения" object-id="config_system">
+      name="Настройки приложений" object-id="config_system">
     <regions>
-        <table id="system_table" query-id="config_system" route="/systems" children="expand">
-            <filters>
-                <row>
-                    <input-text id="appCode" label="Код приложения" domain="string"/>
-                    <input-select id="systems" label="Система" query-id="config_system"
-                                  placeholder="Все" type="multi" search-field-id="name"/>
-                    <search-buttons id="search"/>
-                </row>
-            </filters>
-
-            <columns>
-                <column text-field-id="codeStr" label="Код"/>
-                <column text-field-id="name" label="Наименование"/>
-                <column text-field-id="">
-                    <toolbar>
-                        <button id="delete" label="Сбросить настройки" icon="fa fa-eraser" type="icon"
-                                confirm="true" confirm-title="Сбросить настройки приложения"
-                                confirm-text="Вы уверены, что хотите сбросить настройки приложения к значению по умолчанию?"
-                                visible="{typeof isSystem == 'undefined' || !isSystem || isSystem == null}">
-                            <invoke operation-id="delete"/>
-                        </button>
-                    </toolbar>
-                </column>
-            </columns>
-            <rows>
-                <click enabled="{typeof isSystem == 'undefined' || !isSystem || isSystem == null || isSystem &amp;&amp; code == '${config.common.system.code}'}">
-                    <open-page page-id="configDynamic?{code}" route="/:code/update">
-                        <path-param name="code" value="{code}"/>
-                    </open-page>
-                </click>
-            </rows>
-        </table>
+        <tabs>
+            <tab name="Настройки приложения">
+                <table id="application_configs" query-id="config_system"
+                       route="/application_configs" children="expand">
+                    <columns>
+                        <column text-field-id="name" label="Настройка"/>
+                        <column text-field-id="value" label="Значение"/>
+                        <column text-field-id="common_system_value" label="Общесистемное значение"/>
+                        <column text-field-id="Действие">
+                            <toolbar>
+                                <button id="delete" label="Сбросить значение" icon="fa fa-eraser" type="icon"
+                                        confirm="true" confirm-title="Сбросить значение"
+                                        confirm-text="Вы уверены, что хотите сбросить значение настройки?"
+                                        visible="{typeof isSystem == 'undefined' || !isSystem || isSystem == null}">
+                                    <invoke operation-id="deleteConfigValue"/>
+                                </button>
+                            </toolbar>
+                        </column>
+                    </columns>
+                </table>
+            </tab>
+        </tabs>
     </regions>
 </page>

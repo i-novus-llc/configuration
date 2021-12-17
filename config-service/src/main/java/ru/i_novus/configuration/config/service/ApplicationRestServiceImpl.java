@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.system_application.service;
+package ru.i_novus.configuration.config.service;
 
 import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
@@ -9,20 +9,19 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.i_novus.config.api.criteria.ApplicationCriteria;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
+import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
+import ru.i_novus.configuration.config.entity.QApplicationEntity;
+import ru.i_novus.configuration.config.mapper.ApplicationMapper;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupedApplicationConfigMapper;
+import ru.i_novus.configuration.config.repository.ApplicationRepository;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
-import ru.i_novus.configuration.system_application.entity.ApplicationEntity;
-import ru.i_novus.configuration.system_application.entity.QApplicationEntity;
-import ru.i_novus.configuration.system_application.mapper.ApplicationMapper;
-import ru.i_novus.configuration.system_application.repository.ApplicationRepository;
-import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
-import ru.i_novus.system_application.api.model.ApplicationResponse;
-import ru.i_novus.system_application.api.service.ApplicationRestService;
+import ru.i_novus.config.api.service.ApplicationRestService;
 
 import javax.ws.rs.NotFoundException;
 import java.util.*;
@@ -206,9 +205,6 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (criteria.getSystemCode() != null) {
-            builder.and(qApplicationEntity.system.code.eq(criteria.getSystemCode()));
-        }
         builder.and(qApplicationEntity.isDeleted.isFalse().or(qApplicationEntity.isDeleted.isNull()));
 
         return builder.getValue();

@@ -3,7 +3,7 @@
              welcome-page-id="config_system">
     <header>
         <nav>
-            <menu-item name="Настройка приложения">
+            <menu-item name="Настройки приложений">
                 <open-page page-id="config_system" route="/"/>
             </menu-item>
             <dropdown-menu name="Администрирование">

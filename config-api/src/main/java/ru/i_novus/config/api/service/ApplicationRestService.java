@@ -1,10 +1,10 @@
-package ru.i_novus.system_application.api.service;
+package ru.i_novus.config.api.service;
 
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
+import ru.i_novus.config.api.criteria.ApplicationCriteria;
+import ru.i_novus.config.api.model.ApplicationResponse;
 import ru.i_novus.config.api.model.GroupedApplicationConfig;
-import ru.i_novus.system_application.api.criteria.ApplicationCriteria;
-import ru.i_novus.system_application.api.model.ApplicationResponse;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

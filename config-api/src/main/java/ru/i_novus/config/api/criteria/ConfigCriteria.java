@@ -27,10 +27,6 @@ public class ConfigCriteria extends AbstractCriteria {
     @ApiParam("Идентификаторы групп")
     private List<Integer> groupIds;
 
-    @QueryParam("systemCode")
-    @ApiParam("Коды систем")
-    private List<String> systemCodes;
-
     @Override
     protected List<Sort.Order> getDefaultOrders() {
         return Collections.emptyList();

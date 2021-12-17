@@ -1,16 +1,16 @@
-package ru.i_novus.configuration.system_application.loader;
+package ru.i_novus.configuration.config.loader;
 
 import net.n2oapp.platform.loader.server.repository.RepositoryServerLoader;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
-import ru.i_novus.configuration.system_application.entity.ApplicationEntity;
-import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
+import ru.i_novus.configuration.config.entity.ApplicationEntity;
+import ru.i_novus.config.api.model.ApplicationResponse;
 
 /**
  * Загрузчик приложений
  */
 @Component
-public class ApplicationServerLoader extends RepositoryServerLoader<SimpleApplicationResponse, ApplicationEntity, String> {
+public class ApplicationServerLoader extends RepositoryServerLoader<ApplicationResponse, ApplicationEntity, String> {
 
     public ApplicationServerLoader(CrudRepository<ApplicationEntity, String> repository) {
         super(repository, (model, subject) -> {
@@ -28,7 +28,7 @@ public class ApplicationServerLoader extends RepositoryServerLoader<SimpleApplic
     }
 
     @Override
-    public Class<SimpleApplicationResponse> getDataType() {
-        return SimpleApplicationResponse.class;
+    public Class<ApplicationResponse> getDataType() {
+        return ApplicationResponse.class;
     }
 }
