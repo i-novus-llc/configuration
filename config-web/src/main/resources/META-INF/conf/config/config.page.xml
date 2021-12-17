@@ -34,20 +34,16 @@
                     </toolbar>
                 </column>
             </columns>
-
             <rows>
                 <click>
-                    <show-modal page-id="configItem" upload="query" object-id="config"
-                                route="/:config_id/update"
-                                submit-operation-id="update" page-name="Изменить параметры настройки">
+                    <open-page page-id="configItem" route="/:config_id/view" page-name="Просмотр параметров настройки">
                         <path-param name="config_id" value="{id}"/>
-                    </show-modal>
+                    </open-page>
                 </click>
             </rows>
-
             <toolbar>
                 <button id="create" label="Создать" color="primary" model="filter">
-                    <show-modal page-id="configItem" submit-operation-id="create" object-id="config"
+                    <show-modal page-id="configItemCreate" submit-operation-id="create" object-id="config"
                                 route="/create"
                                 page-name="Создать настройку" upload="defaults"/>
                 </button>

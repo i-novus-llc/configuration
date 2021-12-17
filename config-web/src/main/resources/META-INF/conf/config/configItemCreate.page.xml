@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-3.0">
+
+    <form query-id="config" object-id="config">
+        <fields>
+            <set field-label-location="left" field-label-align="left" field-label-width="220px">
+                <checkbox id="generalSystemSetting" label="Общесистемная настройка"/>
+                <input-select id="applicationName" label="Компонент системы"
+                              query-id="config_application" search-field-id="name">
+                    <dependencies>
+                        <enabling on="generalSystemSetting">
+                            return typeof(generalSystemSetting) == 'undefined' || generalSystemSetting == null ||
+                            generalSystemSetting == false;
+                        </enabling>
+                    </dependencies>
+                </input-select>
+                <input-text id="code" label="Код настройки" required="true">
+                    <dependencies>
+                        <enabling on="isCreateForm">isCreateForm</enabling>
+                    </dependencies>
+                </input-text>
+                <input-text id="name" label="Наименование настройки" required="true"/>
+                <input-select id="group" label="Группа настроек" query-id="config_group">
+                    <pre-filters>
+                        <like field-id="codes" value="{code}"/>
+                    </pre-filters>
+                    <dependencies>
+                        <enabling on="isCreateForm">isCreateForm</enabling>
+                        <set-value on="code">if (isCreateForm) return null</set-value>
+                    </dependencies>
+                </input-select>
+                <input-select id="valueType" label="Тип значения" required="true">
+                    <default-value id="STRING" name="Строка"/>
+                    <options>
+                        <option id="STRING" name="Строка"/>
+                        <option id="NUMBER" name="Число"/>
+                        <option id="BOOLEAN" name="Чекбокс"/>
+                        <option id="REFBOOK" name="Справочник"/>
+                    </options>
+                </input-select>
+
+                <!--                <input-text id="defaultValueString" label="Значение по умолчанию">-->
+                <!--                    <dependencies>-->
+                <!--                        <set-value><![CDATA[-->
+                <!--                        defaultValue-->
+                <!--                        ]]>-->
+                <!--                        </set-value>-->
+                <!--                        <visibility on="valueType">valueType.id == 'STRING'</visibility>-->
+                <!--                    </dependencies>-->
+                <!--                </input-text>-->
+                <!--                <input-text id="defaultValueNumber" domain="integer" label="Значение по умолчанию">-->
+                <!--                    <dependencies>-->
+                <!--                        <set-value><![CDATA[-->
+                <!--                        defaultValue-->
+                <!--                        ]]>-->
+                <!--                        </set-value>-->
+                <!--                        <visibility on="valueType">valueType.id == 'NUMBER'</visibility>-->
+                <!--                    </dependencies>-->
+                <!--                </input-text>-->
+                <!--                <checkbox id="defaultValueBoolean" label="Значение по умолчанию" unchecked="false">-->
+                <!--                    <dependencies>-->
+                <!--                        <set-value><![CDATA[-->
+                <!--                        defaultValue == 'true'-->
+                <!--                        ]]>-->
+                <!--                        </set-value>-->
+                <!--                        <visibility on="valueType">valueType.id == 'BOOLEAN'</visibility>-->
+                <!--                    </dependencies>-->
+                <!--                </checkbox>-->
+                <!--                <auto-complete id="refBookValue" label="Значения справочника" tags="true"-->
+                <!--                               description="Для добавления введите новое значение и нажмите Enter">-->
+                <!--                    <dependencies>-->
+                <!--                        <visibility on="valueType">valueType.id == 'REFBOOK'</visibility>-->
+                <!--                    </dependencies>-->
+                <!--                </auto-complete>-->
+
+                <input-text id="description" label="Описание"/>
+                <hidden id="isCreateForm" default-value="true"/>
+            </set>
+        </fields>
+        <pre-filters>
+            <eq field-id="id" param="config_id"/>
+        </pre-filters>
+    </form>
+</simple-page>
