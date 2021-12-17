@@ -20,6 +20,7 @@ import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.*;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
+import ru.i_novus.configuration.config.mapper.ConfigTypeMapper;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
@@ -108,7 +109,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                             ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
                             return ConfigMapper.toConfigResponse(
                                     e, application,
-                                    groupEntity == null ? null : GroupMapper.toGroupForm(groupEntity)
+                                    groupEntity == null ? null : GroupMapper.toGroupForm(groupEntity),
+                                    (e.getValueType() == null) ? null : ConfigTypeMapper.toConfigResponse(e.getValueType())
                             );
                         }
                 );
@@ -117,12 +119,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     public ConfigResponse getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-
         ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
         GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
-
-        return ConfigMapper.toConfigResponse(configEntity, application, groupForm);
+        ConfigTypeResponse type = (configEntity.getValueType() == null) ? null : ConfigTypeMapper.toConfigResponse(configEntity.getValueType());
+        return ConfigMapper.toConfigResponse(configEntity, application, groupForm, type);
     }
 
     @Override
@@ -130,8 +131,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public void saveConfig(@Valid @NotNull ConfigForm configForm) {
         if (configRepository.existsByCode(configForm.getCode()))
             throw new UserException(messageAccessor.getMessage("config.code.not.unique"));
-
-        ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
+        GroupEntity groupEntity = groupRepository.findById(configForm.getGroupId()).orElseThrow(NotFoundException::new);
+        ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm, groupEntity);
 
         configRepository.save(configEntity);
         audit(configEntity, EventTypeEnum.CONFIG_CREATE);
@@ -142,7 +143,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(
                 Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new),
-                configForm);
+                configForm, null);
 
         if (configEntity.getApplicationCode() != null &&
                 !configEntity.getApplicationCode().equals(configForm.getApplicationCode())) {

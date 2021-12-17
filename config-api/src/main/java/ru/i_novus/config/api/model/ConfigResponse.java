@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Data
 @ApiModel("Выходные данные настройки")
@@ -22,17 +21,18 @@ public class ConfigResponse {
     private String description;
 
     @ApiModelProperty("Тип значения настройки")
-    private ValueTypeEnum valueType;
+    private ConfigTypeResponse valueType;
 
     @ApiModelProperty("Значение по умолчанию")
     private String defaultValue;
-
-    @ApiModelProperty("Значения справочника")
-    private List<String> refBookValue;
 
     @ApiModelProperty("Приложение")
     private ApplicationResponse application;
 
     @ApiModelProperty("Группа, к которой принадлежит настройка")
     private GroupForm group;
+
+    @ApiModelProperty("Признак того, что эта настройка является общесистемной")
+    private Boolean isGeneralSystemSetting;
+
 }

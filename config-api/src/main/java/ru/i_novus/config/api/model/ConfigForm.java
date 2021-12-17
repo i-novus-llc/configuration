@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Data
 @ApiModel("Настройка")
@@ -30,9 +29,9 @@ public class ConfigForm {
     @ApiModelProperty("Значение по умолчанию")
     private String defaultValue;
 
-    @ApiModelProperty("Значения справочника")
-    private List<String> refBookValue;
-
     @ApiModelProperty("Код приложения")
     private String applicationCode;
+
+    @ApiModelProperty("Идентификатор группы настроек")
+    private Integer groupId;
 }

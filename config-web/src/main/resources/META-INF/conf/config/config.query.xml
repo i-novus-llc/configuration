@@ -3,7 +3,7 @@
        object-id="config">
 
     <list count-mapping="[totalElements]" result-mapping="[content]">
-        <rest filters-separator="&amp;">${config.service.url}/?{filters}&amp;page={page}&amp;size={limit}</rest>
+        <rest filters-separator="&amp;">${config.service.url}/?{filters}&amp;page={page}&amp;size={limit}&amp;{sorting}</rest>
     </list>
     <unique filters="id">
         <rest>${config.service.url}/{id}</rest>
@@ -49,7 +49,8 @@
             <select mapping="['application.code']"/>
         </field>
         <field id="applicationName.name" domain="string">
-            <select mapping="['application.name']"/>
+            <select mapping="['application.name']" normalize="#this != null ? #this : 'Общесистемные'"/>
+            <sorting mapping="['applicationName.nameDirection']">sort=application.name,{applicationName.nameDirection}</sorting>
         </field>
 
         <field id="group" domain="string[]">
@@ -64,6 +65,7 @@
             <filters>
                 <eq filter-id="code">code={code}</eq>
             </filters>
+            <sorting mapping="['codeDirection']">sort=code,{codeDirection}</sorting>
         </field>
 
         <field id="name" domain="string">
@@ -71,9 +73,10 @@
             <filters>
                 <eq filter-id="name">name={name}</eq>
             </filters>
+            <sorting mapping="['nameDirection']">sort=name,{nameDirection}</sorting>
         </field>
 
-        <field id="valueType.id" domain="string">
+        <field id="valueType" domain="string">
             <select mapping="[valueType]"/>
         </field>
 
@@ -85,8 +88,14 @@
             <select/>
         </field>
 
-        <field id="refBookValue" domain="string[]">
-            <select mapping="[refBookValue]"/>
+        <field id="isGeneralSystemSetting" domain="boolean">
+            <select/>
         </field>
+
+        <field id="group.name">
+            <select mapping="['group.name']"/>
+            <sorting mapping="['group.nameDirection']">sort=group.name,{group.nameDirection}</sorting>
+        </field>
+
     </fields>
 </query>

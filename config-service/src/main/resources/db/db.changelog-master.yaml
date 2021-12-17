@@ -27,3 +27,5 @@ databaseChangeLog:
       file: db/changelog/V18_delete_system_table.yaml
   - include:
       file: quartz-db/changelog/quartz-init.xml
+  - include:
+      file: db/changelog/V19_update_config_table.yml

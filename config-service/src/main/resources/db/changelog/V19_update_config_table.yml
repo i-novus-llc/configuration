@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: update_config_table
+      author: agolodnaya
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V19_update_config_table.sql

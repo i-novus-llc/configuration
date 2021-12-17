@@ -53,8 +53,10 @@ public class ConfigEntity {
     private String defaultValue;
 
     /**
-     * Значения справочника
+     * Группа
      */
-    @Column(name = "ref_book_value")
-    private String refBookValue;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = false)
+    private GroupEntity group;
+
 }

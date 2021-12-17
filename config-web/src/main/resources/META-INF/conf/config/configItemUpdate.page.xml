@@ -1,6 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <simple-page xmlns="http://n2oapp.net/framework/config/schema/page-3.0">
-    <form id="configCreate" query-id="config" object-id="config">
+    <form id="configUpdate" query-id="config" object-id="config">
+        <toolbar place="topLeft">
+            <group>
+                <button id="configUpdate" label="Сохранить" color="primary" widget-id="configUpdate">
+                    <invoke operation-id="update" object-id="config"/>
+                </button>
+                <button id="configClose" label="Закрыть" color="secondary" widget-id="configUpdate" model="filter">
+                    <close/>
+                </button>
+            </group>
+        </toolbar>
         <fields>
             <set field-label-location="left" field-label-align="left" field-label-width="220px">
                 <checkbox id="isGeneralSystemSetting" label="Общесистемная настройка"/>
@@ -13,21 +23,9 @@
                         </enabling>
                     </dependencies>
                 </input-select>
-                <input-text id="code" label="Код настройки" required="true">
-                    <dependencies>
-                        <enabling on="isCreateForm">isCreateForm</enabling>
-                    </dependencies>
-                </input-text>
+                <input-text id="code" label="Код настройки" required="true" enabled="false"/>
                 <input-text id="name" label="Наименование настройки" required="true"/>
-                <input-select id="group" label="Группа настроек" query-id="config_group" required="true">
-                    <pre-filters>
-                        <like field-id="codes" value="{code}"/>
-                    </pre-filters>
-                    <dependencies>
-                        <enabling on="isCreateForm">isCreateForm</enabling>
-                        <set-value on="code">if (isCreateForm) return null</set-value>
-                    </dependencies>
-                </input-select>
+                <input-select id="group" label="Группа настроек" query-id="config_group" required="true" enabled="false"/>
                 <input-select id="valueType" label="Тип значения" required="true">
                     <default-value id="STRING" name="Строка"/>
                     <options>
@@ -37,11 +35,10 @@
                     </options>
                 </input-select>
                 <input-text id="description" label="Описание"/>
-                <hidden id="isCreateForm" default-value="true"/>
             </set>
         </fields>
         <pre-filters>
-            <eq field-id="id" param="config_id"/>
+            <eq field-id="id" param="update_config_id"/>
         </pre-filters>
     </form>
 </simple-page>

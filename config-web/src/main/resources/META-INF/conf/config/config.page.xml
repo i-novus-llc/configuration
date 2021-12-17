@@ -20,7 +20,7 @@
                 </row>
             </filters>
             <columns>
-                <column text-field-id="application.name" label="Компонент системы"/>
+                <column text-field-id="applicationName.name" label="Компонент системы"/>
                 <column text-field-id="group.name" label="Группа настроек"/>
                 <column text-field-id="code" label="Код"/>
                 <column text-field-id="name" label="Наименование настройки"/>
@@ -36,7 +36,7 @@
             </columns>
             <rows>
                 <click>
-                    <open-page page-id="configItem" route="/:config_id/view" page-name="Просмотр параметров настройки">
+                    <open-page page-id="configItemView" route="/:config_id/view" page-name="Просмотр параметров настройки">
                         <path-param name="config_id" value="{id}"/>
                     </open-page>
                 </click>
