@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.system_application.entity;
+package ru.i_novus.configuration.config.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,11 +33,4 @@ public class ApplicationEntity implements Serializable {
      */
     @Column(name = "name", nullable = false)
     private String name;
-
-    /**
-     * Прикладная система
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "system_code", referencedColumnName = "code")
-    private SystemEntity system;
 }

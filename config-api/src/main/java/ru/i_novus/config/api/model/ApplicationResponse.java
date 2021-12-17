@@ -1,4 +1,4 @@
-package ru.i_novus.system_application.api.model;
+package ru.i_novus.config.api.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +13,4 @@ public class ApplicationResponse {
 
     @ApiModelProperty("Наименование приложения")
     private String name;
-
-    @ApiModelProperty("Прикладная система")
-    private SimpleSystemResponse system;
 }

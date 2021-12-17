@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.system_application.loader;
+package ru.i_novus.configuration.config.loader;
 
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
 import org.junit.Test;
@@ -9,10 +9,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.TestApp;
-import ru.i_novus.configuration.system_application.entity.ApplicationEntity;
-import ru.i_novus.configuration.system_application.loader.builders.LoaderApplicationBuilder;
-import ru.i_novus.configuration.system_application.repository.ApplicationRepository;
-import ru.i_novus.system_application.api.model.SimpleApplicationResponse;
+import ru.i_novus.config.api.model.ApplicationResponse;
+import ru.i_novus.configuration.config.entity.ApplicationEntity;
+import ru.i_novus.configuration.config.loader.builders.LoaderApplicationBuilder;
+import ru.i_novus.configuration.config.repository.ApplicationRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +47,7 @@ public class ApplicationServerLoaderTest {
      */
     @Test
     public void simpleLoader() {
-        BiConsumer<List<SimpleApplicationResponse>, String> loader = applicationServerLoader::load;
+        BiConsumer<List<ApplicationResponse>, String> loader = applicationServerLoader::load;
         repository.deleteAll();
         case1(loader);
         case2(loader);
@@ -59,10 +59,10 @@ public class ApplicationServerLoaderTest {
     /**
      * Вставка двух новых записей, в БД нет записей
      */
-    private void case1(BiConsumer<List<SimpleApplicationResponse>, String> loader) {
-        SimpleApplicationResponse application1 = LoaderApplicationBuilder.buildApplication1();
-        SimpleApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2();
-        List<SimpleApplicationResponse> data = Arrays.asList(application1, application2);
+    private void case1(BiConsumer<List<ApplicationResponse>, String> loader) {
+        ApplicationResponse application1 = LoaderApplicationBuilder.buildApplication1();
+        ApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2();
+        List<ApplicationResponse> data = Arrays.asList(application1, application2);
 
         loader.accept(data, "test");
 
@@ -74,10 +74,10 @@ public class ApplicationServerLoaderTest {
     /**
      * Вставка двух записей, обе есть в БД, но одна будет обновлена
      */
-    private void case2(BiConsumer<List<SimpleApplicationResponse>, String> loader) {
-        SimpleApplicationResponse application1 = LoaderApplicationBuilder.buildApplication1();
-        SimpleApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2Updated();
-        List<SimpleApplicationResponse> data = Arrays.asList(application1, application2);
+    private void case2(BiConsumer<List<ApplicationResponse>, String> loader) {
+        ApplicationResponse application1 = LoaderApplicationBuilder.buildApplication1();
+        ApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2Updated();
+        List<ApplicationResponse> data = Arrays.asList(application1, application2);
 
         loader.accept(data, "test");
 
@@ -89,11 +89,11 @@ public class ApplicationServerLoaderTest {
     /**
      * Вставка трех записей, две есть в БД, третьей нет
      */
-    private void case3(BiConsumer<List<SimpleApplicationResponse>, String> loader) {
-        SimpleApplicationResponse application1 = LoaderApplicationBuilder.buildApplication1();
-        SimpleApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2Updated();
-        SimpleApplicationResponse application3 = LoaderApplicationBuilder.buildApplication3();
-        List<SimpleApplicationResponse> data = Arrays.asList(application1, application2, application3);
+    private void case3(BiConsumer<List<ApplicationResponse>, String> loader) {
+        ApplicationResponse application1 = LoaderApplicationBuilder.buildApplication1();
+        ApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2Updated();
+        ApplicationResponse application3 = LoaderApplicationBuilder.buildApplication3();
+        List<ApplicationResponse> data = Arrays.asList(application1, application2, application3);
 
         loader.accept(data, "test");
 
@@ -106,10 +106,10 @@ public class ApplicationServerLoaderTest {
     /**
      * Вставка двух записей, в БД три записи, вторая будет обновлена, третья не будет удалена
      */
-    private void case4(BiConsumer<List<SimpleApplicationResponse>, String> loader) {
-        SimpleApplicationResponse application1 = LoaderApplicationBuilder.buildApplication1();
-        SimpleApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2();
-        List<SimpleApplicationResponse> data = Arrays.asList(application1, application2);
+    private void case4(BiConsumer<List<ApplicationResponse>, String> loader) {
+        ApplicationResponse application1 = LoaderApplicationBuilder.buildApplication1();
+        ApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2();
+        List<ApplicationResponse> data = Arrays.asList(application1, application2);
 
         loader.accept(data, "test");
 
@@ -122,12 +122,12 @@ public class ApplicationServerLoaderTest {
     /**
      * Обновление двух записей, в БД три записи, вторая будет обновлена новыми значениями, третья - старыми значениями второй
      */
-    private void case5(BiConsumer<List<SimpleApplicationResponse>, String> loader) {
-        SimpleApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2Updated();
-        SimpleApplicationResponse application3 = LoaderApplicationBuilder.buildApplication3();
-        SimpleApplicationResponse tmp = LoaderApplicationBuilder.buildApplication2();
+    private void case5(BiConsumer<List<ApplicationResponse>, String> loader) {
+        ApplicationResponse application2 = LoaderApplicationBuilder.buildApplication2Updated();
+        ApplicationResponse application3 = LoaderApplicationBuilder.buildApplication3();
+        ApplicationResponse tmp = LoaderApplicationBuilder.buildApplication2();
         application3.setName(tmp.getName());
-        List<SimpleApplicationResponse> data = Arrays.asList(application2, application3);
+        List<ApplicationResponse> data = Arrays.asList(application2, application3);
 
         loader.accept(data, "test");
 
@@ -137,7 +137,7 @@ public class ApplicationServerLoaderTest {
         applicationAssertEquals(application3, repository.findByCode("app3"));
     }
 
-    private void applicationAssertEquals(SimpleApplicationResponse expected, ApplicationEntity actual) {
+    private void applicationAssertEquals(ApplicationResponse expected, ApplicationEntity actual) {
         assertEquals(expected.getCode(), actual.getCode());
         assertEquals(expected.getName(), actual.getName());
     }
