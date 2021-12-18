@@ -31,11 +31,10 @@
 
             <rows>
                 <click>
-                    <show-modal page-id="config_groupItem" object-id="config_group"
-                                route="/:config_group_id/update"
-                                submit-operation-id="update" page-name="Изменить группу настроек">
+                    <open-page page-id="config_groupItem" object-id="config_group"
+                               route="/:config_group_id/update" page-name="Изменить группу настроек">
                         <path-param name="config_group_id" value="{id}"/>
-                    </show-modal>
+                    </open-page>
                 </click>
             </rows>
 
