@@ -21,10 +21,6 @@
             </filters>
         </field>
 
-        <field id="codesStr" domain="string">
-            <select mapping="[codes]" normalize="T(java.lang.String).join(' ', #this)"/>
-        </field>
-
         <field id="codes" domain="string[]">
             <select/>
             <filters>

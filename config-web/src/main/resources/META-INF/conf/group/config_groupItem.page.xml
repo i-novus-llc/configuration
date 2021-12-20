@@ -3,11 +3,12 @@
     <form id="group_item" query-id="config_group" object-id="config_group">
         <toolbar place="topLeft">
             <group>
-                <button id="group_update" label="Сохранить" color="primary" widget-id="group_item"
+                <button id="group_update" label="Сохранить" color="primary"
                         visible="{id != null}">
-                    <invoke operation-id="update" object-id="config_group"/>
+                    <invoke operation-id="update" redirect-url="../../" redirect-target="application"/>
                 </button>
-                <button id="group_close" label="Закрыть" color="secondary" widget-id="group_item" model="filter">
+                <button id="group_close" label="Закрыть" color="secondary"
+                        disable-on-empty-model="false">
                     <close/>
                     <dependencies>
                         <visibility ref-model="resolve" ref-widget-id="group_item">id != null</visibility>
@@ -17,13 +18,7 @@
         </toolbar>
         <fields>
             <set field-label-location="left" field-label-align="left" field-label-width="220px">
-                <input-text id="codesStr" label="Коды группы" required="true"
-                            description="Введите коды группы через пробел"/>
-                <output-text id="codes" visible="false">
-                    <dependencies>
-                        <set-value on="codesStr">codesStr.trim().split(' ')</set-value>
-                    </dependencies>
-                </output-text>
+                <auto-complete id="codes" tags="true" placeholder="Введите коды группы через Enter" label="Коды группы" required="true"/>
                 <input-text id="name" label="Наименование группы" required="true"/>
                 <input-text id="description" label="Описание"/>
                 <input-text id="priority" label="Приоритет" domain="integer" min="0"/>

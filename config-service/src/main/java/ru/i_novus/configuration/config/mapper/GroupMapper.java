@@ -26,7 +26,7 @@ public class GroupMapper {
         groupForm.setCodes(
                 groupEntity.getCodes().stream()
                         .map(GroupCodeEntity::getCode)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toSet())
         );
         return groupForm;
     }

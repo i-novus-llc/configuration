@@ -6,7 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @ApiModel("Группа настроек")
@@ -27,5 +27,5 @@ public class GroupForm {
 
     @NotEmpty(message = "Группа настройки должна иметь один или более кодов")
     @ApiModelProperty("Коды группы")
-    private List<String> codes;
+    private Set<String> codes;
 }
