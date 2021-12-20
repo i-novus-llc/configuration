@@ -3,11 +3,15 @@
     <form id="group_item" query-id="config_group" object-id="config_group">
         <toolbar place="topLeft">
             <group>
-                <button id="group_update" label="Сохранить" color="primary" widget-id="group_item">
+                <button id="group_update" label="Сохранить" color="primary" widget-id="group_item"
+                        visible="{id != null}">
                     <invoke operation-id="update" object-id="config_group"/>
                 </button>
                 <button id="group_close" label="Закрыть" color="secondary" widget-id="group_item" model="filter">
                     <close/>
+                    <dependencies>
+                        <visibility ref-model="resolve" ref-widget-id="group_item">id != null</visibility>
+                    </dependencies>
                 </button>
             </group>
         </toolbar>
