@@ -3,24 +3,19 @@
     <form id="group_item" query-id="config_group" object-id="config_group">
         <toolbar place="topLeft">
             <group>
-                <button id="group_update" label="Сохранить" color="primary">
+                <button id="group_update" label="Сохранить" color="primary" visible="{id != null}">
                     <invoke operation-id="update" close-on-success="true" message-on-success="false"/>
-                    <dependencies>
-                        <visibility ref-model="resolve" ref-widget-id="group_item">id != null</visibility>
-                    </dependencies>
                 </button>
                 <button id="group_close" label="Закрыть" color="secondary"
-                        disable-on-empty-model="false">
+                        disable-on-empty-model="false" visible="{id != null}">
                     <close/>
-                    <dependencies>
-                        <visibility ref-model="resolve" ref-widget-id="group_item">id != null</visibility>
-                    </dependencies>
                 </button>
             </group>
         </toolbar>
         <fields>
             <set field-label-location="left" field-label-align="left" field-label-width="220px">
-                <auto-complete id="codes" tags="true" placeholder="Введите коды группы через Enter" label="Коды группы" required="true"/>
+                <auto-complete id="codes" tags="true" placeholder="Введите коды группы через Enter" label="Коды группы"
+                               required="true"/>
                 <input-text id="name" label="Наименование группы" required="true"/>
                 <input-text id="description" label="Описание"/>
                 <input-text id="priority" label="Приоритет" domain="integer" min="0"/>
