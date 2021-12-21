@@ -264,7 +264,6 @@ public class ConfigRestServiceImplTest {
         assertEquals(configForm.getName(), configResponse.getName());
         assertEquals(configForm.getDescription(), configResponse.getDescription());
         assertEquals(configForm.getApplicationCode(), configResponse.getApplication().getCode());
-
         assertEquals(configForm.getValueType(), configResponse.getValueType().getId());
     }
 }
