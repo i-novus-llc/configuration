@@ -1,6 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <simple-page xmlns="http://n2oapp.net/framework/config/schema/page-3.0">
-    <form id="configCreate" query-id="config" object-id="config">
+    <form id="config" query-id="config" object-id="config">
+        <toolbar place="topLeft">
+            <group>
+                <button id="config_update" label="Сохранить" color="primary">
+                    <invoke operation-id="update" message-on-success="false" close-on-success="true"/>
+                </button>
+                <button id="config_close" label="Закрыть" color="secondary" disable-on-empty-model="false">
+                    <close/>
+                </button>
+            </group>
+        </toolbar>
         <fields>
             <set field-label-location="left" field-label-align="left" field-label-width="220px">
                 <checkbox id="isGeneralSystemSetting" label="Общесистемная настройка"/>
