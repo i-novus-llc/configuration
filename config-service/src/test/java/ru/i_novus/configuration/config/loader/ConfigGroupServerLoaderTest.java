@@ -176,6 +176,6 @@ public class ConfigGroupServerLoaderTest {
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getDescription(), actual.getDescription());
         assertEquals(expected.getPriority(), actual.getPriority());
-        assertEquals(expected.getCodes(), actual.getCodes().stream().map(GroupCodeEntity::getCode).collect(Collectors.toList()));
+        assertEquals(expected.getCodes(), actual.getCodes().stream().map(GroupCodeEntity::getCode).collect(Collectors.toSet()));
     }
 }

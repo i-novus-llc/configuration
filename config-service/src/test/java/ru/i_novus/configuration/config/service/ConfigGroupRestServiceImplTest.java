@@ -16,8 +16,8 @@ import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.service.builders.GroupFormBuilder;
 
 import javax.ws.rs.NotFoundException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -176,7 +176,7 @@ public class ConfigGroupRestServiceImplTest {
         Integer groupId = groupRestService.saveGroup(groupForm);
 
         groupForm.setName("test-test");
-        groupForm.setCodes(Arrays.asList("test"));
+        groupForm.setCodes(Set.of("test"));
 
         groupRestService.updateGroup(groupId, groupForm);
 
