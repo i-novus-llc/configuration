@@ -14,13 +14,13 @@
         </toolbar>
         <fields>
             <set field-label-location="left" field-label-align="left" field-label-width="220px">
-                <checkbox id="isGeneralSystemSetting" label="Общесистемная настройка"/>
+                <checkbox id="isCommonSystemConfig" label="Общесистемная настройка"/>
                 <input-select id="applicationName" label="Компонент системы"
                               query-id="config_application" search-field-id="name">
                     <dependencies>
-                        <enabling on="isGeneralSystemSetting">
-                            return typeof(isGeneralSystemSetting) == 'undefined' || isGeneralSystemSetting == null ||
-                            isGeneralSystemSetting == false;
+                        <enabling on="isCommonSystemConfig">
+                            return typeof(isCommonSystemConfig) == 'undefined' || isCommonSystemConfig == null ||
+                            isCommonSystemConfig == false;
                         </enabling>
                     </dependencies>
                 </input-select>

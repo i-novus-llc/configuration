@@ -4,8 +4,6 @@ import ru.i_novus.config.api.model.*;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.entity.GroupEntity;
 
-import static org.springframework.util.StringUtils.hasText;
-
 public class ConfigMapper {
 
     public static ConfigEntity toConfigEntity(ConfigForm configForm, GroupEntity group) {
@@ -24,16 +22,15 @@ public class ConfigMapper {
         return configEntity;
     }
 
-    public static ConfigResponse toConfigResponse(ConfigEntity configEntity, ApplicationResponse application, GroupForm group, ConfigTypeResponse type) {
+    public static ConfigResponse toConfigResponse(ConfigEntity configEntity, ApplicationResponse application, GroupForm group) {
         ConfigResponse configResponse = new ConfigResponse();
         configResponse.setCode(configEntity.getCode());
         configResponse.setName(configEntity.getName());
         configResponse.setDescription(configEntity.getDescription());
-        configResponse.setValueType(type);
+        configResponse.setValueType(configEntity.getValueType());
         configResponse.setDefaultValue(configEntity.getDefaultValue());
         configResponse.setApplication(application);
         configResponse.setGroup(group);
-        configResponse.setIsGeneralSystemSetting(hasText(configEntity.getApplicationCode()) ? Boolean.FALSE : Boolean.TRUE);
         return configResponse;
     }
 

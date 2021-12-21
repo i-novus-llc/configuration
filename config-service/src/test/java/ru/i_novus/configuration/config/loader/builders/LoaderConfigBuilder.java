@@ -10,7 +10,7 @@ public class LoaderConfigBuilder {
         configForm.setCode("code1");
         configForm.setName("name1");
         configForm.setDescription("desc1");
-        configForm.setValueType(ValueTypeEnum.STRING.name());
+        configForm.setValueType(ValueTypeEnum.STRING.getId());
         return configForm;
     }
 
@@ -19,7 +19,7 @@ public class LoaderConfigBuilder {
         configForm.setCode("code2");
         configForm.setName("name2");
         configForm.setDescription("desc2");
-        configForm.setValueType(ValueTypeEnum.NUMBER.name());
+        configForm.setValueType(ValueTypeEnum.NUMBER.getId());
         return configForm;
     }
 
@@ -28,7 +28,7 @@ public class LoaderConfigBuilder {
         configForm.setCode("code2");
         configForm.setName("name2-new");
         configForm.setDescription("desc2-new");
-        configForm.setValueType(ValueTypeEnum.STRING.name());
+        configForm.setValueType(ValueTypeEnum.STRING.getId());
         return configForm;
     }
 
@@ -37,7 +37,7 @@ public class LoaderConfigBuilder {
         configForm.setCode("code3");
         configForm.setName("name3");
         configForm.setDescription("desc3");
-        configForm.setValueType(ValueTypeEnum.STRING.name());
+        configForm.setValueType(ValueTypeEnum.STRING.getId());
         return configForm;
     }
 
@@ -46,7 +46,7 @@ public class LoaderConfigBuilder {
         configForm.setCode("code4");
         configForm.setName("name4");
         configForm.setDescription("desc4");
-        configForm.setValueType(ValueTypeEnum.STRING.name());
+        configForm.setValueType(ValueTypeEnum.STRING.getId());
         return configForm;
     }
 }

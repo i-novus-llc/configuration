@@ -218,7 +218,7 @@ public class ConfigRestServiceImplTest {
         configForm.setDescription("test-test");
         configForm.setName("test-test");
         configForm.setValue("1");
-        configForm.setValueType(ValueTypeEnum.NUMBER.name());
+        configForm.setValueType(ValueTypeEnum.NUMBER.getId());
 
         configRestService.updateConfig(configForm.getCode(), configForm);
 

@@ -21,7 +21,7 @@ public class ConfigResponse {
     private String description;
 
     @ApiModelProperty("Тип значения настройки")
-    private ConfigTypeResponse valueType;
+    private ValueTypeEnum valueType;
 
     @ApiModelProperty("Значение по умолчанию")
     private String defaultValue;
@@ -31,8 +31,4 @@ public class ConfigResponse {
 
     @ApiModelProperty("Группа, к которой принадлежит настройка")
     private GroupForm group;
-
-    @ApiModelProperty("Признак того, что эта настройка является общесистемной")
-    private Boolean isGeneralSystemSetting;
-
 }

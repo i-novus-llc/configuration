@@ -56,7 +56,7 @@ public class ConfigEntity {
      * Группа
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
+    @JoinColumn(name = "group_id")
     private GroupEntity group;
 
 }
