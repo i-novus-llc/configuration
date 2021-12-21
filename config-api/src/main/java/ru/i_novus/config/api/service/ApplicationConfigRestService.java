@@ -2,7 +2,7 @@ package ru.i_novus.config.api.service;
 
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
-import ru.i_novus.config.api.criteria.ApplicationCriteria;
+import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.ApplicationResponse;
 import ru.i_novus.config.api.model.GroupedApplicationConfig;
 
@@ -18,17 +18,20 @@ import java.util.Map;
  * Интерфейс API для работы с приложениями
  */
 @Valid
-@Path("/applications/")
+@Path("/application_configs/")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api("Сервис для получения приложений")
-public interface ApplicationRestService {
+@Api("Сервис для получения настроек приложений")
+public interface ApplicationConfigRestService {
+
+
+
 
     @GET
     @Path("/")
-    @ApiOperation(value = "Получение всех приложений", response = ApplicationResponse.class, responseContainer = "List")
-    @ApiResponse(code = 200, message = "Успешное получение списка приложений")
-    public Page<ApplicationResponse> getAllApplication(@BeanParam ApplicationCriteria criteria);
+    @ApiOperation(value = "Получение настроек приложений / общесистемных", response = ApplicationResponse.class, responseContainer = "List")
+    @ApiResponse(code = 200, message = "Успешное получение списка настроек приложений / общесистемных")
+    Page<ApplicationResponse> getAllApplicationConfig(@BeanParam ApplicationConfigCriteria criteria);
 
     @GET
     @Path("/{code}")
@@ -37,7 +40,7 @@ public interface ApplicationRestService {
             @ApiResponse(code = 200, message = "Успешное получение приложения"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
-    public ApplicationResponse getApplication(@PathParam("code") @ApiParam(value = "Код приложения") String code);
+    ApplicationResponse getApplication(@PathParam("code") @ApiParam(value = "Код приложения") String code);
 
     @GET
     @Path("/{code}/configs")

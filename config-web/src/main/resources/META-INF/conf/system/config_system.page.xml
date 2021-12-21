@@ -8,8 +8,10 @@
                        route="/application_configs" children="expand">
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
-                        <column text-field-id="value" label="Значение"/>
-                        <column text-field-id="common_system_value" label="Общесистемное значение"/>
+                        <column text-field-id="value" label="Значение">
+                            <edit/>
+                        </column>
+                        <column text-field-id="commonSystemValue" label="Общесистемное значение"/>
                         <column text-field-id="Действие">
                             <toolbar>
                                 <button id="delete" label="Сбросить значение" icon="fa fa-eraser" type="icon"

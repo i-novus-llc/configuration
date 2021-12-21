@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @ApiModel("Критерии поиска приложений")
-public class ApplicationCriteria extends AbstractCriteria {
+public class ApplicationConfigCriteria extends AbstractCriteria {
 
     @Override
     protected List<Sort.Order> getDefaultOrders() {

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.i_novus.config.api.criteria.ApplicationCriteria;
+import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
@@ -21,7 +21,7 @@ import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupedApplicationConfigMapper;
 import ru.i_novus.configuration.config.repository.ApplicationRepository;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
-import ru.i_novus.config.api.service.ApplicationRestService;
+import ru.i_novus.config.api.service.ApplicationConfigRestService;
 
 import javax.ws.rs.NotFoundException;
 import java.util.*;
@@ -31,7 +31,7 @@ import java.util.*;
  */
 @Service
 @Primary
-public class ApplicationRestServiceImpl implements ApplicationRestService {
+public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestService {
 
     @Autowired
     private ApplicationRepository applicationRepository;
@@ -49,8 +49,20 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     private String commonSystemCode;
 
 
+    /**
+     * 1) Вернуть все настройки приложений
+     * 2) Вернуть все общесистемные настройки
+     * 3) Можно ли отобразить с помощью одной query
+     * 4) Фильтры
+     * 5) Сортировка по настройкам
+     * 6) Изменение настроек
+     *
+     */
+
+
+
     @Override
-    public Page<ApplicationResponse> getAllApplication(ApplicationCriteria criteria) {
+    public Page<ApplicationResponse> getAllApplicationConfig(ApplicationConfigCriteria criteria) {
         return applicationRepository.findAll(toPredicate(criteria), criteria)
                 .map(ApplicationMapper::toApplicationResponse);
     }
@@ -200,7 +212,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
         configValueService.deleteAllValues(code);
     }
 
-    private Predicate toPredicate(ApplicationCriteria criteria) {
+    private Predicate toPredicate(ApplicationConfigCriteria criteria) {
         QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
 
         BooleanBuilder builder = new BooleanBuilder();

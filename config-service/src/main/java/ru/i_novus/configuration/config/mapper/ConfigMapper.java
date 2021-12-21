@@ -1,10 +1,10 @@
 package ru.i_novus.configuration.config.mapper;
 
+import ru.i_novus.config.api.model.ApplicationResponse;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
-import ru.i_novus.config.api.model.ApplicationResponse;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

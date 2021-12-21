@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.*;
-import ru.i_novus.config.api.service.ApplicationRestService;
+import ru.i_novus.config.api.service.ApplicationConfigRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
@@ -41,7 +41,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Autowired
     private ConfigValueService configValueService;
     @Autowired
-    private ApplicationRestService applicationRestService;
+    private ApplicationConfigRestService applicationRestService;
     @Autowired
     private ConfigRepository configRepository;
     @Autowired

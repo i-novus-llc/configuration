@@ -3,7 +3,7 @@
     object-id="config_system">
 
     <list count-mapping="[totalElements]" result-mapping="[content]">
-        <rest filters-separator="&amp;">${config.service.url}/systems/?{filters}&amp;hasApplications=true&amp;page={page}&amp;size={limit}</rest>
+        <rest filters-separator="&amp;">${config.service.url}/systems/?{filters}&amp;page={page}&amp;size={limit}</rest>
     </list>
     <unique filters="id">
         <rest>${config.service.url}/systems/{id}</rest>
