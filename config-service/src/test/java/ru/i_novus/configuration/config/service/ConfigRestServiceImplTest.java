@@ -218,7 +218,7 @@ public class ConfigRestServiceImplTest {
         configForm.setDescription("test-test");
         configForm.setName("test-test");
         configForm.setValue("1");
-        configForm.setValueType(ValueTypeEnum.NUMBER);
+        configForm.setValueType(ValueTypeEnum.NUMBER.name());
 
         configRestService.updateConfig(configForm.getCode(), configForm);
 
@@ -264,6 +264,7 @@ public class ConfigRestServiceImplTest {
         assertEquals(configForm.getName(), configResponse.getName());
         assertEquals(configForm.getDescription(), configResponse.getDescription());
         assertEquals(configForm.getApplicationCode(), configResponse.getApplication().getCode());
-        assertEquals(configForm.getValueType(), configResponse.getValueType());
+
+        assertEquals(configForm.getValueType(), configResponse.getValueType().getId());
     }
 }

@@ -21,7 +21,7 @@ public class ConfigForm {
     private String description;
 
     @ApiModelProperty("Тип значения настройки")
-    private ValueTypeEnum valueType;
+    private String valueType;
 
     @ApiModelProperty("Значение настройки")
     private String value;
