@@ -3,9 +3,11 @@
     <form id="group_item" query-id="config_group" object-id="config_group">
         <toolbar place="topLeft">
             <group>
-                <button id="group_update" label="Сохранить" color="primary"
-                        visible="{id != null}">
-                    <invoke operation-id="update" redirect-url="../../" redirect-target="application"/>
+                <button id="group_update" label="Сохранить" color="primary">
+                    <invoke operation-id="update" close-on-success="true" message-on-success="false"/>
+                    <dependencies>
+                        <visibility ref-model="resolve" ref-widget-id="group_item">id != null</visibility>
+                    </dependencies>
                 </button>
                 <button id="group_close" label="Закрыть" color="secondary"
                         disable-on-empty-model="false">

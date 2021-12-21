@@ -12,7 +12,7 @@ import java.util.Set;
 public interface GroupCodeRepository extends JpaRepository<GroupCodeEntity, String> {
 
     @Query("SELECT CASE WHEN (COUNT(g) > 0) THEN true ELSE false END " +
-            "FROM GroupCodeEntity g WHERE g.code IN (:codes) AND g.group.id = :groupId")
+            "FROM GroupCodeEntity g WHERE g.code IN (:codes) AND g.group.id != :groupId")
     Boolean existsAtLeastOneCode(@Param("codes") Set<String> codes, @Param("groupId") Integer groupId);
 
     void deleteByGroupId(Integer groupId);

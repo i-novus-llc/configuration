@@ -23,7 +23,7 @@
                         <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
                                 confirm="true" confirm-title="Удалить группу настроек"
                                 confirm-text="Вы уверены, что хотите удалить группу настроек?">
-                            <invoke operation-id="delete"/>
+                            <invoke operation-id="delete" message-on-success="false"/>
                         </button>
                     </toolbar>
                 </column>
