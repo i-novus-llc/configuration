@@ -3,10 +3,11 @@
     <form id="config" query-id="config" object-id="config">
         <toolbar place="topLeft">
             <group>
-                <button id="config_update" label="Сохранить" color="primary">
+                <button id="config_update" label="Сохранить" color="primary" visible="{id != null}">
                     <invoke operation-id="update" message-on-success="false" close-on-success="true"/>
                 </button>
-                <button id="config_close" label="Закрыть" color="secondary" disable-on-empty-model="false">
+                <button id="config_close" label="Закрыть" color="secondary" disable-on-empty-model="false"
+                        visible="{id != null}">
                     <close/>
                 </button>
             </group>
@@ -35,7 +36,7 @@
                     </pre-filters>
                     <dependencies>
                         <enabling on="isCreateForm">isCreateForm</enabling>
-                        <set-value on="code">if (isCreateForm) return null</set-value>
+                        <set-value on="code" apply-on-init="false">if (isCreateForm) return null</set-value>
                     </dependencies>
                 </input-select>
                 <input-select id="valueType" label="Тип значения" required="true">
