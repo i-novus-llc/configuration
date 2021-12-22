@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Data
 @ApiModel("Выходные данные настройки")
@@ -26,9 +25,6 @@ public class ConfigResponse {
 
     @ApiModelProperty("Значение по умолчанию")
     private String defaultValue;
-
-    @ApiModelProperty("Значения справочника")
-    private List<String> refBookValue;
 
     @ApiModelProperty("Приложение")
     private ApplicationResponse application;

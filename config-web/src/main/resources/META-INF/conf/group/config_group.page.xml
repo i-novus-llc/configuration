@@ -7,7 +7,6 @@
                 <row>
                     <input-text id="code" label="Код группы" domain="string"/>
                     <input-text id="name" label="Наименование группы" domain="string"/>
-                    <search-buttons id="search"/>
                 </row>
             </filters>
 
