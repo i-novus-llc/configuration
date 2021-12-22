@@ -31,6 +31,10 @@ public class ConfigCriteria extends AbstractCriteria {
     @ApiParam("Компоненты систем")
     private List<String> applicationCodes;
 
+    @QueryParam("isCommonSystemConfig")
+    @ApiParam("Признак того является настройка общесистемной или нет")
+    private Boolean isCommonSystemConfig;
+
     @Override
     protected List<Sort.Order> getDefaultOrders() {
         return Collections.emptyList();
