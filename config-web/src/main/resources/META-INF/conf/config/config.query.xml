@@ -93,6 +93,9 @@
 
         <field id="isCommonSystemConfig">
             <select mapping="['application.name']" normalize="#this == null"/>
+            <filters>
+                <eq filter-id="isCommonSystemConfig">isCommonSystemConfig={isCommonSystemConfig}</eq>
+            </filters>
         </field>
 
         <field id="group.name">

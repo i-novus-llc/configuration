@@ -15,8 +15,9 @@
                         <input-select id="applications" label="Компонент системы" query-id="config_application"
                                       placeholder="Все" type="multi" search-field-id="name"/>
                     </col>
-                    <search-buttons id="search"/>
-                    <input-select id="hidden" visible="false"/>
+                    <col size="4">
+                        <checkbox id="isCommonSystemConfig" label="Общесистемная настройка"/>
+                    </col>
                 </row>
             </filters>
             <columns>

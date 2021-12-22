@@ -102,6 +102,10 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             query.where(qConfigEntity.applicationCode.in(criteria.getApplicationCodes()));
         }
 
+        if (Boolean.TRUE.equals(criteria.getIsCommonSystemConfig())) {
+            query.where(qConfigEntity.applicationCode.isNull());
+        }
+
         // orders
         OrderSpecifier<?>[] sortOrder;
         Optional<Sort.Order> order = criteria.getSort().stream().findFirst();
