@@ -3,6 +3,7 @@ package ru.i_novus.config.api.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 
 import javax.validation.constraints.NotBlank;
 

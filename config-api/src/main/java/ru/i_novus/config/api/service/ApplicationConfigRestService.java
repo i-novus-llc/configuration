@@ -3,19 +3,18 @@ package ru.i_novus.config.api.service;
 import io.swagger.annotations.*;
 import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
-import ru.i_novus.config.api.model.ApplicationResponse;
-import ru.i_novus.config.api.model.GroupedApplicationConfig;
+import ru.i_novus.config.api.model.ApplicationConfigResponse;
+import ru.i_novus.config.api.model.ConfigsApplicationResponse;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 import java.util.Map;
 
 
 /**
- * Интерфейс API для работы с приложениями
+ * Интерфейс API для работы с настройками приложений
  */
 @Valid
 @Path("/application_configs/")
@@ -24,35 +23,27 @@ import java.util.Map;
 @Api("Сервис для получения настроек приложений")
 public interface ApplicationConfigRestService {
 
-
-
-
     @GET
     @Path("/")
-    @ApiOperation(value = "Получение настроек приложений / общесистемных", response = ApplicationResponse.class, responseContainer = "List")
-    @ApiResponse(code = 200, message = "Успешное получение списка настроек приложений / общесистемных")
-    Page<ApplicationResponse> getAllApplicationConfig(@BeanParam ApplicationConfigCriteria criteria);
+    @ApiOperation(value = "Получение всех настроек приложений", response = ConfigsApplicationResponse.class, responseContainer = "List")
+    @ApiResponse(code = 200, message = "Успешное получение списка настроек приложений")
+    Page<ConfigsApplicationResponse> getAllConfigs(@BeanParam ApplicationConfigCriteria criteria);
 
     @GET
     @Path("/{code}")
-    @ApiOperation(value = "Получение приложения", response = ApplicationResponse.class)
+    @ApiOperation(value = "Получение настройки приложения", response = ApplicationConfigResponse.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Успешное получение приложения"),
-            @ApiResponse(code = 404, message = "Приложение не найдено")
+            @ApiResponse(code = 200, message = "Успешное получение настройки приложения"),
+            @ApiResponse(code = 404, message = "Настройка приложения не найдена")
     })
-    ApplicationResponse getApplication(@PathParam("code") @ApiParam(value = "Код приложения") String code);
+    ApplicationConfigResponse getConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code);
 
-    @GET
-    @Path("/{code}/configs")
-    @ApiOperation(value = "Получение сгруппированных настроек приложения", response = GroupedApplicationConfig.class, responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Успешное получение сгрупированных настроек приложения"),
-            @ApiResponse(code = 404, message = "Приложение не найдено")
-    })
-    List<GroupedApplicationConfig> getGroupedApplicationConfig(@PathParam("code") @ApiParam(value = "Код приложения") String code);
+
+
+    // TODO - переделать методы ниже
 
     @PUT
-    @Path("/{code}/configs")
+    @Path("/{code}")
     @ApiOperation(value = "Изменение значений настроек приложения")
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Изменение значений настроек приложения успешно выполнено"),

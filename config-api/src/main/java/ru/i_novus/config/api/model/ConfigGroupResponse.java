@@ -17,21 +17,5 @@ public class ConfigGroupResponse {
     private String name;
 
     @ApiModelProperty("Настройки")
-    private List<Config> configs;
-
-    @Data
-    @ApiModel("Настройка")
-    static class Config {
-        @ApiModelProperty("Код настройки")
-        private String code;
-
-        @ApiModelProperty("Наименование настройки")
-        private String name;
-
-        @ApiModelProperty("Значение настройки")
-        private String value;
-
-        @ApiModelProperty("Общесистемное значение")
-        private String commonSystemValue;
-    }
+    private List<ApplicationConfigResponse> configs;
 }

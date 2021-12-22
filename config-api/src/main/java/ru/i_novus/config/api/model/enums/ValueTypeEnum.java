@@ -1,4 +1,4 @@
-package ru.i_novus.config.api.model;
+package ru.i_novus.config.api.model.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

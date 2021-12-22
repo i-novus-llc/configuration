@@ -4,15 +4,18 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-@ApiModel("Настройки приложений")
-public class ApplicationConfigResponse extends ApplicationConfig {
-
-    @ApiModelProperty("Код приложения")
+@ApiModel("Настройка")
+public class ApplicationConfigResponse {
+    @ApiModelProperty("Код настройки")
     private String code;
 
-    @ApiModelProperty("Группы настроек приложения")
-    private List<ConfigGroupResponse> groups;
+    @ApiModelProperty("Наименование настройки")
+    private String name;
+
+    @ApiModelProperty("Значение настройки")
+    private String value;
+
+    @ApiModelProperty("Общесистемное значение")
+    private String commonSystemValue;
 }

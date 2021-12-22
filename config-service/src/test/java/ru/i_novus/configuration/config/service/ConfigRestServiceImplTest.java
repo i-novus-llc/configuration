@@ -14,7 +14,7 @@ import ru.i_novus.TestApp;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.ValueTypeEnum;
+import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
