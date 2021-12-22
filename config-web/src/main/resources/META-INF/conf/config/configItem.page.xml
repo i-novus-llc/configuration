@@ -22,6 +22,7 @@
                             return typeof(isCommonSystemConfig) == 'undefined' || isCommonSystemConfig == null ||
                             isCommonSystemConfig == false;
                         </enabling>
+                        <set-value on="isCommonSystemConfig" apply-on-init="false">if (isCommonSystemConfig) return null</set-value>
                     </dependencies>
                 </input-select>
                 <input-text id="code" label="Код настройки" required="true">
@@ -30,7 +31,7 @@
                     </dependencies>
                 </input-text>
                 <input-text id="name" label="Наименование настройки" required="true"/>
-                <input-select id="group" label="Группа настроек" query-id="config_group" required="true">
+                <input-select id="group" label="Группа настроек" query-id="config_group">
                     <pre-filters>
                         <like field-id="codes" value="{code}"/>
                     </pre-filters>

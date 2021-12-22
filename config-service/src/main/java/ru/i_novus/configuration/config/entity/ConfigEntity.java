@@ -53,10 +53,9 @@ public class ConfigEntity {
     private String defaultValue;
 
     /**
-     * Группа
+     * Идентификатор группы
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
-    private GroupEntity group;
+    @Column(name = "group_id")
+    private Integer groupId;
 
 }

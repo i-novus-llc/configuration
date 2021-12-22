@@ -26,6 +26,7 @@
                 <field id="name" mapping="['name']"/>
                 <field id="valueType.id" mapping="['valueType']"/>
                 <field id="description" mapping="['description']"/>
+                <field id="group.id" mapping="['groupId']"/>
             </in>
         </operation>
 

@@ -2,23 +2,22 @@ package ru.i_novus.configuration.config.mapper;
 
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
-import ru.i_novus.configuration.config.entity.GroupEntity;
 
 public class ConfigMapper {
 
-    public static ConfigEntity toConfigEntity(ConfigForm configForm, GroupEntity group) {
+    public static ConfigEntity toConfigEntity(ConfigForm configForm) {
         ConfigEntity configEntity = new ConfigEntity();
         configEntity.setCode(configForm.getCode());
-        return toConfigEntity(configEntity, configForm, group);
+        return toConfigEntity(configEntity, configForm);
     }
 
-    public static ConfigEntity toConfigEntity(ConfigEntity configEntity, ConfigForm configForm, GroupEntity group) {
+    public static ConfigEntity toConfigEntity(ConfigEntity configEntity, ConfigForm configForm) {
         configEntity.setName(configForm.getName());
         configEntity.setDescription(configForm.getDescription());
         configEntity.setValueType(ValueTypeEnum.valueOf(configForm.getValueType()));
         configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setApplicationCode(configForm.getApplicationCode());
-        configEntity.setGroup(group);
+        configEntity.setGroupId(configEntity.getGroupId());
         return configEntity;
     }
 

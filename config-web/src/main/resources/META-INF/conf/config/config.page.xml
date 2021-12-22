@@ -20,7 +20,7 @@
                 </row>
             </filters>
             <columns>
-                <column text-field-id="applicationName.name" label="Компонент системы"/>
+                <column text-field-id="applicationDisplayName" label="Компонент системы"/>
                 <column text-field-id="group.name" label="Группа настроек"/>
                 <column text-field-id="code" label="Код"/>
                 <column text-field-id="name" label="Наименование настройки"/>

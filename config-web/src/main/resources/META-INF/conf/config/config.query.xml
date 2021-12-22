@@ -49,8 +49,12 @@
             <select mapping="['application.code']"/>
         </field>
         <field id="applicationName.name" domain="string">
+            <select mapping="['application.name']"/>
+        </field>
+
+        <field id="applicationDisplayName" domain="string">
             <select mapping="['application.name']" normalize="#this != null ? #this : 'Общесистемные'"/>
-            <sorting mapping="['applicationName.nameDirection']">sort=application.name,{applicationName.nameDirection}</sorting>
+            <sorting mapping="['applicationDisplayName.nameDirection']">sort=application.name,{applicationDisplayName.nameDirection}</sorting>
         </field>
 
         <field id="group" domain="string[]">
@@ -73,7 +77,6 @@
             <filters>
                 <eq filter-id="name">name={name}</eq>
             </filters>
-            <sorting mapping="['nameDirection']">sort=name,{nameDirection}</sorting>
         </field>
 
         <field id="valueType" domain="string">
