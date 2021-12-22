@@ -107,7 +107,7 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
             configForm.setCode((String) obj[2]);
             configForm.setName((String) obj[3]);
             configForm.setDescription((String) obj[4]);
-            configForm.setValueType(ValueTypeEnum.valueOf((String) obj[5]));
+            configForm.setValueType((String) obj[5]);
             configForm.setDefaultValue((String) obj[6]);
             configForm.setApplicationCode((String) obj[7]);
 

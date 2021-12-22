@@ -5,27 +5,26 @@
         <table id="config_table" query-id="config" route="/systems">
             <filters>
                 <row>
-                    <input-text id="code" label="Код настройки" domain="string"/>
                     <input-text id="name" label="Наименование настройки" domain="string"/>
-                    <input-select id="systems" label="Система" query-id="config_system"
+                    <input-text id="code" label="Код настройки" domain="string"/>
+                    <input-select id="groups" label="Группа настроек" query-id="config_group"
                                   placeholder="Все" type="multi" search-field-id="name"/>
                 </row>
                 <row>
-                    <input-select id="groups" label="Группа настроек" query-id="config_group"
-                                  placeholder="Все" type="multi" search-field-id="name"/>
-                    <search-buttons id="search"/>
-                    <input-select id="hidden" visible="false"/>
+                    <col size="4">
+                        <input-select id="applications" label="Компонент системы" query-id="config_application"
+                                      placeholder="Все" type="multi" search-field-id="name"/>
+                    </col>
+                    <col size="4">
+                        <checkbox id="isCommonSystemConfig" label="Общесистемная настройка"/>
+                    </col>
                 </row>
             </filters>
-
             <columns>
-                <column text-field-id="systemName.name" label="Система"/>
-                <column text-field-id="application.name" label="Приложение"/>
+                <column text-field-id="applicationDisplayName" label="Компонент системы"/>
                 <column text-field-id="group.name" label="Группа настроек"/>
                 <column text-field-id="code" label="Код"/>
-                <column text-field-id="name" label="Наименование"/>
-                <column text-field-id="defaultValue" label="Значение по умолчанию"/>
-
+                <column text-field-id="name" label="Наименование настройки"/>
                 <column text-field-id="option">
                     <toolbar>
                         <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
@@ -36,20 +35,16 @@
                     </toolbar>
                 </column>
             </columns>
-
             <rows>
                 <click>
-                    <show-modal page-id="configItem" upload="query" object-id="config"
-                                route="/:config_id/update"
-                                submit-operation-id="update" page-name="Изменить параметры настройки">
+                    <open-page page-id="configItem" route="/:config_id/view" page-name="Просмотр параметров настройки">
                         <path-param name="config_id" value="{id}"/>
-                    </show-modal>
+                    </open-page>
                 </click>
             </rows>
-
             <toolbar>
-                <button id="create" label="Создать" color="primary" model="filter">
-                    <show-modal page-id="configItem" submit-operation-id="create" object-id="config"
+                <button id="create" label="Создать" color="primary" disable-on-empty-model="false">
+                    <show-modal page-id="configItem" submit-operation-id="create"
                                 route="/create"
                                 page-name="Создать настройку" upload="defaults"/>
                 </button>

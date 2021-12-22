@@ -9,7 +9,7 @@ public class ConfigFormBuilder {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("auth.config");
         configForm.setName("something");
-        configForm.setValueType(ValueTypeEnum.STRING);
+        configForm.setValueType(ValueTypeEnum.STRING.getId());
         configForm.setValue("test-value");
         configForm.setApplicationCode("app-auth");
         return configForm;
@@ -19,7 +19,7 @@ public class ConfigFormBuilder {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("sec1.url");
         configForm.setName("name");
-        configForm.setValueType(ValueTypeEnum.STRING);
+        configForm.setValueType(ValueTypeEnum.STRING.getId());
         configForm.setValue("test-value");
         configForm.setApplicationCode("app-security");
         return configForm;
@@ -29,7 +29,7 @@ public class ConfigFormBuilder {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("sec2.spring.sec-token");
         configForm.setName("name 2");
-        configForm.setValueType(ValueTypeEnum.STRING);
+        configForm.setValueType(ValueTypeEnum.STRING.getId());
         configForm.setValue("test-value");
         configForm.setApplicationCode(null);
         return configForm;
@@ -39,7 +39,7 @@ public class ConfigFormBuilder {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("sec1.test");
         configForm.setName("test");
-        configForm.setValueType(ValueTypeEnum.STRING);
+        configForm.setValueType(ValueTypeEnum.STRING.getId());
         configForm.setValue("test-value");
         configForm.setApplicationCode("app-security");
         return configForm;
