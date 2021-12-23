@@ -31,10 +31,10 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
     List<Object[]> findGroupedConfigByAppCode(@Param("code") String code);
 
     @Query(nativeQuery = true, value =
-            "SELECT g.id, g.name AS g_name, c.code, c.name AS c_name, " +
+            "SELECT g.id, g.name as g_name, c.code, c.name as c_name " +
                     "FROM configuration.config c " +
-                    "LEFT JOIN ON c.group_id = g.id" +
-                    "WHERE c.application_code IS NULL" +
+                    "LEFT JOIN configuration.config_group g ON c.group_id = g.id " +
+                    "WHERE c.application_code IS NULL " +
                     "GROUP BY g.id, c.code ORDER BY g.priority, c.name"
     )
     List<Object[]> findGroupedCommonSystemConfigs();

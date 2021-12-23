@@ -4,15 +4,16 @@ import net.n2oapp.criteria.dataset.DataSet;
 
 import java.util.List;
 
-public class ApplicationSystemUtil {
+public class ApplicationConfigUtil {
 
-    public static <T extends List> T normalize(T children) {
+    public static <T extends List> T normalizeCommonSystem(T children) {
         if (children == null || children.isEmpty())
             return null;
         for (Object item : children) {
             ((DataSet) item).put("id", ((DataSet) item).get("code"));
-            ((DataSet) item).put("codeStr", ((DataSet) item).get("code"));
-            ((DataSet) item).put("code", ((String) ((DataSet) item).get("code")).replace("-", "__"));
+            ((DataSet) item).put("name", ((DataSet) item).get("name"));
+            ((DataSet) item).put("value", ((DataSet) item).get("value"));
+            ((DataSet) item).put("isConfig", true);
         }
         return children;
     }

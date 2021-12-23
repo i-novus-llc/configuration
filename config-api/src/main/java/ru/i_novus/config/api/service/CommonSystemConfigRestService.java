@@ -1,7 +1,6 @@
 package ru.i_novus.config.api.service;
 
 import io.swagger.annotations.*;
-import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.ApplicationConfigResponse;
 import ru.i_novus.config.api.model.ConfigGroupResponse;
@@ -9,6 +8,7 @@ import ru.i_novus.config.api.model.ConfigGroupResponse;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * Интерфейс API для работы с общесистемными настройками
@@ -24,7 +24,7 @@ public interface CommonSystemConfigRestService {
     @Path("/")
     @ApiOperation(value = "Получение общесистемных настроек", response = ConfigGroupResponse.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка общесистемных настроек")
-    Page<ConfigGroupResponse> getAllConfigs(@BeanParam ApplicationConfigCriteria criteria);
+    List<ConfigGroupResponse> getAllConfigs(@BeanParam ApplicationConfigCriteria criteria);
 
     @GET
     @Path("/{code}")
@@ -35,7 +35,7 @@ public interface CommonSystemConfigRestService {
     })
     ApplicationConfigResponse getConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code);
 
-    @POST
+    @PUT
     @Path("/{code}")
     @ApiOperation(value = "Изменение значения общесистемной настройки")
     @ApiResponses(value = {

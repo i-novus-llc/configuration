@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 import ru.i_novus.config.api.criteria.ApplicationCriteria;
 import ru.i_novus.config.api.model.ApplicationResponse;
 import ru.i_novus.config.api.service.ApplicationRestService;
@@ -18,6 +19,7 @@ import java.util.Optional;
 /**
  * Реализация REST сервиса для работы с приложениями
  */
+@Service
 public class ApplicationRestServiceImpl implements ApplicationRestService {
 
     @Autowired

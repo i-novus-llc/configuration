@@ -2,7 +2,7 @@ package ru.i_novus.configuration.config.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.ApplicationConfigResponse;
 import ru.i_novus.config.api.model.ConfigGroupResponse;
@@ -12,10 +12,12 @@ import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 
 import javax.ws.rs.NotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Service
 public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRestService {
 
     @Autowired
@@ -29,11 +31,39 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
 
 
     @Override
-    public Page<ConfigGroupResponse> getAllConfigs(ApplicationConfigCriteria criteria) {
-        Map<String, String> commonSystemConfigValues = configValueService.getKeyValueList(commonSystemCode);
-        List<Object[]> groupedCommonSystemConfigs = configRepository.findGroupedCommonSystemConfigs();
+    public List<ConfigGroupResponse> getAllConfigs(ApplicationConfigCriteria criteria) {
+        Map<String, String> configValues = configValueService.getKeyValueList(commonSystemCode);
+        List<Object[]> groupedConfigs = configRepository.findGroupedCommonSystemConfigs();
 
-        return null;
+        // TODO list -> page
+        List<ConfigGroupResponse> result = new ArrayList<>();
+
+        for (int i = 0; i < groupedConfigs.size();) {
+            Object[] data = groupedConfigs.get(i);
+            ConfigGroupResponse group = new ConfigGroupResponse();
+            if (data[0] != null) {
+                group.setId((int) data[0]);
+                group.setName((String) data[1]);
+            } else {
+                group.setId(0);
+            }
+            group.setConfigs(new ArrayList<>());
+
+            do {
+                ApplicationConfigResponse config = new ApplicationConfigResponse();
+                data = groupedConfigs.get(i);
+                config.setCode((String) data[2]);
+                config.setName((String) data[3]);
+                config.setValue(configValues.get(config.getCode()));
+                group.getConfigs().add(config);
+                i++;
+            } while (i < groupedConfigs.size() &&
+                    ((groupedConfigs.get(i)[0] != null && (int) groupedConfigs.get(i)[0] == group.getId()) ||
+                    groupedConfigs.get(i)[0] == null && group.getId() == 0));
+            result.add(group);
+        }
+
+        return result;
     }
 
     @Override

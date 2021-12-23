@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
+      name="Настройки приложений">
+    <regions>
+        <tabs>
+<!--            <tab name="Настройки приложения">-->
+<!--                <table id="application_configs" query-id="config_system"-->
+<!--                       route="/application_configs" children="expand">-->
+<!--                    <columns>-->
+<!--                        <column text-field-id="name" label="Настройка"/>-->
+<!--                        <column text-field-id="value" label="Значение">-->
+<!--                            <edit/>-->
+<!--                        </column>-->
+<!--                        <column text-field-id="commonSystemValue" label="Общесистемное значение"/>-->
+<!--                        <column text-field-id="Действие">-->
+<!--                            <toolbar>-->
+<!--                                <button id="delete" label="Сбросить значение" icon="fa fa-eraser" type="icon"-->
+<!--                                        confirm="true" confirm-title="Сбросить значение"-->
+<!--                                        confirm-text="Вы уверены, что хотите сбросить значение настройки?"-->
+<!--                                        visible="{typeof isSystem == 'undefined' || !isSystem || isSystem == null}">-->
+<!--                                    <invoke operation-id="deleteConfigValue"/>-->
+<!--                                </button>-->
+<!--                            </toolbar>-->
+<!--                        </column>-->
+<!--                    </columns>-->
+<!--                </table>-->
+<!--            </tab>-->
+            <tab name="Общесистемные настройки">
+                <table id="common_system_configs" children="expand"
+                       query-id="common_system_config" object-id="common_system_config">
+                    <columns>
+                        <column text-field-id="name" label="Настройка"/>
+                        <column text-field-id="value" label="Значение">
+                            <edit action-id="updateConfig" visible="{isConfig}">
+                                <input-text id="value"/>
+                            </edit>
+                        </column>
+                    </columns>
+                </table>
+            </tab>
+        </tabs>
+    </regions>
+</page>
