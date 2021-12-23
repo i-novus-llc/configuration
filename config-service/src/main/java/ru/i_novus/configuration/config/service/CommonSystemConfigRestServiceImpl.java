@@ -5,10 +5,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.ApplicationConfigResponse;
+import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigGroupResponse;
+import ru.i_novus.config.api.model.ConfigValue;
+import ru.i_novus.config.api.model.enums.EventTypeEnum;
+import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.CommonSystemConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
+import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
+import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 
 import javax.ws.rs.NotFoundException;
@@ -26,6 +32,9 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
     @Autowired
     ConfigValueService configValueService;
 
+    @Autowired
+    private AuditService auditService;
+
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String commonSystemCode;
 
@@ -38,7 +47,7 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
         // TODO list -> page
         List<ConfigGroupResponse> result = new ArrayList<>();
 
-        for (int i = 0; i < groupedConfigs.size();) {
+        for (int i = 0; i < groupedConfigs.size(); ) {
             Object[] data = groupedConfigs.get(i);
             ConfigGroupResponse group = new ConfigGroupResponse();
             if (data[0] != null) {
@@ -59,7 +68,7 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
                 i++;
             } while (i < groupedConfigs.size() &&
                     ((groupedConfigs.get(i)[0] != null && (int) groupedConfigs.get(i)[0] == group.getId()) ||
-                    groupedConfigs.get(i)[0] == null && group.getId() == 0));
+                            groupedConfigs.get(i)[0] == null && group.getId() == 0));
             result.add(group);
         }
 
@@ -72,20 +81,29 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
                 orElseThrow(NotFoundException::new);
 
         String value = configValueService.getValue(commonSystemCode, code);
-        return toConfigResponse(configEntity, value);
-    }
-
-    @Override
-    public void saveApplicationConfig(String code, String value) {
-        Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-        configValueService.saveValue(commonSystemCode, code, value);
-    }
-
-    private ApplicationConfigResponse toConfigResponse(ConfigEntity configEntity, String value) {
         ApplicationConfigResponse configResponse = new ApplicationConfigResponse();
         configResponse.setCode(configEntity.getCode());
         configResponse.setName(configEntity.getName());
         configResponse.setValue(value);
+
         return configResponse;
+    }
+
+    @Override
+    public void saveApplicationConfig(String code, ConfigValue configValue) {
+        ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+        String value = configValue.getValue();
+
+        if (value != null) {
+            configValueService.saveValue(commonSystemCode, code, value);
+            audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.COMMON_SYSTEM_CONFIG_UPDATE);
+        } else {
+            configValueService.deleteValue(commonSystemCode, code);
+            audit(ConfigMapper.toConfigForm(entity, null), EventTypeEnum.COMMON_SYSTEM_CONFIG_DELETE);
+        }
+    }
+
+    private void audit(ConfigForm configForm, EventTypeEnum eventType) {
+        auditService.audit(eventType.getTitle(), configForm, configForm.getCode(), ObjectTypeEnum.COMMON_SYSTEM_CONFIG.getTitle());
     }
 }

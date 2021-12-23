@@ -28,6 +28,13 @@
             <tab name="Общесистемные настройки">
                 <table id="common_system_configs" children="expand"
                        query-id="common_system_config" object-id="common_system_config">
+                    <actions>
+                        <action id="updateConfig">
+                            <invoke operation-id="updateConfig"
+                                    refresh-on-submit="false"
+                                    message-on-success="false"/>
+                        </action>
+                    </actions>
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">

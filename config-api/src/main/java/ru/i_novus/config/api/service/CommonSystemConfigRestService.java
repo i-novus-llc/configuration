@@ -4,6 +4,7 @@ import io.swagger.annotations.*;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.ApplicationConfigResponse;
 import ru.i_novus.config.api.model.ConfigGroupResponse;
+import ru.i_novus.config.api.model.ConfigValue;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -44,6 +45,6 @@ public interface CommonSystemConfigRestService {
             @ApiResponse(code = 404, message = "Общесистемная настройка не найдена")
     })
     void saveApplicationConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code,
-                               @FormParam("value") @ApiParam(name = "Значение настройки", required = true) String value);
+                               @ApiParam(name = "Значение настройки", required = true) ConfigValue configValue);
 
 }

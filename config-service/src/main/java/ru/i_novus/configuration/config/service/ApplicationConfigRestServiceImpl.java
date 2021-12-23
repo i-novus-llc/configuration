@@ -57,67 +57,13 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
     }
 
     @Override
-    @Transactional
     public void saveApplicationConfig(String code, Map<String, Object> data) {
-        if (!code.equals(commonSystemCode))
-            Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-        if (data.get("data") == null) {
-            return;
-        }
 
-        Map<String, String> updatedKeyValues = new HashMap<>();
-        Map<String, String> deletedKeyValues = new HashMap<>();
-
-        Map<String, String> commonApplicationConfigKeyValues = Collections.EMPTY_MAP;
-        try {
-            commonApplicationConfigKeyValues = configValueService.getKeyValueList(defaultAppCode);
-        } catch (Exception ignored) {
-        }
-        Map<String, String> applicationConfigKeyValues = Collections.EMPTY_MAP;
-        if (!code.equals(commonSystemCode)) {
-            try {
-                applicationConfigKeyValues = configValueService.getKeyValueList(code);
-                deletedKeyValues = applicationConfigKeyValues;
-            } catch (Exception ignored) {
-            }
-        } else {
-            code = defaultAppCode;
-            deletedKeyValues = commonApplicationConfigKeyValues;
-        }
-
-        for (Map.Entry entry : ((Map<String, Object>) data.get("data")).entrySet()) {
-            String key = ((String) entry.getKey()).replace("__", ".");
-            String value = String.valueOf(entry.getValue());
-
-            if (entry.getValue() == null || value.equals("")) continue;
-
-            String applicationConfigValue = applicationConfigKeyValues.get(key);
-            String commonApplicationValue = commonApplicationConfigKeyValues.get(key);
-            ConfigForm configForm = ConfigMapper.toConfigForm(configRepository.findByCode(key), value);
-
-            if (applicationConfigValue == null &&
-                    (commonApplicationValue == null || !commonApplicationValue.equals(value))) {
-                updatedKeyValues.put(key, value);
-                audit(configForm, EventTypeEnum.APPLICATION_CONFIG_CREATE);
-            } else if (applicationConfigValue != null && !applicationConfigValue.equals(value)) {
-                updatedKeyValues.put(key, value);
-                audit(configForm, EventTypeEnum.APPLICATION_CONFIG_UPDATE);
-            }
-            deletedKeyValues.remove(key);
-        }
-
-        for (Map.Entry<String, String> e : deletedKeyValues.entrySet()) {
-            ConfigEntity configEntity = configRepository.findByCode(e.getKey());
-            if (configEntity == null) configEntity = new ConfigEntity();
-            audit(ConfigMapper.toConfigForm(configEntity, e.getValue()), EventTypeEnum.APPLICATION_CONFIG_DELETE);
-        }
-
-        configValueService.saveAllValues(code, updatedKeyValues, deletedKeyValues);
     }
 
     @Override
     @Transactional
-    public void deleteApplicationConfig(String code) {
+    public void deleteApplicationConfigValue(String code) {
         Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         List<ConfigEntity> configEntities = configRepository.findByApplicationCode(code);
 

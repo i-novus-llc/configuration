@@ -61,5 +61,5 @@ public interface ApplicationConfigRestService {
             @ApiResponse(code = 204, message = "Удаление значений настроек приложения успешно выполнено"),
             @ApiResponse(code = 404, message = "Приложение не найдено")
     })
-    void deleteApplicationConfig(@PathParam("code") @ApiParam(value = "Код приложения") String code);
+    void deleteApplicationConfigValue(@PathParam("code") @ApiParam(value = "Код приложения") String code);
 }

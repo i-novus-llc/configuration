@@ -9,7 +9,8 @@ import lombok.Getter;
 public enum ObjectTypeEnum {
     CONFIG("Настройка"),
     CONFIG_GROUP("Группа настроек"),
-    APPLICATION_CONFIG("Настройка приложения");
+    APPLICATION_CONFIG("Настройка приложения"),
+    COMMON_SYSTEM_CONFIG("Общесистемная настройка");
 
     private String title;
 
