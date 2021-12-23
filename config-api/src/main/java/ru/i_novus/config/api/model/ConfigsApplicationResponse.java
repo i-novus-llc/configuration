@@ -13,6 +13,9 @@ public class ConfigsApplicationResponse {
     @ApiModelProperty("Код приложения")
     private String code;
 
+    @ApiModelProperty("Наименование приложения")
+    private String name;
+
     @ApiModelProperty("Группы настроек приложения")
     private List<ConfigGroupResponse> groups;
 }

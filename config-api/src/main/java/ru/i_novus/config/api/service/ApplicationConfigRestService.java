@@ -1,16 +1,15 @@
 package ru.i_novus.config.api.service;
 
 import io.swagger.annotations.*;
-import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.ApplicationConfigResponse;
+import ru.i_novus.config.api.model.ConfigValue;
 import ru.i_novus.config.api.model.ConfigsApplicationResponse;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Map;
+import java.util.List;
 
 
 /**
@@ -27,7 +26,7 @@ public interface ApplicationConfigRestService {
     @Path("/")
     @ApiOperation(value = "Получение всех настроек приложений", response = ConfigsApplicationResponse.class, responseContainer = "List")
     @ApiResponse(code = 200, message = "Успешное получение списка настроек приложений")
-    Page<ConfigsApplicationResponse> getAllConfigs(@BeanParam ApplicationConfigCriteria criteria);
+    List<ConfigsApplicationResponse> getAllConfigs(@BeanParam ApplicationConfigCriteria criteria);
 
     @GET
     @Path("/{code}")
@@ -38,28 +37,23 @@ public interface ApplicationConfigRestService {
     })
     ApplicationConfigResponse getConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code);
 
-
-
-    // TODO - переделать методы ниже
-
     @PUT
     @Path("/{code}")
-    @ApiOperation(value = "Изменение значений настроек приложения")
+    @ApiOperation(value = "Изменение значения настройки приложения")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Изменение значений настроек приложения успешно выполнено"),
+            @ApiResponse(code = 204, message = "Изменение значения настройки приложения успешно выполнено"),
             @ApiResponse(code = 400, message = "Некорректный запрос"),
-            @ApiResponse(code = 404, message = "Приложение не найдено")
+            @ApiResponse(code = 404, message = "Настройка приложения не найдена")
     })
-    void saveApplicationConfig(@PathParam("code") @ApiParam(value = "Код приложения") String code,
-                               @Valid @NotNull @ApiParam(name = "Пары значений (код настройки / значение)", required = true)
-                                       Map<String, Object> data);
+    void saveConfigValue(@PathParam("code") @ApiParam(value = "Код настройки") String code,
+                         @ApiParam(name = "Значение настройки", required = true) ConfigValue configValue);
 
     @DELETE
-    @Path("/{code}/configs")
-    @ApiOperation(value = "Удаление значений настроек приложения")
+    @Path("/{code}")
+    @ApiOperation(value = "Удаление значения настройки приложения")
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Удаление значений настроек приложения успешно выполнено"),
-            @ApiResponse(code = 404, message = "Приложение не найдено")
+            @ApiResponse(code = 204, message = "Удаление значения настройки приложения успешно выполнено"),
+            @ApiResponse(code = 404, message = "Настройка приложения не найдена")
     })
-    void deleteApplicationConfigValue(@PathParam("code") @ApiParam(value = "Код приложения") String code);
+    void deleteConfigValue(@PathParam("code") @ApiParam(value = "Код настройки") String code);
 }

@@ -44,7 +44,7 @@ public interface CommonSystemConfigRestService {
             @ApiResponse(code = 400, message = "Некорректный запрос"),
             @ApiResponse(code = 404, message = "Общесистемная настройка не найдена")
     })
-    void saveApplicationConfig(@PathParam("code") @ApiParam(value = "Код настройки") String code,
-                               @ApiParam(name = "Значение настройки", required = true) ConfigValue configValue);
+    void saveConfigValue(@PathParam("code") @ApiParam(value = "Код настройки") String code,
+                         @ApiParam(name = "Значение настройки", required = true) ConfigValue configValue);
 
 }

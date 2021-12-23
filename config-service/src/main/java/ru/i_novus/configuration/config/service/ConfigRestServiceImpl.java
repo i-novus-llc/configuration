@@ -63,9 +63,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
 
-    @Value("${config.common.system.code}")
-    private String commonSystemCode;
-
 
     @Override
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {

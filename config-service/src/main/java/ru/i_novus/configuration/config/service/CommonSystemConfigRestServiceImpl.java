@@ -3,6 +3,7 @@ package ru.i_novus.configuration.config.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.ApplicationConfigResponse;
 import ru.i_novus.config.api.model.ConfigForm;
@@ -90,7 +91,8 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
     }
 
     @Override
-    public void saveApplicationConfig(String code, ConfigValue configValue) {
+    @Transactional
+    public void saveConfigValue(String code, ConfigValue configValue) {
         ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         String value = configValue.getValue();
 
@@ -98,8 +100,9 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
             configValueService.saveValue(commonSystemCode, code, value);
             audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.COMMON_SYSTEM_CONFIG_UPDATE);
         } else {
+            String oldValue = configValueService.getValue(commonSystemCode, code);
             configValueService.deleteValue(commonSystemCode, code);
-            audit(ConfigMapper.toConfigForm(entity, null), EventTypeEnum.COMMON_SYSTEM_CONFIG_DELETE);
+            audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.COMMON_SYSTEM_CONFIG_DELETE);
         }
     }
 

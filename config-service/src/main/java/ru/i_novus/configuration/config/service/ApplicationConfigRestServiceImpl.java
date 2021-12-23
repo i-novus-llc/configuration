@@ -3,13 +3,10 @@ package ru.i_novus.configuration.config.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
-import ru.i_novus.config.api.model.ApplicationConfigResponse;
-import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.ConfigsApplicationResponse;
+import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ApplicationConfigRestService;
@@ -17,7 +14,6 @@ import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
-import ru.i_novus.configuration.config.repository.ApplicationRepository;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 
 import javax.ws.rs.NotFoundException;
@@ -31,50 +27,104 @@ import java.util.*;
 public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestService {
 
     @Autowired
-    private ApplicationRepository applicationRepository;
+    private ConfigRepository configRepository;
+
     @Autowired
     private ConfigValueService configValueService;
-    @Autowired
-    private ConfigRepository configRepository;
+
     @Autowired
     private AuditService auditService;
 
     @Value("${spring.cloud.consul.config.defaultContext}")
-    private String defaultAppCode;
-
-    @Value("${config.common.system.code}")
     private String commonSystemCode;
 
 
     @Override
-    public Page<ConfigsApplicationResponse> getAllConfigs(ApplicationConfigCriteria criteria) {
-        return null;
+    public List<ConfigsApplicationResponse> getAllConfigs(ApplicationConfigCriteria criteria) {
+        Map<String, String> commonSystemConfigValues = configValueService.getKeyValueList(commonSystemCode);
+        List<Object[]> groupedConfigs = configRepository.findGroupedApplicationConfigs();
+
+        List<ConfigsApplicationResponse> result = new ArrayList<>();
+
+        // TODO - сделать код менее запутанным
+        for (int i = 0; i < groupedConfigs.size(); ) {
+            Object[] data = groupedConfigs.get(i);
+
+            ConfigsApplicationResponse application = new ConfigsApplicationResponse();
+            application.setCode((String) data[0]);
+            application.setName((String) data[1]);
+            application.setGroups(new ArrayList<>());
+            result.add(application);
+
+            Map<String, String> appConfigValues = Collections.EMPTY_MAP;
+            try {
+                appConfigValues = configValueService.getKeyValueList(application.getCode());
+            } catch (Exception ignored) {
+            }
+
+            do {
+                data = groupedConfigs.get(i);
+                ConfigGroupResponse group = new ConfigGroupResponse();
+                if (data[2] != null) {
+                    group.setId((int) data[2]);
+                    group.setName((String) data[3]);
+                } else {
+                    group.setId(0);
+                }
+                group.setConfigs(new ArrayList<>());
+
+                do {
+                    ApplicationConfigResponse config = new ApplicationConfigResponse();
+                    data = groupedConfigs.get(i);
+                    config.setCode((String) data[4]);
+                    config.setName((String) data[5]);
+                    config.setValue(appConfigValues.get(config.getCode()));
+                    config.setCommonSystemValue(commonSystemConfigValues.get(config.getCode()));
+                    group.getConfigs().add(config);
+                    i++;
+                } while (i < groupedConfigs.size() &&
+                        ((groupedConfigs.get(i)[2] != null && (int) groupedConfigs.get(i)[2] == group.getId()) ||
+                                groupedConfigs.get(i)[2] == null && group.getId() == 0));
+                application.getGroups().add(group);
+            } while (i < groupedConfigs.size() && application.getCode().equals(groupedConfigs.get(i)[0]));
+        }
+
+        return result;
     }
 
     @Override
     public ApplicationConfigResponse getConfig(String code) {
-        return null;
-    }
+        // TODO - добавить дополнительные проверки на код приложения
+        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).
+                orElseThrow(NotFoundException::new);
 
-    @Override
-    public void saveApplicationConfig(String code, Map<String, Object> data) {
+        String value = configValueService.getValue(configEntity.getApplicationCode(), code);
+        ApplicationConfigResponse configResponse = new ApplicationConfigResponse();
+        configResponse.setCode(configEntity.getCode());
+        configResponse.setName(configEntity.getName());
+        configResponse.setValue(value);
 
+        return configResponse;
     }
 
     @Override
     @Transactional
-    public void deleteApplicationConfigValue(String code) {
-        Optional.ofNullable(applicationRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-        List<ConfigEntity> configEntities = configRepository.findByApplicationCode(code);
+    public void saveConfigValue(String code, ConfigValue configValue) {
+        ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+        String value = configValue.getValue();
+        configValueService.saveValue(entity.getApplicationCode(), code, value);
 
-        for (ConfigEntity e : configEntities) {
-            try {
-                String value = configValueService.getValue(code, e.getCode());
-                audit(ConfigMapper.toConfigForm(e, value), EventTypeEnum.APPLICATION_CONFIG_DELETE);
-            } catch (Exception ignored) {
-            }
-        }
-        configValueService.deleteAllValues(code);
+        audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.APPLICATION_CONFIG_UPDATE);
+    }
+
+    @Override
+    @Transactional
+    public void deleteConfigValue(String code) {
+        ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+        String oldValue = configValueService.getValue(entity.getApplicationCode(), code);
+        configValueService.deleteValue(entity.getApplicationCode(), code);
+
+        audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.APPLICATION_CONFIG_DELETE);
     }
 
     private void audit(ConfigForm configForm, EventTypeEnum eventType) {
