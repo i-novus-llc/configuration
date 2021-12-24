@@ -96,14 +96,8 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
         ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         String value = configValue.getValue();
 
-        if (value != null) {
-            configValueService.saveValue(commonSystemCode, code, value);
-            audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.COMMON_SYSTEM_CONFIG_UPDATE);
-        } else {
-            String oldValue = configValueService.getValue(commonSystemCode, code);
-            configValueService.deleteValue(commonSystemCode, code);
-            audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.COMMON_SYSTEM_CONFIG_DELETE);
-        }
+        configValueService.saveValue(commonSystemCode, code, value);
+        audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.COMMON_SYSTEM_CONFIG_UPDATE);
     }
 
     private void audit(ConfigForm configForm, EventTypeEnum eventType) {

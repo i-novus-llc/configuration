@@ -6,7 +6,7 @@
                 <rest method="PUT">${config.service.url}/application_configs/{code}</rest>
             </invocation>
             <in>
-                <field id="code"/>
+                <field id="configCode" mapping="[code]"/>
                 <field id="value"/>
             </in>
         </operation>
@@ -16,7 +16,7 @@
                 <rest method="DELETE">${config.service.url}/application_configs/{code}</rest>
             </invocation>
             <in>
-                <field id="code"/>
+                <field id="configCode" mapping="[code]"/>
             </in>
         </operation>
     </operations>
