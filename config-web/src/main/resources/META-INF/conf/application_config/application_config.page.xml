@@ -23,7 +23,8 @@
                         <column text-field-id="commonSystemValue" label="Общесистемное значение"/>
                         <column text-field-id="option">
                             <toolbar>
-                                <button id="delete" label="Стереть значение" icon="fa fa-eraser" type="icon">
+                                <button id="delete" label="Стереть значение" visible="{isConfig}"
+                                        icon="fa fa-eraser" type="icon">
                                     <invoke operation-id="deleteConfigValue"/>
                                 </button>
                             </toolbar>
