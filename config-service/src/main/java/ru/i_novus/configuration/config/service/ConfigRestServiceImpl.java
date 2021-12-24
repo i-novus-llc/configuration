@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.*;
+import ru.i_novus.config.api.model.enums.EventTypeEnum;
+import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ApplicationRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
@@ -60,9 +62,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
-
-    @Value("${config.common.system.code}")
-    private String commonSystemCode;
 
 
     @Override

@@ -1,4 +1,4 @@
-package ru.i_novus.config.api.model;
+package ru.i_novus.config.api.model.enums;
 
 import lombok.Getter;
 
@@ -9,7 +9,8 @@ import lombok.Getter;
 public enum ObjectTypeEnum {
     CONFIG("Настройка"),
     CONFIG_GROUP("Группа настроек"),
-    APPLICATION_CONFIG("Настройка приложения");
+    APPLICATION_CONFIG("Настройка приложения"),
+    COMMON_SYSTEM_CONFIG("Общесистемная настройка");
 
     private String title;
 

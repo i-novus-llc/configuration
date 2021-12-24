@@ -2,8 +2,7 @@
     <permit-all>
         <object-access object-id="config" operations="*"/>
         <object-access object-id="config_group" operations="*"/>
-        <object-access object-id="config_application" operations="*"/>
-        <object-access object-id="config_system" operations="*"/>
-        <object-access object-id="groupedConfig" operations="*"/>
+        <object-access object-id="application_config" operations="*"/>
+        <object-access object-id="common_system_config" operations="*"/>
     </permit-all>
 </access>

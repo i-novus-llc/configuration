@@ -1,7 +1,7 @@
 package ru.i_novus.configuration.config.loader.builders;
 
 import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.ValueTypeEnum;
+import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 
 public class LoaderConfigBuilder {
 

@@ -3,9 +3,7 @@ package ru.i_novus.configuration.config.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 
 import java.util.List;
@@ -16,24 +14,28 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
     ConfigEntity findByCode(String code);
 
     @Query(nativeQuery = true, value =
-            "SELECT g.id, g.name AS g_name, c.code, c.name AS c_name, c.description, c.value_type, c.default_value, c.application_code " +
-            "FROM configuration.config c " +
-            "INNER JOIN (SELECT * FROM ( " +
-            "SELECT ROW_NUMBER() OVER (PARTITION BY c.code ORDER BY LENGTH(gc.code) DESC) AS rn, c.code, gc.group_id " +
-            "FROM configuration.config c LEFT JOIN configuration.config_group_code gc " +
-            "ON c.code = gc.code OR strpos(c.code, gc.code || '.') = 1 " +
-            "WHERE c.application_code IS NULL OR c.application_code = CAST(?1 AS TEXT)) x " +
-            "WHERE x.rn <= 1) x " +
-            "ON c.code = x.code " +
-            "LEFT JOIN configuration.config_group g ON g.id = x.group_id " +
-            "GROUP BY g.id, c.code ORDER BY g.priority, c.code"
+            "SELECT a.code as a_code, a.name as a_name, " +
+                    "g.id, g.name as g_name, " +
+                    "c.code as c_code, c.name as c_name " +
+                    "FROM configuration.config c " +
+                    "LEFT JOIN configuration.config_group g ON c.group_id = g.id " +
+                    "INNER JOIN rdm.application a ON c.application_code = a.code " +
+                    "GROUP BY a.code, g.id, c.code ORDER BY a.name, g.priority, c.name"
     )
-    List<Object[]> findGroupedConfigByAppCode(@Param("code") String code);
+    List<Object[]> findGroupedApplicationConfigs();
+
+    @Query(nativeQuery = true, value =
+            "SELECT g.id, g.name as g_name, c.code, c.name as c_name " +
+                    "FROM configuration.config c " +
+                    "LEFT JOIN configuration.config_group g ON c.group_id = g.id " +
+                    "WHERE c.application_code IS NULL " +
+                    "GROUP BY g.id, c.code ORDER BY g.priority, c.name"
+    )
+    List<Object[]> findGroupedCommonSystemConfigs();
 
     List<ConfigEntity> findByApplicationCode(String code);
 
     Boolean existsByCode(String code);
 
-    @Transactional
     void deleteByCode(String code);
 }

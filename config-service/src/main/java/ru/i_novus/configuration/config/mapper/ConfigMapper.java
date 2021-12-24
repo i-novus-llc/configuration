@@ -1,6 +1,7 @@
 package ru.i_novus.configuration.config.mapper;
 
 import ru.i_novus.config.api.model.*;
+import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 
 public class ConfigMapper {

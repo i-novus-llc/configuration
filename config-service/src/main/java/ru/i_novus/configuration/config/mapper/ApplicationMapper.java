@@ -1,7 +1,7 @@
 package ru.i_novus.configuration.config.mapper;
 
-import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.config.api.model.ApplicationResponse;
+import ru.i_novus.configuration.config.entity.ApplicationEntity;
 
 public class ApplicationMapper {
 
