@@ -27,9 +27,13 @@ public class ConfigCriteria extends AbstractCriteria {
     @ApiParam("Идентификаторы групп")
     private List<Integer> groupIds;
 
-    @QueryParam("systemCode")
-    @ApiParam("Коды систем")
-    private List<String> systemCodes;
+    @QueryParam("applicationCode")
+    @ApiParam("Компоненты систем")
+    private List<String> applicationCodes;
+
+    @QueryParam("isCommonSystemConfig")
+    @ApiParam("Признак того, что настройка является общесистемной")
+    private Boolean isCommonSystemConfig;
 
     @Override
     protected List<Sort.Order> getDefaultOrders() {

@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -14,14 +13,13 @@ import ru.i_novus.TestApp;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.ValueTypeEnum;
+import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.service.builders.ConfigFormBuilder;
 
 import javax.ws.rs.NotFoundException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,9 +44,6 @@ public class ConfigRestServiceImplTest {
 
     @MockBean
     private AuditService auditService;
-
-    @Value("${config.common.system.code}")
-    private String commonSystemCode;
 
 
     @Before
@@ -126,26 +121,6 @@ public class ConfigRestServiceImplTest {
 
         ConfigCriteria criteria = new ConfigCriteria();
         criteria.setGroupIds(Collections.singletonList(102));
-
-        List<ConfigResponse> configResponses =
-                configRestService.getAllConfig(criteria).getContent();
-
-        assertEquals(2, configResponses.size());
-        configAssertEquals(configForm2, configResponses.get(0));
-        configAssertEquals(configForm, configResponses.get(1));
-    }
-
-    /**
-     * Проверка, что фильтрация настроек по именам систем работает корректно
-     */
-    @Test
-    public void getAllConfigBySystemNameTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildConfigForm2();
-        ConfigForm configForm2 = ConfigFormBuilder.buildConfigForm3();
-
-
-        ConfigCriteria criteria = new ConfigCriteria();
-        criteria.setSystemCodes(Arrays.asList("system-security", commonSystemCode));
 
         List<ConfigResponse> configResponses =
                 configRestService.getAllConfig(criteria).getContent();
@@ -239,7 +214,7 @@ public class ConfigRestServiceImplTest {
         configForm.setDescription("test-test");
         configForm.setName("test-test");
         configForm.setValue("1");
-        configForm.setValueType(ValueTypeEnum.NUMBER);
+        configForm.setValueType(ValueTypeEnum.NUMBER.getId());
 
         configRestService.updateConfig(configForm.getCode(), configForm);
 
@@ -285,6 +260,6 @@ public class ConfigRestServiceImplTest {
         assertEquals(configForm.getName(), configResponse.getName());
         assertEquals(configForm.getDescription(), configResponse.getDescription());
         assertEquals(configForm.getApplicationCode(), configResponse.getApplication().getCode());
-        assertEquals(configForm.getValueType(), configResponse.getValueType());
+        assertEquals(configForm.getValueType(), configResponse.getValueType().getId());
     }
 }

@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping>
-    <refbook code="SYS001" sys-table="rdm.system" unique-sys-field="code" deleted-field="is_deleted" mapping-version="1">
-        <field sys-field="code" sys-data-type="varchar" rdm-field="code"/>
-        <field sys-field="name" sys-data-type="varchar" rdm-field="name"/>
-        <field sys-field="description" sys-data-type="varchar" rdm-field="description"/>
-    </refbook>
-
     <refbook code="APP001" sys-table="rdm.application" unique-sys-field="code" deleted-field="is_deleted" mapping-version="3">
         <field sys-field="code" sys-data-type="varchar" rdm-field="code"/>
         <field sys-field="name" sys-data-type="varchar" rdm-field="name"/>

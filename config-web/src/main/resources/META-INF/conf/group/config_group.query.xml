@@ -3,7 +3,7 @@
        object-id="config_group">
 
     <list count-mapping="[totalElements]" result-mapping="[content]">
-        <rest filters-separator="&amp;">${config.service.url}/groups/?{filters}&amp;page={page}&amp;size={limit}</rest>
+        <rest filters-separator="&amp;">${config.service.url}/groups/?{filters}&amp;page={page}&amp;size={limit}&amp;{sorting}</rest>
     </list>
     <unique>
         <rest>${config.service.url}/groups/{id}</rest>
@@ -21,10 +21,6 @@
             </filters>
         </field>
 
-        <field id="codesStr" domain="string">
-            <select mapping="[codes]" normalize="T(java.lang.String).join(' ', #this)"/>
-        </field>
-
         <field id="codes" domain="string[]">
             <select/>
             <filters>
@@ -38,6 +34,7 @@
             <filters>
                 <eq filter-id="name">name={name}</eq>
             </filters>
+            <sorting mapping="['nameDirection']">sort=name,{nameDirection}</sorting>
         </field>
 
         <field id="description" domain="string">

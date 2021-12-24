@@ -1,84 +1,56 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <simple-page xmlns="http://n2oapp.net/framework/config/schema/page-3.0">
-    <form query-id="config" object-id="config">
+    <form id="config" query-id="config" object-id="config">
+        <toolbar place="topLeft">
+            <group>
+                <button id="config_update" label="Сохранить" color="primary" visible="{id != null}">
+                    <invoke operation-id="update" message-on-success="false" close-on-success="true"/>
+                </button>
+                <button id="config_close" label="Закрыть" color="secondary" disable-on-empty-model="false"
+                        visible="{id != null}">
+                    <close/>
+                </button>
+            </group>
+        </toolbar>
         <fields>
-            <row>
-                <input-select id="systemName" label="Система" required="true"
-                              query-id="config_system" search-field-id="name"/>
-                <input-select id="applicationName" label="Приложение" query-id="config_application">
-                    <pre-filters>
-                        <eq field-id="systemCode" value="{systemName.id}"/>
-                    </pre-filters>
+            <set field-label-location="left" field-label-align="left" field-label-width="220px">
+                <checkbox id="isCommonSystemConfig" label="Общесистемная настройка"/>
+                <input-select id="applicationName" label="Компонент системы"
+                              query-id="config_application" search-field-id="name">
                     <dependencies>
-                        <enabling on="systemName">systemName.id != 'common_system'</enabling>
-                        <set-value on="systemName" apply-on-init="false">null</set-value>
+                        <enabling on="isCommonSystemConfig">
+                            return typeof(isCommonSystemConfig) == 'undefined' || isCommonSystemConfig == null ||
+                            isCommonSystemConfig == false;
+                        </enabling>
+                        <set-value on="isCommonSystemConfig" apply-on-init="false">if (isCommonSystemConfig) return null</set-value>
                     </dependencies>
                 </input-select>
-            </row>
-            <input-text id="code" label="Код настройки" required="true">
-                <dependencies>
-                    <enabling on="isCreateForm">isCreateForm</enabling>
-                </dependencies>
-            </input-text>
-            <input-text id="name" label="Наименование настройки"/>
-            <row>
+                <input-text id="code" label="Код настройки" required="true">
+                    <dependencies>
+                        <enabling on="isCreateForm">isCreateForm</enabling>
+                    </dependencies>
+                </input-text>
+                <input-text id="name" label="Наименование настройки" required="true"/>
                 <input-select id="group" label="Группа настроек" query-id="config_group">
                     <pre-filters>
                         <like field-id="codes" value="{code}"/>
                     </pre-filters>
                     <dependencies>
                         <enabling on="isCreateForm">isCreateForm</enabling>
-                        <set-value on="code">if (isCreateForm) return null</set-value>
+                        <set-value on="code" apply-on-init="false">if (isCreateForm) return null</set-value>
                     </dependencies>
                 </input-select>
-
                 <input-select id="valueType" label="Тип значения" required="true">
                     <default-value id="STRING" name="Строка"/>
                     <options>
                         <option id="STRING" name="Строка"/>
                         <option id="NUMBER" name="Число"/>
                         <option id="BOOLEAN" name="Чекбокс"/>
-                        <option id="REFBOOK" name="Справочник"/>
                     </options>
                 </input-select>
-            </row>
-
-            <input-text id="defaultValueString" label="Значение по умолчанию">
-                <dependencies>
-                    <set-value><![CDATA[
-                        defaultValue
-                        ]]>
-                    </set-value>
-                    <visibility on="valueType">valueType.id == 'STRING'</visibility>
-                </dependencies>
-            </input-text>
-            <input-text id="defaultValueNumber" domain="integer" label="Значение по умолчанию">
-                <dependencies>
-                    <set-value><![CDATA[
-                        defaultValue
-                        ]]>
-                    </set-value>
-                    <visibility on="valueType">valueType.id == 'NUMBER'</visibility>
-                </dependencies>
-            </input-text>
-            <checkbox id="defaultValueBoolean" label="Значение по умолчанию" unchecked="false">
-                <dependencies>
-                    <set-value><![CDATA[
-                        defaultValue == 'true'
-                        ]]>
-                    </set-value>
-                    <visibility on="valueType">valueType.id == 'BOOLEAN'</visibility>
-                </dependencies>
-            </checkbox>
-            <auto-complete id="refBookValue" label="Значения справочника" tags="true"
-                           description="Для добавления введите новое значение и нажмите Enter">
-                <dependencies>
-                    <visibility on="valueType">valueType.id == 'REFBOOK'</visibility>
-                </dependencies>
-            </auto-complete>
-
-            <input-text id="description" label="Описание"/>
-            <hidden id="isCreateForm" default-value="true"/>
+                <input-text id="description" label="Описание"/>
+                <hidden id="isCreateForm" default-value="true"/>
+            </set>
         </fields>
         <pre-filters>
             <eq field-id="id" param="config_id"/>

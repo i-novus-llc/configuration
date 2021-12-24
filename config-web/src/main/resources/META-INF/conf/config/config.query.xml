@@ -3,7 +3,7 @@
        object-id="config">
 
     <list count-mapping="[totalElements]" result-mapping="[content]">
-        <rest filters-separator="&amp;">${config.service.url}/?{filters}&amp;page={page}&amp;size={limit}</rest>
+        <rest filters-separator="&amp;">${config.service.url}/?{filters}&amp;page={page}&amp;size={limit}&amp;{sorting}</rest>
     </list>
     <unique filters="id">
         <rest>${config.service.url}/{id}</rest>
@@ -17,8 +17,11 @@
             </filters>
         </field>
 
-        <field id="application" domain="object">
+        <field id="application" domain="string[]">
             <select mapping="[application]"/>
+            <filters>
+                <eq filter-id="applications*.id">applicationCode={applications*.id}</eq>
+            </filters>
         </field>
 
         <field id="application.id" domain="string">
@@ -49,6 +52,11 @@
             <select mapping="['application.name']"/>
         </field>
 
+        <field id="applicationDisplayName" domain="string">
+            <select mapping="['application.name']" normalize="#this != null ? #this : 'Общесистемные'"/>
+            <sorting mapping="['applicationDisplayName.nameDirection']">sort=application.name,{applicationDisplayName.nameDirection}</sorting>
+        </field>
+
         <field id="group" domain="string[]">
             <select/>
             <filters>
@@ -61,6 +69,7 @@
             <filters>
                 <eq filter-id="code">code={code}</eq>
             </filters>
+            <sorting mapping="['codeDirection']">sort=code,{codeDirection}</sorting>
         </field>
 
         <field id="name" domain="string">
@@ -70,7 +79,7 @@
             </filters>
         </field>
 
-        <field id="valueType.id" domain="string">
+        <field id="valueType" domain="string">
             <select mapping="[valueType]"/>
         </field>
 
@@ -82,8 +91,17 @@
             <select/>
         </field>
 
-        <field id="refBookValue" domain="string[]">
-            <select mapping="[refBookValue]"/>
+        <field id="isCommonSystemConfig">
+            <select mapping="['application.name']" normalize="#this == null"/>
+            <filters>
+                <eq filter-id="isCommonSystemConfig">isCommonSystemConfig={isCommonSystemConfig}</eq>
+            </filters>
         </field>
+
+        <field id="group.name">
+            <select mapping="['group.name']"/>
+            <sorting mapping="['group.nameDirection']">sort=group.name,{group.nameDirection}</sorting>
+        </field>
+
     </fields>
 </query>

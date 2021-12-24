@@ -1,13 +1,8 @@
 package ru.i_novus.configuration.config.mapper;
 
-import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.*;
+import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
-import ru.i_novus.system_application.api.model.ApplicationResponse;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class ConfigMapper {
 
@@ -20,11 +15,10 @@ public class ConfigMapper {
     public static ConfigEntity toConfigEntity(ConfigEntity configEntity, ConfigForm configForm) {
         configEntity.setName(configForm.getName());
         configEntity.setDescription(configForm.getDescription());
-        configEntity.setValueType(configForm.getValueType());
+        configEntity.setValueType(ValueTypeEnum.valueOf(configForm.getValueType()));
         configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setApplicationCode(configForm.getApplicationCode());
-        if (configForm.getRefBookValue() != null)
-            configEntity.setRefBookValue(String.join(",", configForm.getRefBookValue()));
+        configEntity.setGroupId(configEntity.getGroupId());
         return configEntity;
     }
 
@@ -37,8 +31,6 @@ public class ConfigMapper {
         configResponse.setDefaultValue(configEntity.getDefaultValue());
         configResponse.setApplication(application);
         configResponse.setGroup(group);
-        if (configEntity.getRefBookValue() != null)
-            configResponse.setRefBookValue(Arrays.stream(configEntity.getRefBookValue().split(",")).collect(Collectors.toList()));
         return configResponse;
     }
 
@@ -47,7 +39,7 @@ public class ConfigMapper {
         configForm.setCode(configEntity.getCode());
         configForm.setName(configEntity.getName());
         configForm.setDescription(configEntity.getDescription());
-        configForm.setValueType(configEntity.getValueType());
+        configForm.setValueType(configEntity.getValueType().name());
         configForm.setValue(value);
         configForm.setDefaultValue(configEntity.getDefaultValue());
         configForm.setApplicationCode(configEntity.getApplicationCode());

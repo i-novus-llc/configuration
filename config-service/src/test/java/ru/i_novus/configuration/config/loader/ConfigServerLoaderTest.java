@@ -140,6 +140,6 @@ public class ConfigServerLoaderTest {
         assertEquals(expected.getCode(), actual.getCode());
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getDescription(), actual.getDescription());
-        assertEquals(expected.getValueType(), actual.getValueType());
+        assertEquals(expected.getValueType(), actual.getValueType().getId());
     }
 }

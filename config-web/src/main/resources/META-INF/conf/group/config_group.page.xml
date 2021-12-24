@@ -7,7 +7,6 @@
                 <row>
                     <input-text id="code" label="Код группы" domain="string"/>
                     <input-text id="name" label="Наименование группы" domain="string"/>
-                    <search-buttons id="search"/>
                 </row>
             </filters>
 
@@ -23,7 +22,7 @@
                         <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
                                 confirm="true" confirm-title="Удалить группу настроек"
                                 confirm-text="Вы уверены, что хотите удалить группу настроек?">
-                            <invoke operation-id="delete"/>
+                            <invoke operation-id="delete" message-on-success="false"/>
                         </button>
                     </toolbar>
                 </column>
@@ -31,11 +30,10 @@
 
             <rows>
                 <click>
-                    <show-modal page-id="config_groupItem" object-id="config_group"
-                                route="/:config_group_id/update"
-                                submit-operation-id="update" page-name="Изменить группу настроек">
+                    <open-page page-id="config_groupItem" object-id="config_group"
+                               route="/:config_group_id/update" page-name="Изменить группу настроек">
                         <path-param name="config_group_id" value="{id}"/>
-                    </show-modal>
+                    </open-page>
                 </click>
             </rows>
 

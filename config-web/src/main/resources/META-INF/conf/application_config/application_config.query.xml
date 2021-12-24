@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0">
+
+    <list count-mapping="#this.size()" result-mapping="#this">
+        <rest filters-separator="&amp;">${config.service.url}/application_configs/?{filters}&amp;page={page}&amp;size={limit}</rest>
+    </list>
+
+    <unique filters="id">
+        <rest>${config.service.url}/application_configs/{id}</rest>
+    </unique>
+
+    <fields>
+        <field id="id" domain="string">
+            <select mapping="[code]"/>
+            <filters>
+                <eq filter-id="id">code={id}</eq>
+            </filters>
+        </field>
+
+        <field id="code" domain="string">
+            <select/>
+        </field>
+
+        <field id="name" domain="string">
+            <select/>
+        </field>
+
+        <field id="isConfig" domain="boolean">
+            <select normalize="false"/>
+        </field>
+
+        <field id="children" domain="object[]">
+            <select mapping="[groups]"
+                    normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeApplication(#this)"/>
+        </field>
+
+    </fields>
+</query>

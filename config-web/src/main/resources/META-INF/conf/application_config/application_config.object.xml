@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<object xmlns="http://n2oapp.net/framework/config/schema/object-4.0">
+    <operations>
+        <operation id="updateConfig">
+            <invocation>
+                <rest method="PUT">${config.service.url}/application_configs/{code}</rest>
+            </invocation>
+            <in>
+                <field id="configCode" mapping="[code]"/>
+                <field id="value"/>
+            </in>
+        </operation>
+
+        <operation id="deleteConfigValue">
+            <invocation>
+                <rest method="DELETE">${config.service.url}/application_configs/{code}</rest>
+            </invocation>
+            <in>
+                <field id="configCode" mapping="[code]"/>
+            </in>
+        </operation>
+    </operations>
+</object>

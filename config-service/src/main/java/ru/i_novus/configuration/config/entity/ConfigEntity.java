@@ -2,7 +2,7 @@ package ru.i_novus.configuration.config.entity;
 
 
 import lombok.Data;
-import ru.i_novus.config.api.model.ValueTypeEnum;
+import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 
 import javax.persistence.*;
 
@@ -53,8 +53,9 @@ public class ConfigEntity {
     private String defaultValue;
 
     /**
-     * Значения справочника
+     * Идентификатор группы
      */
-    @Column(name = "ref_book_value")
-    private String refBookValue;
+    @Column(name = "group_id")
+    private Integer groupId;
+
 }

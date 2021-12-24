@@ -11,11 +11,8 @@
                 <field id="code" mapping="['code']"/>
                 <field id="name" mapping="['name']"/>
                 <field id="valueType.id" mapping="['valueType']"/>
-                <field id="defaultValueString" mapping="['defaultValue']" enabled="valueType.id == 'STRING'"/>
-                <field id="defaultValueNumber" mapping="['defaultValue']" enabled="valueType.id == 'NUMBER'"/>
-                <field id="defaultValueBoolean" mapping="['defaultValue']" enabled="valueType.id == 'BOOLEAN'"/>
-                <field id="refBookValue" mapping="['refBookValue']"/>
                 <field id="description" mapping="['description']"/>
+                <field id="group.id" mapping="['groupId']"/>
             </in>
         </operation>
 
@@ -28,11 +25,8 @@
                 <field id="code" mapping="['code']"/>
                 <field id="name" mapping="['name']"/>
                 <field id="valueType.id" mapping="['valueType']"/>
-                <field id="defaultValueString" mapping="['defaultValue']" enabled="valueType.id == 'STRING'"/>
-                <field id="defaultValueNumber" mapping="['defaultValue']" enabled="valueType.id == 'NUMBER'"/>
-                <field id="defaultValueBoolean" mapping="['defaultValue']" enabled="valueType.id == 'BOOLEAN'"/>
-                <field id="refBookValue" mapping="['refBookValue']"/>
                 <field id="description" mapping="['description']"/>
+                <field id="group.id" mapping="['groupId']"/>
             </in>
         </operation>
 
