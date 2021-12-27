@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
-import ru.i_novus.config.api.model.ApplicationConfigResponse;
-import ru.i_novus.config.api.model.ConfigForm;
-import ru.i_novus.config.api.model.ConfigGroupResponse;
-import ru.i_novus.config.api.model.ConfigValue;
+import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.CommonSystemConfigRestService;
@@ -55,7 +52,7 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
                 group.setId((int) data[0]);
                 group.setName((String) data[1]);
             } else {
-                group.setId(0);
+                group = new EmptyGroup();
             }
             group.setConfigs(new ArrayList<>());
 
@@ -98,6 +95,16 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
 
         configValueService.saveValue(commonSystemCode, code, value);
         audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.COMMON_SYSTEM_CONFIG_UPDATE);
+    }
+
+    @Override
+    @Transactional
+    public void deleteConfigValue(String code) {
+        ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+        String oldValue = configValueService.getValue(commonSystemCode, code);
+        configValueService.deleteValue(commonSystemCode, code);
+
+        audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.COMMON_SYSTEM_CONFIG_DELETE);
     }
 
     private void audit(ConfigForm configForm, EventTypeEnum eventType) {

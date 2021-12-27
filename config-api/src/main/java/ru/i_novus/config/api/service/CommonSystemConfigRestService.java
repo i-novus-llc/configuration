@@ -47,4 +47,12 @@ public interface CommonSystemConfigRestService {
     void saveConfigValue(@PathParam("code") @ApiParam(value = "Код настройки") String code,
                          @ApiParam(name = "Значение настройки", required = true) ConfigValue configValue);
 
+    @DELETE
+    @Path("/{code}")
+    @ApiOperation(value = "Удаление значения общесистемной настройки")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Удаление значения общесистемной настройки успешно выполнено"),
+            @ApiResponse(code = 404, message = "Общесистемная настройка не найдена")
+    })
+    void deleteConfigValue(@PathParam("code") @ApiParam(value = "Код настройки") String code);
 }

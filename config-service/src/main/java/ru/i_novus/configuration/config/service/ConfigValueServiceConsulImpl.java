@@ -5,6 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.service.ConfigValueService;
 
@@ -27,12 +28,21 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Override
     public String getValue(String appCode, String code) {
-        return restTemplate.getForObject(getFullUrl(appCode, code) + "?raw=1", String.class);
+        try {
+            return restTemplate.getForObject(getFullUrl(appCode, code) + "?raw=1", String.class);
+        } catch (HttpClientErrorException.NotFound e) {
+            return null;
+        }
     }
 
     @Override
     public Map<String, String> getKeyValueList(String appCode) {
-        List<Map> raw = restTemplate.getForObject(getFullUrl(appCode, "") + "?recurse=true", List.class);
+        List<Map> raw;
+        try {
+            raw = restTemplate.getForObject(getFullUrl(appCode, "") + "?recurse=true", List.class);
+        } catch (HttpClientErrorException.NotFound e) {
+            return Collections.EMPTY_MAP;
+        }
 
         Map<String, String> keyValues = new HashMap<>();
         if (raw != null && !raw.isEmpty()) {
