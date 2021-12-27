@@ -10,5 +10,14 @@
                 <field id="value"/>
             </in>
         </operation>
+
+        <operation id="deleteConfigValue">
+            <invocation>
+                <rest method="DELETE">${config.service.url}/common_system_configs/{code}</rest>
+            </invocation>
+            <in>
+                <field id="code"/>
+            </in>
+        </operation>
     </operations>
 </object>

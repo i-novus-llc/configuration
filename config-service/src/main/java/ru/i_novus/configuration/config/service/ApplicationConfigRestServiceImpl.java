@@ -56,11 +56,7 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
             application.setGroups(new ArrayList<>());
             result.add(application);
 
-            Map<String, String> appConfigValues = Collections.EMPTY_MAP;
-            try {
-                appConfigValues = configValueService.getKeyValueList(application.getCode());
-            } catch (Exception ignored) {
-            }
+            Map<String, String> appConfigValues = configValueService.getKeyValueList(application.getCode());
 
             do {
                 data = groupedConfigs.get(i);
@@ -69,7 +65,7 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
                     group.setId((int) data[2]);
                     group.setName((String) data[3]);
                 } else {
-                    group.setId(0);
+                    group = new EmptyGroup();
                 }
                 group.setConfigs(new ArrayList<>());
 
@@ -112,8 +108,8 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
     public void saveConfigValue(String code, ConfigValue configValue) {
         ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         String value = configValue.getValue();
-        configValueService.saveValue(entity.getApplicationCode(), code, value);
 
+        configValueService.saveValue(entity.getApplicationCode(), code, value);
         audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.APPLICATION_CONFIG_UPDATE);
     }
 

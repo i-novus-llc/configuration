@@ -49,6 +49,14 @@
                                 <input-text id="value"/>
                             </edit>
                         </column>
+                        <column text-field-id="option">
+                            <toolbar>
+                                <button id="delete" label="Стереть значение" visible="{isConfig}"
+                                        icon="fa fa-eraser" type="icon">
+                                    <invoke operation-id="deleteConfigValue"/>
+                                </button>
+                            </toolbar>
+                        </column>
                     </columns>
                 </table>
             </tab>

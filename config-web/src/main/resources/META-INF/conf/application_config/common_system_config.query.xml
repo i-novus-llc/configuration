@@ -17,6 +17,10 @@
             </filters>
         </field>
 
+        <field id="code" domain="string">
+            <select/>
+        </field>
+
         <field id="name" domain="string">
             <select/>
         </field>
