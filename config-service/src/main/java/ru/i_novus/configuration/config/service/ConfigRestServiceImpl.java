@@ -17,7 +17,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.*;
+import ru.i_novus.config.api.model.ApplicationResponse;
+import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.config.api.model.ConfigResponse;
+import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ApplicationRestService;
@@ -168,7 +171,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             throw new UserException(messageAccessor.getMessage("config.code.not.unique"));
 
         if (configForm.getGroupId() != null)
-            groupRepository.findById(configForm.getGroupId()).orElseThrow(NotFoundException::new);
+            groupRepository.findById(configForm.getGroupId())
+                    .orElseThrow(() -> new UserException(messageAccessor.getMessage(
+                            "config.group.not.found.by.id", new Object[]{configForm.getGroupId()})));
 
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
 
@@ -180,7 +185,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Transactional
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
         if (configForm.getGroupId() != null)
-            groupRepository.findById(configForm.getGroupId()).orElseThrow(NotFoundException::new);
+            groupRepository.findById(configForm.getGroupId())
+                    .orElseThrow(() -> new UserException(messageAccessor.getMessage(
+                            "config.group.not.found.by.id", new Object[]{configForm.getGroupId()})));
 
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(
                 Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new),

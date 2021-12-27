@@ -18,7 +18,7 @@ public class ConfigMapper {
         configEntity.setValueType(ValueTypeEnum.valueOf(configForm.getValueType()));
         configEntity.setDefaultValue(configForm.getDefaultValue());
         configEntity.setApplicationCode(configForm.getApplicationCode());
-        configEntity.setGroupId(configEntity.getGroupId());
+        configEntity.setGroupId(configForm.getGroupId());
         return configEntity;
     }
 
