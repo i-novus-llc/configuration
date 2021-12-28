@@ -7,19 +7,18 @@ import ru.i_novus.configuration.config.entity.ConfigEntity;
 public class ConfigMapper {
 
     public static ConfigEntity toConfigEntity(ConfigForm configForm) {
-        ConfigEntity configEntity = new ConfigEntity();
-        configEntity.setCode(configForm.getCode());
-        return toConfigEntity(configEntity, configForm);
+        return toConfigEntity(new ConfigEntity(), configForm);
     }
 
-    public static ConfigEntity toConfigEntity(ConfigEntity configEntity, ConfigForm configForm) {
-        configEntity.setName(configForm.getName());
-        configEntity.setDescription(configForm.getDescription());
-        configEntity.setValueType(ValueTypeEnum.valueOf(configForm.getValueType()));
-        configEntity.setDefaultValue(configForm.getDefaultValue());
-        configEntity.setApplicationCode(configForm.getApplicationCode());
-        configEntity.setGroupId(configForm.getGroupId());
-        return configEntity;
+    public static ConfigEntity toConfigEntity(ConfigEntity entity, ConfigForm configForm) {
+        entity.setCode(configForm.getCode());
+        entity.setName(configForm.getName());
+        entity.setDescription(configForm.getDescription());
+        entity.setValueType(ValueTypeEnum.valueOf(configForm.getValueType()));
+        entity.setDefaultValue(configForm.getDefaultValue());
+        entity.setApplicationCode(configForm.getApplicationCode());
+        entity.setGroupId(configForm.getGroupId());
+        return entity;
     }
 
     public static ConfigResponse toConfigResponse(ConfigEntity configEntity, ApplicationResponse application, GroupForm group) {

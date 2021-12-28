@@ -4,7 +4,7 @@
 
     <groupId>ru.i-novus.config</groupId>
     <artifactId>config</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -15,7 +15,7 @@
 
     <properties>
         <config.server.enable>false</config.server.enable>
-        <n2o.version>7.20.2</n2o.version>
+        <n2o.version>7.20.3</n2o.version>
     </properties>
 
     <modules>

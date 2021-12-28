@@ -31,7 +31,7 @@
 
         <field id="children" domain="object[]">
             <select mapping="[groups]"
-                    normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeApplication(#this)"/>
+                    normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeApplicationConfig(#this, #data['id'])"/>
         </field>
 
     </fields>

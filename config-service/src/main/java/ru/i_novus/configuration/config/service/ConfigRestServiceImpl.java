@@ -181,14 +181,15 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Override
     @Transactional
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
+        ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+
         if (configForm.getGroupId() != null)
             groupRepository.findById(configForm.getGroupId())
                     .orElseThrow(() -> new UserException(messageAccessor.getMessage(
                             "config.group.not.found.by.id", new Object[]{configForm.getGroupId()})));
 
-        ConfigEntity configEntity = ConfigMapper.toConfigEntity(
-                Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new),
-                configForm);
+        configEntity = ConfigMapper.toConfigEntity(configEntity, configForm);
+        configRepository.save(configEntity);
 
         if (configEntity.getApplicationCode() != null &&
                 !configEntity.getApplicationCode().equals(configForm.getApplicationCode())) {
@@ -201,7 +202,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             }
         }
 
-        configRepository.save(configEntity);
         audit(configEntity, EventTypeEnum.CONFIG_UPDATE);
     }
 

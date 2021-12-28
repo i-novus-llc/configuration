@@ -18,11 +18,12 @@
 
         <operation id="update">
             <invocation>
-                <rest method="PUT">${config.service.url}/{code}</rest>
+                <rest method="PUT">${config.service.url}/{oldCode}</rest>
             </invocation>
             <in>
                 <field id="applicationName.id" mapping="['applicationCode']"/>
                 <field id="code" mapping="['code']"/>
+                <field id="oldCode" mapping="['oldCode']"/>
                 <field id="name" mapping="['name']"/>
                 <field id="valueType.id" mapping="['valueType']"/>
                 <field id="description" mapping="['description']"/>

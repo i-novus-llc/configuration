@@ -63,7 +63,7 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Override
     public void saveValue(String appCode, String code, String value) {
-        restTemplate.put(getFullUrl(appCode, code), value);
+        restTemplate.put(getFullUrl(appCode, code), httpEntity(value));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
         String fullUrl = url.substring(0, url.indexOf("kv")) + "txn";
 
-        restTemplate.put(fullUrl, new HttpEntity<>(list, headers()));
+        restTemplate.put(fullUrl, httpEntity(list));
     }
 
     @Override
@@ -107,9 +107,9 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
         list.add(map);
     }
 
-    private HttpHeaders headers() {
+    private HttpEntity httpEntity(Object value) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return headers;
+        return new HttpEntity<>(value, headers);
     }
 }
