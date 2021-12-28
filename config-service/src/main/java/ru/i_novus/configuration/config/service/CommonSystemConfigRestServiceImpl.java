@@ -42,7 +42,6 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
         Map<String, String> configValues = configValueService.getKeyValueList(commonSystemCode);
         List<Object[]> groupedConfigs = configRepository.findGroupedCommonSystemConfigs();
 
-        // TODO list -> page
         List<ConfigGroupResponse> result = new ArrayList<>();
 
         for (int i = 0; i < groupedConfigs.size(); ) {

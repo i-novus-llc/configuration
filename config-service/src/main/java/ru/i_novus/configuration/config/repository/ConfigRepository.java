@@ -20,7 +20,7 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
                     "FROM configuration.config c " +
                     "LEFT JOIN configuration.config_group g ON c.group_id = g.id " +
                     "INNER JOIN rdm.application a ON c.application_code = a.code " +
-                    "GROUP BY a.code, g.id, c.code ORDER BY a.name, g.priority, c.name"
+                    "GROUP BY a.code, g.id, c.code ORDER BY a.name, g.priority"
     )
     List<Object[]> findGroupedApplicationConfigs();
 
@@ -29,7 +29,7 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, Q
                     "FROM configuration.config c " +
                     "LEFT JOIN configuration.config_group g ON c.group_id = g.id " +
                     "WHERE c.application_code IS NULL " +
-                    "GROUP BY g.id, c.code ORDER BY g.priority, c.name"
+                    "GROUP BY g.id, c.code ORDER BY g.priority"
     )
     List<Object[]> findGroupedCommonSystemConfigs();
 

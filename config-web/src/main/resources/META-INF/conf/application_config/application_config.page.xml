@@ -30,6 +30,7 @@
                             </toolbar>
                         </column>
                     </columns>
+                    <pagination show-count="false"/>
                 </table>
             </tab>
             <tab name="Общесистемные настройки">
@@ -58,6 +59,7 @@
                             </toolbar>
                         </column>
                     </columns>
+                    <pagination show-count="false"/>
                 </table>
             </tab>
         </tabs>

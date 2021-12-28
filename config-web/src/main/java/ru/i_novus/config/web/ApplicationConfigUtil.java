@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ApplicationConfigUtil {
 
-    public static <T extends List> T normalizeCommonSystem(T children) {
+    public static <T extends List> T normalizeCommonSystemConfig(T children) {
         if (children == null || children.isEmpty())
             return null;
         for (Object item : children) {
@@ -19,12 +19,11 @@ public class ApplicationConfigUtil {
         return children;
     }
 
-    public static <T extends List> T normalizeApplication(T children) {
+    public static <T extends List> T normalizeApplicationConfig(T children, String appCode) {
         if (children == null || children.isEmpty())
             return null;
         for (Object item : children) {
-            // TODO - группы с одинаковыми id, но в разных приложениях открываются и закрываются одновременно
-            ((DataSet) item).put("id", ((DataSet) item).get("id"));
+            ((DataSet) item).put("id", appCode + "__" + ((DataSet) item).get("id"));
             ((DataSet) item).put("name", ((DataSet) item).get("name"));
             ((DataSet) item).put("isConfig", false);
             ((DataSet) item).put("children", new DataList());
@@ -38,6 +37,7 @@ public class ApplicationConfigUtil {
                 configDataset.put("isConfig", true);
                 ((DataList) ((DataSet) item).get("children")).add(configDataset);
             }
+            ((DataSet) item).remove("configs");
         }
         return children;
     }

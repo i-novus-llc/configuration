@@ -31,7 +31,7 @@
 
         <field id="children" domain="object[]">
             <select mapping="[configs]"
-                    normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeCommonSystem(#this)"/>
+                    normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeCommonSystemConfig(#this)"/>
         </field>
 
     </fields>

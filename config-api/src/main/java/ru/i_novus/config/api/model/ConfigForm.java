@@ -1,5 +1,6 @@
 package ru.i_novus.config.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @ApiModel("Настройка")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigForm {
 
     @NotBlank(message = "Отсутствует код настройки")

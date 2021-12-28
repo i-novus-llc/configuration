@@ -30,6 +30,7 @@
                         <enabling on="isCreateForm">isCreateForm</enabling>
                     </dependencies>
                 </input-text>
+                <hidden id="oldCode"/>
                 <input-text id="name" label="Наименование настройки" required="true"/>
                 <input-select id="group" label="Группа настроек" query-id="config_group">
                     <pre-filters>
