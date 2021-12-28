@@ -87,7 +87,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                             .and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
                             .and(qGroupEntity.id.in(groupIds))
                             .and(qConfigEntity.code.eq(qGroupCodeEntity.code)
-                                    .or(qConfigEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code + "."))))
+                                    .or(qConfigEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code.append(".")))))
                     .exists();
             query.where(exists);
         }
