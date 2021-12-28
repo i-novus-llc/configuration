@@ -86,7 +86,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                     .where(new BooleanBuilder()
                             .and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
                             .and(qGroupEntity.id.in(groupIds))
-                            .and(qConfigEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code)))
+                            .and(qConfigEntity.code.eq(qGroupCodeEntity.code)
+                                    .or(qConfigEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code.append(".")))))
                     .exists();
             query.where(exists);
         }
@@ -143,13 +144,10 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         return new PageImpl<>(query.fetch(), criteria, total)
                 .map(e -> {
-                            Optional<GroupEntity> groupEntity = e.getGroupId() != null ?
-                                    groupRepository.findById(e.getGroupId()) : Optional.empty();
+                            GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
+                            GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
                             ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
-                            return ConfigMapper.toConfigResponse(
-                                    e, application,
-                                    groupEntity.map(GroupMapper::toGroupForm).orElse(null)
-                            );
+                            return ConfigMapper.toConfigResponse(e, application, groupForm);
                         }
                 );
     }
@@ -158,9 +156,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public ConfigResponse getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
-        Optional<GroupEntity> groupEntity = configEntity.getGroupId() != null ?
-                groupRepository.findById(configEntity.getGroupId()) : Optional.empty();
-        GroupForm groupForm = groupEntity.map(GroupMapper::toGroupForm).orElse(null);
+        GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
+        GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
         return ConfigMapper.toConfigResponse(configEntity, application, groupForm);
     }
 

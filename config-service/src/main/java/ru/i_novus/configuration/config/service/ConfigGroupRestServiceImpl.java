@@ -8,11 +8,12 @@ import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.GroupCriteria;
-import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.GroupForm;
+import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.api.util.AuditService;
@@ -53,7 +54,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
     @Override
     public List<GroupForm> getGroupByConfigCode(String code) {
-        return groupRepository.findGroupsByConfigCode(code).stream()
+        return groupRepository.findGroupsByConfigCodeStarts(code, Pageable.unpaged()).stream()
                 .map(GroupMapper::toGroupForm)
                 .collect(Collectors.toList());
     }
