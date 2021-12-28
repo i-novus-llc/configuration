@@ -14,13 +14,6 @@ import java.util.List;
 @Repository
 public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, QuerydslPredicateExecutor<GroupEntity> {
 
-    @Query(value = "SELECT g FROM GroupEntity g INNER JOIN GroupCodeEntity gc " +
-            "ON g.id = gc.group.id " +
-            "WHERE strpos(:code, gc.code) = 1 OR " +
-            "strpos(gc.code, :code) = 1 " +
-            "GROUP BY g.id ORDER BY length(MAX(gc.code)) DESC")
-    List<GroupEntity> findGroupsByConfigCode(@Param("code") String code);
-
     @Query("SELECT CASE WHEN (COUNT(g) > 0) THEN true ELSE false END " +
             "FROM GroupEntity g WHERE g.name = :name AND g.id != :groupId")
     Boolean existsByName(@Param("name") String name, @Param("groupId") Integer groupId);

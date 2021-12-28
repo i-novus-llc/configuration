@@ -15,10 +15,10 @@ public class TestApp {
     }
 
     @Bean
-    ConfigServerLoader configServerLoader(ConfigRepository repository) {
+    ConfigServerLoader configServerLoader(ConfigRepository repository, ConfigLoaderMapper mapper) {
         return new ConfigServerLoader(
                 repository,
-                new ConfigLoaderMapper(),
+                mapper,
                 c -> repository.findByApplicationCode("application".equals(c) ? null : c),
                 ConfigEntity::getCode
         );
