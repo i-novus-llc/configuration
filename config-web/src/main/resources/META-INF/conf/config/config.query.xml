@@ -72,10 +72,6 @@
             <sorting mapping="['codeDirection']">sort=code,{codeDirection}</sorting>
         </field>
 
-        <field id="oldCode" domain="string">
-            <select mapping="[code]"/>
-        </field>
-
         <field id="name" domain="string">
             <select/>
             <filters>
