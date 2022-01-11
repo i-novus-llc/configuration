@@ -27,7 +27,7 @@
                 </input-select>
                 <input-text id="code" label="Код настройки" required="true">
                     <dependencies>
-                        <enabling on="isCreateForm">isCreateForm</enabling>
+                        <enabling on="id">return typeof(id) == 'undefined' || id == null;</enabling>
                     </dependencies>
                 </input-text>
                 <hidden id="oldCode"/>
