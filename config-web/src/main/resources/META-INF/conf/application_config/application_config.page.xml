@@ -16,16 +16,26 @@
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
-                            <edit action-id="updateConfig" visible="{isConfig}">
-                                <input-text id="value"/>
-                            </edit>
+                            <switch value-field-id="valueType">
+                                <case value="BOOLEAN">
+                                    <checkbox id="value" enabled="true">
+                                        <invoke operation-id="updateConfig" message-on-success="false">
+                                        </invoke>
+                                    </checkbox>
+                                </case>
+                                <default>
+                                    <edit action-id="updateConfig" visible="{isConfig}">
+                                        <input-text id="value"/>
+                                    </edit>
+                                </default>
+                            </switch>
                         </column>
                         <column text-field-id="commonSystemValue" label="Общесистемное значение"/>
                         <column text-field-id="option">
                             <toolbar>
                                 <button id="delete" label="Стереть значение" visible="{isConfig}"
                                         icon="fa fa-eraser" type="icon">
-                                    <invoke operation-id="deleteConfigValue"/>
+                                    <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
                             </toolbar>
                         </column>
@@ -46,15 +56,25 @@
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
-                            <edit action-id="updateConfig" visible="{isConfig}">
-                                <input-text id="value"/>
-                            </edit>
+                            <switch value-field-id="valueType">
+                                <case value="BOOLEAN">
+                                    <checkbox id="value" enabled="true">
+                                        <invoke operation-id="updateConfig" message-on-success="false">
+                                        </invoke>
+                                    </checkbox>
+                                </case>
+                                <default>
+                                    <edit action-id="updateConfig" visible="{isConfig}">
+                                        <input-text id="value"/>
+                                    </edit>
+                                </default>
+                            </switch>
                         </column>
                         <column text-field-id="option">
                             <toolbar>
                                 <button id="delete" label="Стереть значение" visible="{isConfig}"
                                         icon="fa fa-eraser" type="icon">
-                                    <invoke operation-id="deleteConfigValue"/>
+                                    <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
                             </toolbar>
                         </column>

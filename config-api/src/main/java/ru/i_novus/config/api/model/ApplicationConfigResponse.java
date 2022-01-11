@@ -18,4 +18,8 @@ public class ApplicationConfigResponse {
 
     @ApiModelProperty("Общесистемное значение")
     private String commonSystemValue;
+
+    @ApiModelProperty("Тип значения настройки")
+    private String valueType;
+
 }
