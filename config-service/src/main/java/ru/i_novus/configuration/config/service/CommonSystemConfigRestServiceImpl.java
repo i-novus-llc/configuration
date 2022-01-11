@@ -60,6 +60,7 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
                 data = groupedConfigs.get(i);
                 config.setCode((String) data[2]);
                 config.setName((String) data[3]);
+                config.setValueType((String) data[4]);
                 config.setValue(configValues.get(config.getCode()));
                 group.getConfigs().add(config);
                 i++;
