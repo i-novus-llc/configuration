@@ -33,6 +33,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ApplicationResponse getApplication(String code) {
         ApplicationEntity applicationEntity = Optional.ofNullable(applicationRepository.findByCode(code))
                 .orElseThrow(NotFoundException::new);
