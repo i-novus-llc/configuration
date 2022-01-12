@@ -4,7 +4,8 @@ import org.springframework.data.jpa.domain.Specification;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity_;
-import ru.i_novus.configuration.config.entity.GroupCodeEntity;
+import ru.i_novus.configuration.config.entity.GroupEntity;
+import ru.i_novus.configuration.config.entity.GroupEntity_;
 
 import javax.persistence.criteria.*;
 import java.util.List;
@@ -38,16 +39,15 @@ public class ConfigSpecification implements Specification<ConfigEntity> {
 
         List<Integer> groupIds = criteria.getGroupIds();
         if (groupIds != null && !groupIds.isEmpty()) {
-            Subquery<GroupCodeEntity> groupCodeSubQuery = query.subquery(GroupCodeEntity.class);
-            Root<GroupCodeEntity> groupCodeRoot = groupCodeSubQuery.from(GroupCodeEntity.class);
+            Subquery<GroupEntity> groupSubQuery = query.subquery(GroupEntity.class);
+            Root<GroupEntity> groupRoot = groupSubQuery.from(GroupEntity.class);
 
-//            groupCodeSubQuery.select(groupCodeRoot)
-//                    .where(builder.equal(groupCodeRoot.get(GroupCodeEntity_.group).get(ru.i_novus.configuration.config.entity.GroupEntity_.id), root.get(GroupEntity_.id)),
-//                            builder.like(builder.lower(groupCodeRoot.get(GroupCodeEntity_.code)), toLowerCaseString(criteria.getCode()))
-//                    );
+            groupSubQuery.select(groupRoot)
+                    .where(builder.equal(groupRoot.get(GroupEntity_.id), root.get(ConfigEntity_.groupId)),
+                            groupRoot.get(GroupEntity_.id).in(groupIds)
+                    );
 
-            p = builder.and(p, builder.exists(groupCodeSubQuery));
-
+            p = builder.and(p, builder.exists(groupSubQuery));
         }
 
         List<String> applicationCodes = criteria.getApplicationCodes();

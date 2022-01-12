@@ -34,7 +34,8 @@ public class ConfigGroupSpecification implements Specification<GroupEntity> {
 
             groupCodeSubQuery.select(groupCodeRoot)
                     .where(builder.equal(groupCodeRoot.get(GroupCodeEntity_.group).get(GroupEntity_.id), root.get(GroupEntity_.id)),
-                            builder.like(builder.lower(groupCodeRoot.get(GroupCodeEntity_.code)), toLowerCaseString(criteria.getCode())));
+                            builder.like(builder.lower(groupCodeRoot.get(GroupCodeEntity_.code)), toLowerCaseString(criteria.getCode()))
+                    );
 
             p = builder.and(p, builder.exists(groupCodeSubQuery));
         }
