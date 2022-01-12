@@ -13,7 +13,7 @@
                 <row>
                     <col size="4">
                         <input-select id="applications" label="Компонент системы" query-id="config_application"
-                                      placeholder="Все" type="multi" search-field-id="name"/>
+                                      placeholder="Все" type="multi" search="false"/>
                     </col>
                     <col size="4">
                         <checkbox id="isCommonSystemConfig" label="Общесистемная настройка"/>

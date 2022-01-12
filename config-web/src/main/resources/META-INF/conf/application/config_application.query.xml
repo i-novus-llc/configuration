@@ -22,16 +22,6 @@
 
         <field id="name" domain="string">
             <select/>
-            <filters>
-                <eq filter-id="name">name={name}</eq>
-            </filters>
-        </field>
-
-        <field id="systemCode" domain="string">
-            <select/>
-            <filters>
-                <eq filter-id="systemCode">systemCode={systemCode}</eq>
-            </filters>
         </field>
 
     </fields>
