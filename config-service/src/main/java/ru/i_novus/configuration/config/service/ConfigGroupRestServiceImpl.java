@@ -40,14 +40,15 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Autowired
     private MessageSourceAccessor messageAccessor;
 
-
     @Override
+    @Transactional(readOnly = true)
     public GroupForm getGroup(Integer groupId) {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
         return GroupMapper.toGroupForm(groupEntity);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GroupForm> getGroupByConfigCode(String code) {
         return groupRepository.findGroupsByConfigCodeStarts(code, Pageable.unpaged()).stream()
                 .map(GroupMapper::toGroupForm)
@@ -55,6 +56,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<GroupForm> getAllGroup(GroupCriteria criteria) {
         ConfigGroupSpecification specification = new ConfigGroupSpecification(criteria);
         return groupRepository.findAll(specification, criteria)
