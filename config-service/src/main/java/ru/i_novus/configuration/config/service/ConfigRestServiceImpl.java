@@ -28,10 +28,12 @@ import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.*;
+import ru.i_novus.configuration.config.mapper.ApplicationMapper;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
+import ru.i_novus.configuration.specification.ConfigSpecification;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -66,83 +68,11 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Value("${spring.cloud.consul.config.defaultContext}")
     private String defaultAppCode;
 
-
     @Override
+    @Transactional(readOnly = true)
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
-        QConfigEntity qConfigEntity = QConfigEntity.configEntity;
-        QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
-        QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
-        QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
-
-        JPAQuery<ConfigEntity> query = new JPAQuery(entityManager);
-
-        query.from(qConfigEntity)
-                .leftJoin(qApplicationEntity).on(qConfigEntity.applicationCode.eq(qApplicationEntity.code))
-                .leftJoin(qGroupEntity).on(qConfigEntity.groupId.eq(qGroupEntity.id));
-
-        List<Integer> groupIds = criteria.getGroupIds();
-        if (groupIds != null && !groupIds.isEmpty()) {
-            BooleanExpression exists = JPAExpressions.selectOne().from(qGroupCodeEntity).from(qGroupEntity)
-                    .where(new BooleanBuilder()
-                            .and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
-                            .and(qGroupEntity.id.in(groupIds))
-                            .and(qConfigEntity.code.eq(qGroupCodeEntity.code)
-                                    .or(qConfigEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code.append(".")))))
-                    .exists();
-            query.where(exists);
-        }
-
-        if (criteria.getCode() != null) {
-            query.where(qConfigEntity.code.containsIgnoreCase(criteria.getCode()));
-        }
-
-        if (criteria.getName() != null) {
-            query.where(qConfigEntity.name.containsIgnoreCase(criteria.getName()));
-        }
-
-        List<String> applicationCodes = criteria.getApplicationCodes();
-        if (applicationCodes != null && !applicationCodes.isEmpty()) {
-            query.where(qConfigEntity.applicationCode.in(criteria.getApplicationCodes()));
-        }
-
-        if (Boolean.TRUE.equals(criteria.getIsCommonSystemConfig())) {
-            query.where(qConfigEntity.applicationCode.isNull());
-        }
-
-        // orders
-        OrderSpecifier<?>[] sortOrder;
-        Optional<Sort.Order> order = criteria.getSort().stream().findFirst();
-        // TODO этот костыль убрать в будущем переходом с QueryDsl на спецификации
-        if (order.isPresent()) {
-            OrderSpecifier orderSpecifier = null;
-            switch (order.get().getProperty()) {
-                case "code":
-                    orderSpecifier = getOrderSpecifier(order.get(), "configEntity", "code");
-                    break;
-                case "group.name":
-                    orderSpecifier = getOrderSpecifier(order.get(), "groupEntity", "name");
-                    orderSpecifier = order.get().isAscending() ? orderSpecifier.nullsLast() : orderSpecifier.nullsFirst();
-                    break;
-                case "application.name":
-                    orderSpecifier = getOrderSpecifier(order.get(), "applicationEntity", "name");
-                    orderSpecifier = order.get().isAscending() ? orderSpecifier.nullsFirst() : orderSpecifier.nullsLast();
-                    break;
-            }
-            sortOrder = new OrderSpecifier[]{orderSpecifier};
-        } else {
-            sortOrder = new OrderSpecifier[]{
-                    qConfigEntity.applicationCode.asc().nullsFirst(),
-                    qConfigEntity.code.asc()
-            };
-        }
-
-        query.orderBy(sortOrder)
-                .limit(criteria.getPageSize())
-                .offset(criteria.getOffset());
-
-        long total = query.fetchCount();
-
-        return new PageImpl<>(query.fetch(), criteria, total)
+        ConfigSpecification specification = new ConfigSpecification(criteria);
+        return configRepository.findAll(specification, criteria)
                 .map(e -> {
                             GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
                             GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
@@ -151,6 +81,91 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                         }
                 );
     }
+//
+//
+//
+//        QConfigEntity qConfigEntity = QConfigEntity.configEntity;
+//        QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
+//        QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
+//        QApplicationEntity qApplicationEntity = QApplicationEntity.applicationEntity;
+//
+//        JPAQuery<ConfigEntity> query = new JPAQuery(entityManager);
+//
+//        query.from(qConfigEntity)
+//                .leftJoin(qApplicationEntity).on(qConfigEntity.applicationCode.eq(qApplicationEntity.code))
+//                .leftJoin(qGroupEntity).on(qConfigEntity.groupId.eq(qGroupEntity.id));
+//
+//        List<Integer> groupIds = criteria.getGroupIds();
+//        if (groupIds != null && !groupIds.isEmpty()) {
+//            BooleanExpression exists = JPAExpressions.selectOne().from(qGroupCodeEntity).from(qGroupEntity)
+//                    .where(new BooleanBuilder()
+//                            .and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
+//                            .and(qGroupEntity.id.in(groupIds))
+//                            .and(qConfigEntity.code.eq(qGroupCodeEntity.code)
+//                                    .or(qConfigEntity.code.startsWithIgnoreCase(qGroupCodeEntity.code.append(".")))))
+//                    .exists();
+//            query.where(exists);
+//        }
+//
+//        if (criteria.getCode() != null) {
+//            query.where(qConfigEntity.code.containsIgnoreCase(criteria.getCode()));
+//        }
+//
+//        if (criteria.getName() != null) {
+//            query.where(qConfigEntity.name.containsIgnoreCase(criteria.getName()));
+//        }
+//
+//        List<String> applicationCodes = criteria.getApplicationCodes();
+//        if (applicationCodes != null && !applicationCodes.isEmpty()) {
+//            query.where(qConfigEntity.applicationCode.in(criteria.getApplicationCodes()));
+//        }
+//
+//        if (Boolean.TRUE.equals(criteria.getIsCommonSystemConfig())) {
+//            query.where(qConfigEntity.applicationCode.isNull());
+//        }
+//
+//        // orders
+//        OrderSpecifier<?>[] sortOrder;
+//        Optional<Sort.Order> order = criteria.getSort().stream().findFirst();
+//        // TODO этот костыль убрать в будущем переходом с QueryDsl на спецификации
+//        if (order.isPresent()) {
+//            OrderSpecifier orderSpecifier = null;
+//            switch (order.get().getProperty()) {
+//                case "code":
+//                    orderSpecifier = getOrderSpecifier(order.get(), "configEntity", "code");
+//                    break;
+//                case "group.name":
+//                    orderSpecifier = getOrderSpecifier(order.get(), "groupEntity", "name");
+//                    orderSpecifier = order.get().isAscending() ? orderSpecifier.nullsLast() : orderSpecifier.nullsFirst();
+//                    break;
+//                case "application.name":
+//                    orderSpecifier = getOrderSpecifier(order.get(), "applicationEntity", "name");
+//                    orderSpecifier = order.get().isAscending() ? orderSpecifier.nullsFirst() : orderSpecifier.nullsLast();
+//                    break;
+//            }
+//            sortOrder = new OrderSpecifier[]{orderSpecifier};
+//        } else {
+//            sortOrder = new OrderSpecifier[]{
+//                    qConfigEntity.applicationCode.asc().nullsFirst(),
+//                    qConfigEntity.code.asc()
+//            };
+//        }
+//
+//        query.orderBy(sortOrder)
+//                .limit(criteria.getPageSize())
+//                .offset(criteria.getOffset());
+//
+//        long total = query.fetchCount();
+//
+//        return new PageImpl<>(query.fetch(), criteria, total)
+//                .map(e -> {
+//                            GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
+//                            GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
+//                            ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
+//                            return ConfigMapper.toConfigResponse(e, application, groupForm);
+//                        }
+//                );
+//    }
 
     @Override
     public ConfigResponse getConfig(String code) {
@@ -227,13 +242,13 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         }
         return applicationResponse;
     }
-
-    private OrderSpecifier getOrderSpecifier(Sort.Order order, String entityName, String propertyName) {
-        PathBuilder<Object> orderByExpression = new PathBuilder<Object>(Object.class, entityName);
-        return new OrderSpecifier(
-                Order.valueOf(order.getDirection().name()),
-                orderByExpression.get(propertyName));
-    }
+//
+//    private OrderSpecifier getOrderSpecifier(Sort.Order order, String entityName, String propertyName) {
+//        PathBuilder<Object> orderByExpression = new PathBuilder<Object>(Object.class, entityName);
+//        return new OrderSpecifier(
+//                Order.valueOf(order.getDirection().name()),
+//                orderByExpression.get(propertyName));
+//    }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
         auditService.audit(eventType.getTitle(), configEntity, configEntity.getCode(), ObjectTypeEnum.CONFIG.getTitle());

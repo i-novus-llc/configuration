@@ -3,6 +3,7 @@ package ru.i_novus.configuration.config.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ApplicationCriteria;
 import ru.i_novus.config.api.model.ApplicationResponse;
 import ru.i_novus.config.api.service.ApplicationRestService;
@@ -24,6 +25,7 @@ public class ApplicationRestServiceImpl implements ApplicationRestService {
     private ApplicationRepository applicationRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ApplicationResponse> getAllApplications(ApplicationCriteria criteria) {
         ApplicationSpecification specification = new ApplicationSpecification(criteria);
         return applicationRepository.findAll(specification, criteria)
