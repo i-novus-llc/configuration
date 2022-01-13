@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.springframework.data.domain.Sort;
 
 import javax.ws.rs.QueryParam;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -37,6 +36,8 @@ public class ConfigCriteria extends AbstractCriteria {
 
     @Override
     protected List<Sort.Order> getDefaultOrders() {
-        return Collections.emptyList();
+        return List.of(
+                Sort.Order.asc("applicationCode"),
+                Sort.Order.asc("code"));
     }
 }

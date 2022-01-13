@@ -52,7 +52,7 @@ public class ConfigSpecification implements Specification<ConfigEntity> {
 
         List<String> applicationCodes = criteria.getApplicationCodes();
         if (applicationCodes != null && !applicationCodes.isEmpty()) {
-            p = builder.and(p, root.get(ConfigEntity_.code).in(criteria.getApplicationCodes()));
+            p = builder.and(p, root.get(ConfigEntity_.applicationCode).in(criteria.getApplicationCodes()));
         }
 
         return p;
