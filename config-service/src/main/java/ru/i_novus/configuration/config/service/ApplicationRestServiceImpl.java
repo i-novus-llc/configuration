@@ -9,7 +9,7 @@ import ru.i_novus.config.api.service.ApplicationRestService;
 import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.configuration.config.mapper.ApplicationMapper;
 import ru.i_novus.configuration.config.repository.ApplicationRepository;
-import ru.i_novus.configuration.specification.ApplicationSpecification;
+import ru.i_novus.configuration.config.specification.ApplicationSpecification;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Optional;
