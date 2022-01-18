@@ -1,10 +1,10 @@
-package ru.i_novus.configuration.util;
+package ru.i_novus.configuration.config.specification;
 
 import static org.springframework.util.StringUtils.hasText;
 
 public class SpecificationUtils {
 
-    public static String toLowerCaseString(String str) {
+    public static String toLowerCaseLikeString(String str) {
         if (!hasText(str))
             return null;
 

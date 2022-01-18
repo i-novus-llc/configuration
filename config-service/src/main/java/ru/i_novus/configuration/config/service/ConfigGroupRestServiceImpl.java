@@ -17,7 +17,7 @@ import ru.i_novus.configuration.config.entity.GroupEntity;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.GroupCodeRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
-import ru.i_novus.configuration.specification.ConfigGroupSpecification;
+import ru.i_novus.configuration.config.specification.ConfigGroupSpecification;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
