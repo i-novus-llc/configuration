@@ -26,7 +26,8 @@ import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
-import ru.i_novus.configuration.specification.ConfigSpecification;
+import ru.i_novus.configuration.config.specification.ConfigSpecification;
+
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
