@@ -23,6 +23,10 @@ public class GroupCriteria extends AbstractCriteria {
     @ApiParam("Код группы")
     private String code;
 
+    @QueryParam("configCode")
+    @ApiParam("Код настройки")
+    private String configCode;
+
     @Override
     protected List<Sort.Order> getDefaultOrders() {
         return Arrays.asList(new Sort.Order(Sort.Direction.ASC, "id"));

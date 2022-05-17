@@ -1,5 +1,7 @@
 package ru.i_novus.configuration.config.specification;
 
+import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
+import org.hibernate.query.criteria.internal.expression.LiteralExpression;
 import org.springframework.data.jpa.domain.Specification;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.configuration.config.entity.GroupCodeEntity;
@@ -35,6 +37,18 @@ public class ConfigGroupSpecification implements Specification<GroupEntity> {
             groupCodeSubQuery.select(groupCodeRoot)
                     .where(builder.equal(groupCodeRoot.get(GroupCodeEntity_.group).get(GroupEntity_.id), root.get(GroupEntity_.id)),
                             builder.like(builder.lower(groupCodeRoot.get(GroupCodeEntity_.code)), toLowerCaseLikeString(criteria.getCode())));
+
+            p = builder.and(p, builder.exists(groupCodeSubQuery));
+        }
+
+        if (hasText(criteria.getConfigCode())) {
+            Subquery<GroupCodeEntity> groupCodeSubQuery = query.subquery(GroupCodeEntity.class);
+            Root<GroupCodeEntity> groupCodeRoot = groupCodeSubQuery.from(GroupCodeEntity.class);
+
+            groupCodeSubQuery.select(groupCodeRoot)
+                    .where(builder.equal(groupCodeRoot.get(GroupCodeEntity_.group).get(GroupEntity_.id), root.get(GroupEntity_.id)),
+                            builder.like(new LiteralExpression<>((CriteriaBuilderImpl) builder, criteria.getConfigCode()),
+                                    builder.concat(groupCodeRoot.get(GroupCodeEntity_.code).as(String.class), ".%")));
 
             p = builder.and(p, builder.exists(groupCodeSubQuery));
         }
