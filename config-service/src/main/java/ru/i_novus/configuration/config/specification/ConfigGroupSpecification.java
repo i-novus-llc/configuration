@@ -42,15 +42,10 @@ public class ConfigGroupSpecification implements Specification<GroupEntity> {
         }
 
         if (hasText(criteria.getConfigCode())) {
-            Subquery<GroupCodeEntity> groupCodeSubQuery = query.subquery(GroupCodeEntity.class);
-            Root<GroupCodeEntity> groupCodeRoot = groupCodeSubQuery.from(GroupCodeEntity.class);
+            Join<GroupEntity, GroupCodeEntity> join = root.join("codes", JoinType.LEFT);
 
-            groupCodeSubQuery.select(groupCodeRoot)
-                    .where(builder.equal(groupCodeRoot.get(GroupCodeEntity_.group).get(GroupEntity_.id), root.get(GroupEntity_.id)),
-                            builder.like(new LiteralExpression<>((CriteriaBuilderImpl) builder, criteria.getConfigCode()),
-                                    builder.concat(groupCodeRoot.get(GroupCodeEntity_.code).as(String.class), ".%")));
-
-            p = builder.and(p, builder.exists(groupCodeSubQuery));
+            p = builder.and(p, builder.like(new LiteralExpression<>((CriteriaBuilderImpl) builder, criteria.getConfigCode()),
+                    builder.concat(join.get(GroupCodeEntity_.code).as(String.class), ".%")));
         }
 
         return p;
