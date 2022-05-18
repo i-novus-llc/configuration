@@ -145,7 +145,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         return new PageImpl<>(query.fetch(), criteria, total)
                 .map(e -> {
                             GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
-                            GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
+                            GroupForm groupForm = (e.getGroupId() == null) ? null : GroupMapper.toGroupForm(groupEntity);
                             ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
                             return ConfigMapper.toConfigResponse(e, application, groupForm);
                         }
@@ -157,7 +157,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
-        GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
+        GroupForm groupForm = (configEntity.getGroupId() == null) ? null : GroupMapper.toGroupForm(groupEntity);
         return ConfigMapper.toConfigResponse(configEntity, application, groupForm);
     }
 
