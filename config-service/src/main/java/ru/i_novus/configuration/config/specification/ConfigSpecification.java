@@ -13,7 +13,6 @@ import java.util.List;
 import static org.springframework.util.StringUtils.hasText;
 import static ru.i_novus.configuration.config.specification.SpecificationUtils.toLowerCaseLikeString;
 
-
 public class ConfigSpecification implements Specification<ConfigEntity> {
 
     private final ConfigCriteria criteria;
@@ -45,8 +44,7 @@ public class ConfigSpecification implements Specification<ConfigEntity> {
 
             groupSubQuery.select(groupRoot)
                     .where(builder.equal(groupRoot.get(GroupEntity_.id), root.get(ConfigEntity_.groupId)),
-                            groupRoot.get(GroupEntity_.id).in(groupIds)
-                    );
+                            groupRoot.get(GroupEntity_.id).in(groupIds));
 
             p = builder.and(p, builder.exists(groupSubQuery));
         }
