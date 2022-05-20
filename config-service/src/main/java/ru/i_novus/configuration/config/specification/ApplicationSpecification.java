@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.specification;
+package ru.i_novus.configuration.config.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 import ru.i_novus.config.api.criteria.ApplicationCriteria;

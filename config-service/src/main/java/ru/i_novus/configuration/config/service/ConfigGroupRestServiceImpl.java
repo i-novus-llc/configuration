@@ -4,7 +4,6 @@ import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.GroupCriteria;
@@ -17,13 +16,11 @@ import ru.i_novus.configuration.config.entity.GroupEntity;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.GroupCodeRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
-import ru.i_novus.configuration.specification.ConfigGroupSpecification;
+import ru.i_novus.configuration.config.specification.ConfigGroupSpecification;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Реализация REST сервиса для работы с группами настроек
@@ -45,14 +42,6 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     public GroupForm getGroup(Integer groupId) {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
         return GroupMapper.toGroupForm(groupEntity);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<GroupForm> getGroupByConfigCode(String code) {
-        return groupRepository.findGroupsByConfigCodeStarts(code, Pageable.unpaged()).stream()
-                .map(GroupMapper::toGroupForm)
-                .collect(Collectors.toList());
     }
 
     @Override

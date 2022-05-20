@@ -1,4 +1,4 @@
-package ru.i_novus.configuration.specification;
+package ru.i_novus.configuration.config.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
@@ -11,7 +11,8 @@ import javax.persistence.criteria.*;
 import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
-import static ru.i_novus.configuration.util.SpecificationUtils.toLowerCaseString;
+import static ru.i_novus.configuration.config.specification.SpecificationUtils.toLowerCaseLikeString;
+
 
 public class ConfigSpecification implements Specification<ConfigEntity> {
 
@@ -26,11 +27,11 @@ public class ConfigSpecification implements Specification<ConfigEntity> {
         Predicate p = builder.and();
 
         if (hasText(criteria.getCode())) {
-            p = builder.and(p, builder.like(builder.lower(root.get(ConfigEntity_.code)), toLowerCaseString(criteria.getCode())));
+            p = builder.and(p, builder.like(builder.lower(root.get(ConfigEntity_.code)), toLowerCaseLikeString(criteria.getCode())));
         }
 
         if (hasText(criteria.getName())) {
-            p = builder.and(p, builder.like(builder.lower(root.get(ConfigEntity_.name)), toLowerCaseString(criteria.getName())));
+            p = builder.and(p, builder.like(builder.lower(root.get(ConfigEntity_.name)), toLowerCaseLikeString(criteria.getName())));
         }
 
         if (Boolean.TRUE.equals(criteria.getIsCommonSystemConfig())) {

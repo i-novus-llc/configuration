@@ -1,5 +1,7 @@
-package ru.i_novus.configuration.specification;
+package ru.i_novus.configuration.config.specification;
 
+import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
+import org.hibernate.query.criteria.internal.expression.LiteralExpression;
 import org.springframework.data.jpa.domain.Specification;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.configuration.config.entity.GroupCodeEntity;
@@ -10,7 +12,7 @@ import ru.i_novus.configuration.config.entity.GroupEntity_;
 import javax.persistence.criteria.*;
 
 import static org.springframework.util.StringUtils.hasText;
-import static ru.i_novus.configuration.util.SpecificationUtils.toLowerCaseString;
+import static ru.i_novus.configuration.config.specification.SpecificationUtils.toLowerCaseLikeString;
 
 public class ConfigGroupSpecification implements Specification<GroupEntity> {
 
@@ -25,7 +27,7 @@ public class ConfigGroupSpecification implements Specification<GroupEntity> {
         Predicate p = builder.and();
 
         if (hasText(criteria.getName())) {
-            p = builder.and(p, builder.like(builder.lower(root.get(GroupEntity_.name)), toLowerCaseString(criteria.getName())));
+            p = builder.and(p, builder.like(builder.lower(root.get(GroupEntity_.name)), toLowerCaseLikeString(criteria.getName())));
         }
 
         if (hasText(criteria.getCode())) {
@@ -34,10 +36,16 @@ public class ConfigGroupSpecification implements Specification<GroupEntity> {
 
             groupCodeSubQuery.select(groupCodeRoot)
                     .where(builder.equal(groupCodeRoot.get(GroupCodeEntity_.group).get(GroupEntity_.id), root.get(GroupEntity_.id)),
-                            builder.like(builder.lower(groupCodeRoot.get(GroupCodeEntity_.code)), toLowerCaseString(criteria.getCode()))
-                    );
+                            builder.like(builder.lower(groupCodeRoot.get(GroupCodeEntity_.code)), toLowerCaseLikeString(criteria.getCode())));
 
             p = builder.and(p, builder.exists(groupCodeSubQuery));
+        }
+
+        if (hasText(criteria.getConfigCode())) {
+            Join<GroupEntity, GroupCodeEntity> join = root.join("codes", JoinType.LEFT);
+
+            p = builder.and(p, builder.like(new LiteralExpression<>((CriteriaBuilderImpl) builder, criteria.getConfigCode()),
+                    builder.concat(join.get(GroupCodeEntity_.code).as(String.class), ".%")));
         }
 
         return p;
