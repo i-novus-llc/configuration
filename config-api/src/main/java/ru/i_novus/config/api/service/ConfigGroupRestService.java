@@ -9,7 +9,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 /**
  * Интерфейс REST API для работы с группами настроек
@@ -29,12 +28,6 @@ public interface ConfigGroupRestService {
             @ApiResponse(code = 404, message = "Группа настроек не найдена")
     })
     GroupForm getGroup(@PathParam("groupId") @ApiParam(value = "Идентификатор группы") Integer groupId);
-
-    @GET
-    @Path("/byCode/{code}")
-    @ApiOperation(value = "Получение групп настроек по коду настройки", response = GroupForm.class, responseContainer = "List")
-    @ApiResponse(code = 200, message = "Успешное получение групп настроек")
-    List<GroupForm> getGroupByConfigCode(@PathParam("code") @ApiParam(value = "Код настройки") String code);
 
     @GET
     @Path("/")
