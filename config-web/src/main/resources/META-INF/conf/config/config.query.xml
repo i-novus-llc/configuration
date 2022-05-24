@@ -54,7 +54,7 @@
 
         <field id="applicationDisplayName" domain="string">
             <select mapping="['application.name']" normalize="#this != null ? #this : 'Общесистемные'"/>
-            <sorting mapping="['applicationDisplayName.nameDirection']">sort=name,{applicationDisplayName.nameDirection}</sorting>
+            <sorting mapping="['applicationDisplayName.nameDirection']">sort=applicationCode,{applicationDisplayName.nameDirection}</sorting>
         </field>
 
         <field id="group" domain="string[]">
