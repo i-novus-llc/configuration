@@ -35,13 +35,14 @@ public class ConfigFormBuilder {
         return configForm;
     }
 
-    public static ConfigForm buildTestConfigForm() {
+    public static ConfigForm buildTestConfigForm(int groupId) {
         ConfigForm configForm = new ConfigForm();
         configForm.setCode("sec1.test");
         configForm.setName("test");
         configForm.setValueType(ValueTypeEnum.STRING.getId());
         configForm.setValue("test-value");
         configForm.setApplicationCode("app-security");
+        configForm.setGroupId(groupId);
         return configForm;
     }
 }

@@ -72,7 +72,7 @@ public class ConfigGroupServerLoaderTest {
         loader.accept(data, "test");
 
         assertThat(repository.findAll().size(), is(2));
-        assertThat(groupCodeRepository.findAll().size(), is(4));
+        assertThat(groupCodeRepository.findAll().size(), is(6));
         configGroupAssertEquals(groupForm1, repository.findByName("group1"));
         configGroupAssertEquals(groupForm2, repository.findByName("group2"));
     }
@@ -88,7 +88,7 @@ public class ConfigGroupServerLoaderTest {
         loader.accept(data, "test");
 
         assertThat(repository.findAll().size(), is(2));
-        assertThat(groupCodeRepository.findAll().size(), is(4));
+        assertThat(groupCodeRepository.findAll().size(), is(5));
         configGroupAssertEquals(groupForm1, repository.findByName("group1"));
         configGroupAssertEquals(groupForm2, repository.findByName("group2"));
     }
@@ -105,7 +105,7 @@ public class ConfigGroupServerLoaderTest {
         loader.accept(data, "test");
 
         assertThat(repository.findAll().size(), is(3));
-        assertThat(groupCodeRepository.findAll().size(), is(6));
+        assertThat(groupCodeRepository.findAll().size(), is(8));
         configGroupAssertEquals(groupForm1, repository.findByName("group1"));
         configGroupAssertEquals(groupForm2, repository.findByName("group2"));
         configGroupAssertEquals(groupForm3, repository.findByName("group3"));
@@ -122,7 +122,7 @@ public class ConfigGroupServerLoaderTest {
         loader.accept(data, "test");
 
         assertThat(repository.findAll().size(), is(3));
-        assertThat(groupCodeRepository.findAll().size(), is(6));
+        assertThat(groupCodeRepository.findAll().size(), is(9));
         configGroupAssertEquals(groupForm1, repository.findByName("group1"));
         configGroupAssertEquals(groupForm2, repository.findByName("group2"));
         configGroupAssertEquals(LoaderGroupBuilder.buildGroup3(), repository.findByName("group3"));
@@ -145,7 +145,7 @@ public class ConfigGroupServerLoaderTest {
         } catch (UserException ignored) {}
 
         assertThat(repository.findAll().size(), is(3));
-        assertThat(groupCodeRepository.findAll().size(), is(6));
+        assertThat(groupCodeRepository.findAll().size(), is(9));
         configGroupAssertEquals(groupForm1, repository.findByName("group1"));
         configGroupAssertEquals(LoaderGroupBuilder.buildGroup2(), repository.findByName("group2"));
         configGroupAssertEquals(LoaderGroupBuilder.buildGroup3(), repository.findByName("group3"));
@@ -166,7 +166,7 @@ public class ConfigGroupServerLoaderTest {
         loader.accept(data, "test");
 
         assertThat(repository.findAll().size(), is(3));
-        assertThat(groupCodeRepository.findAll().size(), is(6));
+        assertThat(groupCodeRepository.findAll().size(), is(8));
         configGroupAssertEquals(LoaderGroupBuilder.buildGroup1(), repository.findByName("group1"));
         configGroupAssertEquals(groupForm2, repository.findByName("group2"));
         configGroupAssertEquals(groupForm3, repository.findByName("group3"));

@@ -17,7 +17,10 @@ import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
+import ru.i_novus.configuration.config.loader.ConfigGroupServerLoader;
+import ru.i_novus.configuration.config.repository.GroupRepository;
 import ru.i_novus.configuration.config.service.builders.ConfigFormBuilder;
+import ru.i_novus.configuration.config.service.builders.GroupFormBuilder;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Collections;
@@ -39,20 +42,25 @@ public class ConfigRestServiceImplTest {
     @Autowired
     private ConfigRestService configRestService;
 
+    @Autowired
+    private ConfigGroupServerLoader configGroupLoader;
+
+    @Autowired
+    private GroupRepository groupRepository;
+
     @MockBean
     private ConfigValueService configValueService;
 
     @MockBean
     private AuditService auditService;
 
-
     @Before
     public void setUp() {
+        configGroupLoader.load(List.of(GroupFormBuilder.buildGroupForm2()), "test");
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
         doNothing().when(configValueService).saveValue(any(), any(), any());
         doNothing().when(configValueService).deleteValue(any(), any());
     }
-
 
     /**
      * Проверка, что список настроек возвращается корректно
@@ -161,7 +169,7 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void getConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm(groupRepository.findByName("Security settings").getId());
         configRestService.saveConfig(configForm);
 
         configAssertEquals(configForm, configRestService.getConfig(configForm.getCode()));
@@ -182,7 +190,7 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void saveConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm(groupRepository.findByName("Security settings").getId());
         configRestService.saveConfig(configForm);
 
         ConfigResponse configResponse = configRestService.getConfig(configForm.getCode());
@@ -207,7 +215,7 @@ public class ConfigRestServiceImplTest {
      */
     @Test
     public void updateConfigMetadataTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm(groupRepository.findByName("Security settings").getId());
         configRestService.saveConfig(configForm);
 
         configForm.setApplicationCode(null);
@@ -229,7 +237,7 @@ public class ConfigRestServiceImplTest {
      */
     @Test(expected = NotFoundException.class)
     public void updateConfigByNotExistsCodeTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm(groupRepository.findByName("Security settings").getId());
         configForm.setCode("bad-code");
         configRestService.updateConfig(configForm.getCode(), configForm);
     }
@@ -239,7 +247,7 @@ public class ConfigRestServiceImplTest {
      */
     @Test(expected = NotFoundException.class)
     public void deleteConfigTest() {
-        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
+        ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm(groupRepository.findByName("Security settings").getId());
 
         configRestService.saveConfig(configForm);
         configRestService.deleteConfig(configForm.getCode());
