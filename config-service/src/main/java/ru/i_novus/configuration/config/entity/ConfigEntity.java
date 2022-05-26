@@ -22,12 +22,6 @@ public class ConfigEntity {
     private String code;
 
     /**
-     * Код приложения
-     */
-    @Column(name = "application_code", nullable = false)
-    private String applicationCode;
-
-    /**
      * Наименование настройки
      */
     @Column(name = "name", nullable = false)
@@ -53,9 +47,17 @@ public class ConfigEntity {
     private String defaultValue;
 
     /**
-     * Идентификатор группы
+     * Приложение
      */
-    @Column(name = "group_id")
-    private Integer groupId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "application_code")
+    private ApplicationEntity application;
+
+    /**
+     * Группа
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "group_id")
+    private GroupEntity group;
 
 }

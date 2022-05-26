@@ -21,9 +21,9 @@ public class ConfigLoaderMapper implements LoaderMapper<ConfigForm, ConfigEntity
     public ConfigEntity map(ConfigForm configForm, String subject) {
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
         if (!"application".equals(subject))
-            configEntity.setApplicationCode(subject);
+            configEntity.getApplication().setCode(subject);
         Optional<GroupEntity> group = Optional.ofNullable(groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode()));
-        configEntity.setGroupId(group.map(GroupEntity::getId).orElse(null));
+        configEntity.getGroup().setId(group.map(GroupEntity::getId).orElse(null));
 
         return configEntity;
     }

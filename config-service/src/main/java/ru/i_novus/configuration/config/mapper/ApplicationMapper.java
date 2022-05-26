@@ -7,8 +7,10 @@ public class ApplicationMapper {
 
     public static ApplicationResponse toApplicationResponse(ApplicationEntity applicationEntity) {
         ApplicationResponse applicationResponse = new ApplicationResponse();
-        applicationResponse.setCode(applicationEntity.getCode());
-        applicationResponse.setName(applicationEntity.getName());
+        if (applicationEntity != null) {
+            applicationResponse.setCode(applicationEntity.getCode());
+            applicationResponse.setName(applicationEntity.getName());
+        }
         return applicationResponse;
     }
 }

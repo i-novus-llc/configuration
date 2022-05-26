@@ -57,8 +57,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
                 .map(e -> {
                             GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
                             GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
-                            ApplicationResponse application = getApplicationResponse(e.getApplicationCode());
-                            return ConfigMapper.toConfigResponse(e, application, groupForm);
+                            return ConfigMapper.toConfigResponse(e, groupForm);
                         }
                 );
     }
@@ -67,10 +66,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Transactional(readOnly = true)
     public ConfigResponse getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-        ApplicationResponse application = getApplicationResponse(configEntity.getApplicationCode());
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
         GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
-        return ConfigMapper.toConfigResponse(configEntity, application, groupForm);
+        return ConfigMapper.toConfigResponse(configEntity, groupForm);
     }
 
     @Override
@@ -103,13 +101,13 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         configEntity = ConfigMapper.toConfigEntity(configEntity, configForm);
         configRepository.save(configEntity);
 
-        if (configEntity.getApplicationCode() != null &&
-                !configEntity.getApplicationCode().equals(configForm.getApplicationCode())) {
+        if (configEntity.getApplication().getCode() != null &&
+                !configEntity.getApplication().getCode().equals(configForm.getApplicationCode())) {
             String value;
             try {
-                value = configValueService.getValue(configEntity.getApplicationCode(), code);
+                value = configValueService.getValue(configEntity.getApplication().getCode(), code);
                 configValueService.saveValue(configForm.getApplicationCode(), code, value);
-                configValueService.deleteValue(configEntity.getApplicationCode(), code);
+                configValueService.deleteValue(configEntity.getApplication().getCode(), code);
             } catch (Exception ignored) {
             }
         }
@@ -123,7 +121,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         configRepository.deleteByCode(code);
-        configValueService.deleteValue(configEntity.getApplicationCode(), code);
+        configValueService.deleteValue(configEntity.getApplication().getCode(), code);
         audit(configEntity, EventTypeEnum.APPLICATION_CONFIG_DELETE);
     }
 

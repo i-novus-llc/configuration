@@ -6,6 +6,8 @@ import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity_;
 import ru.i_novus.configuration.config.entity.GroupEntity;
 import ru.i_novus.configuration.config.entity.GroupEntity_;
+import ru.i_novus.configuration.config.entity.ApplicationEntity;
+import ru.i_novus.configuration.config.entity.ApplicationEntity_;
 
 import javax.persistence.criteria.*;
 import java.util.List;
@@ -42,8 +44,11 @@ public class ConfigSpecification implements Specification<ConfigEntity> {
             Subquery<GroupEntity> groupSubQuery = query.subquery(GroupEntity.class);
             Root<GroupEntity> groupRoot = groupSubQuery.from(GroupEntity.class);
 
+            Join<ConfigEntity, GroupEntity> joinGroup = root.join(ConfigEntity_.group);
+            Path<Integer> configGroupId = joinGroup.get(GroupEntity_.id);
+
             groupSubQuery.select(groupRoot)
-                    .where(builder.equal(groupRoot.get(GroupEntity_.id), root.get(ConfigEntity_.groupId)),
+                    .where(builder.equal(groupRoot.get(GroupEntity_.id), configGroupId),
                             groupRoot.get(GroupEntity_.id).in(groupIds));
 
             p = builder.and(p, builder.exists(groupSubQuery));
@@ -51,7 +56,9 @@ public class ConfigSpecification implements Specification<ConfigEntity> {
 
         List<String> applicationCodes = criteria.getApplicationCodes();
         if (applicationCodes != null && !applicationCodes.isEmpty()) {
-            p = builder.and(p, root.get(ConfigEntity_.applicationCode).in(criteria.getApplicationCodes()));
+            Join<ConfigEntity, ApplicationEntity> joinApplication = root.join(ConfigEntity_.application);
+            Path<String> applicationCode = joinApplication.get(ApplicationEntity_.code);
+            p = builder.and(p, applicationCode.in(criteria.getApplicationCodes()));
         }
 
         return p;
