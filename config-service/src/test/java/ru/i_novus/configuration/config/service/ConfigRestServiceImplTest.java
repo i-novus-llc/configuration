@@ -17,8 +17,6 @@ import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
-import ru.i_novus.configuration.config.entity.ApplicationEntity;
-import ru.i_novus.configuration.config.repository.ApplicationRepository;
 import ru.i_novus.configuration.config.service.builders.ConfigFormBuilder;
 
 import javax.ws.rs.NotFoundException;
@@ -40,9 +38,6 @@ public class ConfigRestServiceImplTest {
 
     @Autowired
     private ConfigRestService configRestService;
-
-    @Autowired
-    private ApplicationRepository applicationRepository;
 
     @MockBean
     private ConfigValueService configValueService;
