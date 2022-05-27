@@ -2,9 +2,7 @@ package ru.i_novus.configuration.config.mapper;
 
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.model.enums.ValueTypeEnum;
-import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
-import ru.i_novus.configuration.config.entity.GroupEntity;
 
 public class ConfigMapper {
 
@@ -18,14 +16,6 @@ public class ConfigMapper {
         entity.setDescription(configForm.getDescription());
         entity.setValueType(ValueTypeEnum.valueOf(configForm.getValueType()));
         entity.setDefaultValue(configForm.getDefaultValue());
-        if (configForm.getApplicationCode() != null) {
-            entity.setApplication(new ApplicationEntity(configForm.getApplicationCode()));
-        } else if (entity.getApplication() != null && configForm.getApplicationCode() == null) {
-            entity.setApplication(null);
-        }
-        if (configForm.getGroupId() != null) {
-            entity.setGroup(new GroupEntity(configForm.getGroupId()));
-        }
         return entity;
     }
 

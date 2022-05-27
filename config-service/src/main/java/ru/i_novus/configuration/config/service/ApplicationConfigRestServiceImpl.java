@@ -123,11 +123,9 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
     @Transactional
     public void deleteConfigValue(String code) {
         ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-        String oldValue =  null;
-        if (entity.getApplication() != null) {
-            oldValue = configValueService.getValue(entity.getApplication().getCode(), code);
-            configValueService.deleteValue(entity.getApplication().getCode(), code);
-        }
+        String applicationCode = entity.getApplication() == null ? commonSystemCode : entity.getApplication().getCode();
+        String oldValue = configValueService.getValue(applicationCode, code);
+        configValueService.deleteValue(applicationCode, code);
         audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.APPLICATION_CONFIG_DELETE);
     }
 

@@ -17,10 +17,12 @@ import ru.i_novus.config.api.service.ApplicationRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.config.api.util.AuditService;
+import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.entity.GroupEntity;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
+import ru.i_novus.configuration.config.repository.ApplicationRepository;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
 import ru.i_novus.configuration.config.specification.ConfigSpecification;
@@ -44,6 +46,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     private ConfigRepository configRepository;
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    private ApplicationRepository applicationRepository;
     @Autowired
     private AuditService auditService;
     @Autowired
@@ -77,12 +81,20 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         if (configRepository.existsByCode(configForm.getCode()))
             throw new UserException(messageAccessor.getMessage("config.code.not.unique"));
 
+        GroupEntity group = null;
+        ApplicationEntity application = applicationRepository.findByCode(configForm.getApplicationCode());
+
         if (configForm.getGroupId() != null)
-            groupRepository.findById(configForm.getGroupId())
+            group = groupRepository.findById(configForm.getGroupId())
                     .orElseThrow(() -> new UserException(messageAccessor.getMessage(
                             "config.group.not.found.by.id", new Object[]{configForm.getGroupId()})));
 
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
+        if (application == null && configForm.getApplicationCode() != null) {
+            application = new ApplicationEntity(configForm.getApplicationCode());
+        }
+        configEntity.setApplication(application);
+        configEntity.setGroup(group);
 
         configRepository.save(configEntity);
         audit(configEntity, EventTypeEnum.CONFIG_CREATE);
@@ -93,12 +105,19 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
+        GroupEntity group = null;
         if (configForm.getGroupId() != null)
-            groupRepository.findById(configForm.getGroupId())
+            group = groupRepository.findById(configForm.getGroupId())
                     .orElseThrow(() -> new UserException(messageAccessor.getMessage(
                             "config.group.not.found.by.id", new Object[]{configForm.getGroupId()})));
 
         configEntity = ConfigMapper.toConfigEntity(configEntity, configForm);
+        if (configForm.getApplicationCode() != null) {
+            configEntity.setApplication(applicationRepository.findByCode(configForm.getApplicationCode()));
+        } else if (configEntity.getApplication() != null && configForm.getApplicationCode() == null) {
+            configEntity.setApplication(null);
+        }
+        configEntity.setGroup(group);
         configRepository.save(configEntity);
 
         if (configEntity.getApplication() != null && configEntity.getApplication().getCode() != null &&

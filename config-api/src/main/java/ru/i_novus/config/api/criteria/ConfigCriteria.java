@@ -38,7 +38,7 @@ public class ConfigCriteria extends AbstractCriteria {
     @Override
     protected List<Sort.Order> getDefaultOrders() {
         List<Sort.Order> orders = new ArrayList<Sort.Order>();
-        orders.add(new Sort.Order(Sort.Direction.ASC, "applicationCode", Sort.NullHandling.NULLS_FIRST));
+        orders.add(new Sort.Order(Sort.Direction.ASC, "application.code", Sort.NullHandling.NULLS_FIRST));
         orders.add(new Sort.Order(Sort.Direction.ASC, "code", Sort.NullHandling.NATIVE));
         return orders;
     }
