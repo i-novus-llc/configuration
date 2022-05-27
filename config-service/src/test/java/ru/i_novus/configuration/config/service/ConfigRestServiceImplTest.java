@@ -53,15 +53,9 @@ public class ConfigRestServiceImplTest {
 
     @Before
     public void setUp() {
-        initApplications();
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
         doNothing().when(configValueService).saveValue(any(), any(), any());
         doNothing().when(configValueService).deleteValue(any(), any());
-    }
-
-    private void initApplications() {
-        ApplicationEntity application = new ApplicationEntity("app-security");
-        applicationRepository.save(application);
     }
 
     /**
