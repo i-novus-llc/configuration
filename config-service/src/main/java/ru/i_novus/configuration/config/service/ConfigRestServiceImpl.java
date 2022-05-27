@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
-import ru.i_novus.config.api.model.ApplicationResponse;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.GroupForm;
@@ -144,19 +143,6 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             configValueService.deleteValue(configEntity.getApplication().getCode(), code);
         }
         audit(configEntity, EventTypeEnum.APPLICATION_CONFIG_DELETE);
-    }
-
-    private ApplicationResponse getApplicationResponse(String code) {
-        if (code == null)
-            return new ApplicationResponse();
-
-        ApplicationResponse applicationResponse;
-        try {
-            applicationResponse = applicationRestService.getApplication(code);
-        } catch (Exception e) {
-            applicationResponse = null;
-        }
-        return applicationResponse;
     }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
