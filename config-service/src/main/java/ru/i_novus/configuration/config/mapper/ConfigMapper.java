@@ -20,8 +20,12 @@ public class ConfigMapper {
         entity.setDefaultValue(configForm.getDefaultValue());
         if (configForm.getApplicationCode() != null) {
             entity.setApplication(new ApplicationEntity(configForm.getApplicationCode()));
+        } else if (entity.getApplication() != null && configForm.getApplicationCode() == null) {
+            entity.setApplication(null);
         }
-        entity.setGroup(new GroupEntity(configForm.getGroupId()));
+        if (configForm.getGroupId() != null) {
+            entity.setGroup(new GroupEntity(configForm.getGroupId()));
+        }
         return entity;
     }
 

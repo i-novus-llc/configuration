@@ -6,8 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Сущность Приложение
@@ -40,5 +38,10 @@ public class ApplicationEntity implements Serializable {
 
     public ApplicationEntity(String code) {
         this.code = code;
+    }
+
+    public ApplicationEntity(String code, String name) {
+        this.code = code;
+        this.name = name;
     }
 }

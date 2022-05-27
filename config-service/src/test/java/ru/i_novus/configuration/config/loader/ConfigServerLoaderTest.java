@@ -10,8 +10,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.TestApp;
 import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.loader.builders.LoaderConfigBuilder;
+import ru.i_novus.configuration.config.repository.ApplicationRepository;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 
 import java.util.Arrays;
@@ -35,6 +37,9 @@ public class ConfigServerLoaderTest {
     private ConfigServerLoader configLoader;
 
     @Autowired
+    private ApplicationRepository applicationRepository;
+
+    @Autowired
     private RepositoryServerLoader<ConfigForm, ConfigEntity, String> repositoryLoader;
 
     @Autowired
@@ -50,12 +55,14 @@ public class ConfigServerLoaderTest {
     @Test
     public void simpleLoader() {
         BiConsumer<List<ConfigForm>, String> loader = configLoader::load;
+        applicationRepository.save(new ApplicationEntity("test-app", "name app"));
         repository.deleteAll();
         case1(loader);
         case2(loader);
         case3(loader);
         case4(loader);
         case5(loader);
+        applicationRepository.deleteAll();
     }
 
     /**

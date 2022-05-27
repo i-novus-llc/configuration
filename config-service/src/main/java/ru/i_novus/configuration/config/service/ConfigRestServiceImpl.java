@@ -101,7 +101,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         configEntity = ConfigMapper.toConfigEntity(configEntity, configForm);
         configRepository.save(configEntity);
 
-        if (configEntity.getApplication().getCode() != null &&
+        if (configEntity.getApplication() != null && configEntity.getApplication().getCode() != null &&
                 !configEntity.getApplication().getCode().equals(configForm.getApplicationCode())) {
             String value;
             try {
@@ -121,7 +121,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         configRepository.deleteByCode(code);
-        configValueService.deleteValue(configEntity.getApplication().getCode(), code);
+        if (configEntity.getApplication() != null) {
+            configValueService.deleteValue(configEntity.getApplication().getCode(), code);
+        }
         audit(configEntity, EventTypeEnum.APPLICATION_CONFIG_DELETE);
     }
 

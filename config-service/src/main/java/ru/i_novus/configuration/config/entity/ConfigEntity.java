@@ -49,14 +49,14 @@ public class ConfigEntity {
     /**
      * Приложение
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "application_code")
     private ApplicationEntity application;
 
     /**
      * Группа
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "group_id")
     private GroupEntity group;
 
