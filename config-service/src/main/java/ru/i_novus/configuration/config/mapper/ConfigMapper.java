@@ -50,7 +50,9 @@ public class ConfigMapper {
         configForm.setValueType(configEntity.getValueType().name());
         configForm.setValue(value);
         configForm.setDefaultValue(configEntity.getDefaultValue());
-        configForm.setApplicationCode(configEntity.getApplication().getCode());
+        if (configEntity.getApplication() != null) {
+            configForm.setApplicationCode(configEntity.getApplication().getCode());
+        }
         return configForm;
     }
 }

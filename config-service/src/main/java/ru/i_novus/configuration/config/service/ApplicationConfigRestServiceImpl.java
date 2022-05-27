@@ -95,7 +95,10 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).
                 orElseThrow(NotFoundException::new);
 
-        String value = configValueService.getValue(configEntity.getApplication().getCode(), code);
+        String value = null;
+        if (configEntity.getApplication() != null) {
+            value = configValueService.getValue(configEntity.getApplication().getCode(), code);
+        }
         ApplicationConfigResponse configResponse = new ApplicationConfigResponse();
         configResponse.setCode(configEntity.getCode());
         configResponse.setName(configEntity.getName());
@@ -110,7 +113,9 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
         ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         String value = configValue.getValue();
 
-        configValueService.saveValue(entity.getApplication().getCode(), code, value);
+        if (entity.getApplication() != null) {
+            configValueService.saveValue(entity.getApplication().getCode(), code, value);
+        }
         audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.APPLICATION_CONFIG_UPDATE);
     }
 
@@ -118,9 +123,11 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
     @Transactional
     public void deleteConfigValue(String code) {
         ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-        String oldValue = configValueService.getValue(entity.getApplication().getCode(), code);
-        configValueService.deleteValue(entity.getApplication().getCode(), code);
-
+        String oldValue =  null;
+        if (entity.getApplication() != null) {
+            oldValue = configValueService.getValue(entity.getApplication().getCode(), code);
+            configValueService.deleteValue(entity.getApplication().getCode(), code);
+        }
         audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.APPLICATION_CONFIG_DELETE);
     }
 
