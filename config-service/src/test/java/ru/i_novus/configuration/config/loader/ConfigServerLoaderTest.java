@@ -69,8 +69,8 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(2));
-        configAssertEquals(configForm1, repository.findById("code1").get());
-        configAssertEquals(configForm2, repository.findById("code2").get());
+        configAssertEquals(configForm1, repository.findById("auth.code1").get());
+        configAssertEquals(configForm2, repository.findById("auth.code2").get());
     }
 
     /**
@@ -84,8 +84,8 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(2));
-        configAssertEquals(configForm1, repository.findById("code1").get());
-        configAssertEquals(configForm2, repository.findById("code2").get());
+        configAssertEquals(configForm1, repository.findById("auth.code1").get());
+        configAssertEquals(configForm2, repository.findById("auth.code2").get());
     }
 
     /**
@@ -100,9 +100,9 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(3));
-        configAssertEquals(configForm1, repository.findById("code1").get());
-        configAssertEquals(configForm2, repository.findById("code2").get());
-        configAssertEquals(configForm3, repository.findById("code3").get());
+        configAssertEquals(configForm1, repository.findById("auth.code1").get());
+        configAssertEquals(configForm2, repository.findById("auth.code2").get());
+        configAssertEquals(configForm3, repository.findById("auth.code3").get());
     }
 
     /**
@@ -116,8 +116,8 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(2));
-        configAssertEquals(configForm1, repository.findById("code1").get());
-        configAssertEquals(configForm2, repository.findById("code2").get());
+        configAssertEquals(configForm1, repository.findById("auth.code1").get());
+        configAssertEquals(configForm2, repository.findById("auth.code2").get());
     }
 
     /**
@@ -131,8 +131,8 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "application");
 
         assertThat(repository.findByApplicationCode(null).size(), is(2));
-        configAssertEquals(configForm3, repository.findById("code3").get());
-        configAssertEquals(configForm4, repository.findById("code4").get());
+        configAssertEquals(configForm3, repository.findById("auth.code3").get());
+        configAssertEquals(configForm4, repository.findById("auth.code4").get());
     }
 
 

@@ -7,7 +7,7 @@ public class LoaderConfigBuilder {
 
     public static ConfigForm buildConfig1() {
         ConfigForm configForm = new ConfigForm();
-        configForm.setCode("code1");
+        configForm.setCode("auth.code1");
         configForm.setName("name1");
         configForm.setDescription("desc1");
         configForm.setValueType(ValueTypeEnum.STRING.getId());
@@ -16,7 +16,7 @@ public class LoaderConfigBuilder {
 
     public static ConfigForm buildConfig2() {
         ConfigForm configForm = new ConfigForm();
-        configForm.setCode("code2");
+        configForm.setCode("auth.code2");
         configForm.setName("name2");
         configForm.setDescription("desc2");
         configForm.setValueType(ValueTypeEnum.NUMBER.getId());
@@ -25,7 +25,7 @@ public class LoaderConfigBuilder {
 
     public static ConfigForm buildConfig2Updated() {
         ConfigForm configForm = new ConfigForm();
-        configForm.setCode("code2");
+        configForm.setCode("auth.code2");
         configForm.setName("name2-new");
         configForm.setDescription("desc2-new");
         configForm.setValueType(ValueTypeEnum.STRING.getId());
@@ -34,7 +34,7 @@ public class LoaderConfigBuilder {
 
     public static ConfigForm buildConfig3() {
         ConfigForm configForm = new ConfigForm();
-        configForm.setCode("code3");
+        configForm.setCode("auth.code3");
         configForm.setName("name3");
         configForm.setDescription("desc3");
         configForm.setValueType(ValueTypeEnum.STRING.getId());
@@ -43,7 +43,7 @@ public class LoaderConfigBuilder {
 
     public static ConfigForm buildConfig4() {
         ConfigForm configForm = new ConfigForm();
-        configForm.setCode("code4");
+        configForm.setCode("auth.code4");
         configForm.setName("name4");
         configForm.setDescription("desc4");
         configForm.setValueType(ValueTypeEnum.STRING.getId());

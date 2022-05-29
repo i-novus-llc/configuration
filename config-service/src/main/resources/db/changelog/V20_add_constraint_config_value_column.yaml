@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_constraint_config_value
+      author: amorozkin
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V20_add_constraint_config_value_column.sql

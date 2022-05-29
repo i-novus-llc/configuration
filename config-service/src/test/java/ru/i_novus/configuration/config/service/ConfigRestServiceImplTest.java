@@ -45,14 +45,12 @@ public class ConfigRestServiceImplTest {
     @MockBean
     private AuditService auditService;
 
-
     @Before
     public void setUp() {
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
         doNothing().when(configValueService).saveValue(any(), any(), any());
         doNothing().when(configValueService).deleteValue(any(), any());
     }
-
 
     /**
      * Проверка, что список настроек возвращается корректно
