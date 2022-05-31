@@ -49,13 +49,4 @@ public class LoaderConfigBuilder {
         configForm.setValueType(ValueTypeEnum.STRING.getId());
         return configForm;
     }
-
-    public static ConfigForm buildConfig5() {
-        ConfigForm configForm = new ConfigForm();
-        configForm.setCode("null.code5");
-        configForm.setName("name5");
-        configForm.setDescription("desc5");
-        configForm.setValueType(ValueTypeEnum.STRING.getId());
-        return configForm;
-    }
 }

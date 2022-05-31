@@ -147,10 +147,11 @@ public class ConfigServerLoaderTest {
      * Обработка исключения при group = null в ConfigEntity
      */
     private void case6(BiConsumer<List<ConfigForm>, String> loader) {
-        ConfigForm configForm = LoaderConfigBuilder.buildConfig5();
+        ConfigForm configForm = LoaderConfigBuilder.buildConfig4();
+        configForm.setCode("config.without.group");
         List<ConfigForm> data = Arrays.asList(configForm);
         UserException userException = assertThrows(UserException.class, () -> loader.accept(data, "test-app"));
-        assertEquals("Group for config null.code5 is not found", userException.getMessage());
+        assertEquals("Group for config config.without.group is not found", userException.getMessage());
     }
 
 
