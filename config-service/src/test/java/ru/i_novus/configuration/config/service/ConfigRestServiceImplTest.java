@@ -45,7 +45,6 @@ public class ConfigRestServiceImplTest {
     @MockBean
     private AuditService auditService;
 
-
     @Before
     public void setUp() {
         when(configValueService.getValue(any(), any())).thenReturn("test-value");

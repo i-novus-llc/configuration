@@ -59,8 +59,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         return configRepository.findAll(specification, criteria)
                 .map(e -> {
                             GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
-                            GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
-                            return ConfigMapper.toConfigResponse(e, groupForm);
+                            return ConfigMapper.toConfigResponse(e, GroupMapper.toGroupForm(groupEntity));
                         }
                 );
     }
@@ -70,8 +69,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     public ConfigResponse getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
-        GroupForm groupForm = (groupEntity == null) ? null : GroupMapper.toGroupForm(groupEntity);
-        return ConfigMapper.toConfigResponse(configEntity, groupForm);
+        return ConfigMapper.toConfigResponse(configEntity, GroupMapper.toGroupForm(groupEntity));
     }
 
     @Override

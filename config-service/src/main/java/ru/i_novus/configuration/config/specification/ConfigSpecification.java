@@ -61,6 +61,11 @@ public class ConfigSpecification implements Specification<ConfigEntity> {
             p = builder.and(p, applicationCode.in(criteria.getApplicationCodes()));
         }
 
+        if (criteria.getSort().stream().findFirst().isEmpty()) {
+            Join<ConfigEntity, ApplicationEntity> joinApplication = root.join(ConfigEntity_.application, JoinType.LEFT);
+            Path<String> applicationNamePath = joinApplication.get(ApplicationEntity_.name);
+            query.orderBy(builder.asc(builder.coalesce(applicationNamePath, " ")), builder.asc(root.get("code")));
+        }
         return p;
     }
 }
