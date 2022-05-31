@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.i_novus.config.api.util.AuditService;
-import ru.i_novus.configuration.audit.SimpleAuditService;
+import ru.i_novus.configuration.audit.AuditServiceImpl;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.loader.ConfigLoaderMapper;
 import ru.i_novus.configuration.config.loader.ConfigServerLoader;
@@ -26,6 +26,6 @@ public class ConfigBackendConfiguration {
 
     @Bean
     AuditService auditService() {
-        return new SimpleAuditService();
+        return new AuditServiceImpl();
     }
 }
