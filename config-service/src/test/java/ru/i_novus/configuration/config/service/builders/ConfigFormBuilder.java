@@ -42,6 +42,7 @@ public class ConfigFormBuilder {
         configForm.setValueType(ValueTypeEnum.STRING.getId());
         configForm.setValue("test-value");
         configForm.setApplicationCode("app-security");
+        configForm.setGroupId(102);
         return configForm;
     }
 }
