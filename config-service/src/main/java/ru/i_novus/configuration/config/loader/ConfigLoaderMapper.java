@@ -1,7 +1,9 @@
 package ru.i_novus.configuration.config.loader;
 
+import net.n2oapp.platform.i18n.UserException;
 import net.n2oapp.platform.loader.server.repository.LoaderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Component;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.configuration.config.entity.ApplicationEntity;
@@ -22,6 +24,9 @@ public class ConfigLoaderMapper implements LoaderMapper<ConfigForm, ConfigEntity
     @Autowired
     private ApplicationRepository applicationRepository;
 
+    @Autowired
+    private MessageSourceAccessor messageAccessor;
+
     @Override
     public ConfigEntity map(ConfigForm configForm, String subject) {
         ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
@@ -30,9 +35,8 @@ public class ConfigLoaderMapper implements LoaderMapper<ConfigForm, ConfigEntity
             configEntity.setApplication(application);
         }
         Optional<GroupEntity> group = Optional.ofNullable(groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode()));
-        if (configEntity.getGroup() != null) {
-            configEntity.getGroup().setId(group.map(GroupEntity::getId).orElse(null));
-        }
+        configEntity.setGroup(group.orElseThrow(() -> new UserException(messageAccessor
+                .getMessage("config.group.not.found", new Object[]{configForm.getCode()}))));
         return configEntity;
     }
 }

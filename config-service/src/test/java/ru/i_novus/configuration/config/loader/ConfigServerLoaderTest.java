@@ -1,5 +1,6 @@
 package ru.i_novus.configuration.config.loader;
 
+import net.n2oapp.platform.i18n.UserException;
 import net.n2oapp.platform.loader.server.repository.RepositoryServerLoader;
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
 import org.junit.Test;
@@ -21,8 +22,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Тесты лоадера настроек
@@ -62,6 +62,7 @@ public class ConfigServerLoaderTest {
         case3(loader);
         case4(loader);
         case5(loader);
+        case6(loader);
         applicationRepository.deleteAll();
     }
 
@@ -140,6 +141,16 @@ public class ConfigServerLoaderTest {
         assertThat(repository.findByApplicationCode(null).size(), is(2));
         configAssertEquals(configForm3, repository.findById("auth.code3").get());
         configAssertEquals(configForm4, repository.findById("auth.code4").get());
+    }
+
+    /**
+     * Обработка исключения при group = null в ConfigEntity
+     */
+    private void case6(BiConsumer<List<ConfigForm>, String> loader) {
+        ConfigForm configForm = LoaderConfigBuilder.buildConfig5();
+        List<ConfigForm> data = Arrays.asList(configForm);
+        UserException userException = assertThrows(UserException.class, () -> loader.accept(data, "test-app"));
+        assertEquals("Group for config null.code5 is not found", userException.getMessage());
     }
 
 
