@@ -1,6 +1,7 @@
 package ru.i_novus.configuration.config.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "application", schema = "rdm")
 public class ApplicationEntity implements Serializable {
 
@@ -33,4 +35,13 @@ public class ApplicationEntity implements Serializable {
      */
     @Column(name = "name", nullable = false)
     private String name;
+
+    public ApplicationEntity(String code) {
+        this.code = code;
+    }
+
+    public ApplicationEntity(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
 }

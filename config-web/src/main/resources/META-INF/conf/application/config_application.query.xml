@@ -27,13 +27,6 @@
             </filters>
         </field>
 
-        <field id="systemCode" domain="string">
-            <select/>
-            <filters>
-                <eq filter-id="systemCode">systemCode={systemCode}</eq>
-            </filters>
-        </field>
-
     </fields>
 
 </query>

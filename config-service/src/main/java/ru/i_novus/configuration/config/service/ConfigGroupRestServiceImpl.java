@@ -1,14 +1,9 @@
 package ru.i_novus.configuration.config.service;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.GroupCriteria;
@@ -18,17 +13,14 @@ import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
 import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.GroupEntity;
-import ru.i_novus.configuration.config.entity.QGroupCodeEntity;
-import ru.i_novus.configuration.config.entity.QGroupEntity;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.GroupCodeRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
+import ru.i_novus.configuration.config.specification.ConfigGroupSpecification;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Реализация REST сервиса для работы с группами настроек
@@ -45,25 +37,19 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
     @Autowired
     private MessageSourceAccessor messageAccessor;
 
-
     @Override
+    @Transactional(readOnly = true)
     public GroupForm getGroup(Integer groupId) {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
         return GroupMapper.toGroupForm(groupEntity);
     }
 
     @Override
-    public List<GroupForm> getGroupByConfigCode(String code) {
-        return groupRepository.findGroupsByConfigCodeStarts(code, Pageable.unpaged()).stream()
-                .map(GroupMapper::toGroupForm)
-                .collect(Collectors.toList());
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public Page<GroupForm> getAllGroup(GroupCriteria criteria) {
-        Predicate predicate = toPredicate(criteria);
-        Page<GroupEntity> groupEntities = groupRepository.findAll(predicate == null ? new BooleanBuilder() : predicate, criteria);
-        return groupEntities.map(GroupMapper::toGroupForm);
+        ConfigGroupSpecification specification = new ConfigGroupSpecification(criteria);
+        return groupRepository.findAll(specification, criteria)
+                .map(GroupMapper::toGroupForm);
     }
 
     @Override
@@ -117,27 +103,6 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
         groupRepository.deleteById(groupEntity.getId());
         audit(GroupMapper.toGroupForm(groupEntity), EventTypeEnum.CONFIG_GROUP_DELETE);
-    }
-
-    private Predicate toPredicate(GroupCriteria criteria) {
-        QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
-        QGroupCodeEntity qGroupCodeEntity = QGroupCodeEntity.groupCodeEntity;
-        BooleanBuilder builder = new BooleanBuilder();
-
-        if (criteria.getCode() != null) {
-            BooleanExpression exists = JPAExpressions.selectOne().from(qGroupCodeEntity)
-                    .where(new BooleanBuilder()
-                            .and(qGroupCodeEntity.group.id.eq(qGroupEntity.id))
-                            .and(qGroupCodeEntity.code.containsIgnoreCase(criteria.getCode())))
-                    .exists();
-            builder.and(exists);
-        }
-
-        if (criteria.getName() != null) {
-            builder.and(qGroupEntity.name.containsIgnoreCase(criteria.getName()));
-        }
-
-        return builder.getValue();
     }
 
     private void audit(GroupForm groupForm, EventTypeEnum eventType) {

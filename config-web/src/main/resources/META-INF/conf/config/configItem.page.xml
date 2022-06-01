@@ -33,7 +33,7 @@
                 <input-text id="name" label="Наименование настройки" required="true"/>
                 <input-select id="group" label="Группа настроек" query-id="config_group" required="true">
                     <pre-filters>
-                        <like field-id="codes" value="{code}"/>
+                        <eq field-id="configCode" value="{code}"/>
                     </pre-filters>
                     <dependencies>
                         <reset on="code" apply-on-init="false"/>

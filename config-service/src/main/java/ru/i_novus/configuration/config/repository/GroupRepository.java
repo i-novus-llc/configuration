@@ -3,8 +3,8 @@ package ru.i_novus.configuration.config.repository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.i_novus.configuration.config.entity.GroupEntity;
@@ -12,7 +12,7 @@ import ru.i_novus.configuration.config.entity.GroupEntity;
 import java.util.List;
 
 @Repository
-public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, QuerydslPredicateExecutor<GroupEntity> {
+public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, JpaSpecificationExecutor<GroupEntity> {
 
     @Query("SELECT CASE WHEN (COUNT(g) > 0) THEN true ELSE false END " +
             "FROM GroupEntity g WHERE g.name = :name AND g.id != :groupId")
