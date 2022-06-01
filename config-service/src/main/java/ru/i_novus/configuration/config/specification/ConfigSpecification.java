@@ -36,7 +36,7 @@ public class ConfigSpecification implements Specification<ConfigEntity> {
         }
 
         if (Boolean.TRUE.equals(criteria.getIsCommonSystemConfig())) {
-            p = builder.and(p, builder.isNull(root.get(ConfigEntity_.code)));
+            p = builder.and(p, builder.isNull(root.get(ConfigEntity_.application)));
         }
 
         List<Integer> groupIds = criteria.getGroupIds();

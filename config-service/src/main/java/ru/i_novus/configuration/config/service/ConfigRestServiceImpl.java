@@ -2,6 +2,7 @@ package ru.i_novus.configuration.config.service;
 
 import net.n2oapp.platform.i18n.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
-import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ApplicationRestService;
@@ -52,6 +52,10 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Autowired
     private MessageSourceAccessor messageAccessor;
 
+    @Value("${spring.cloud.consul.config.defaultContext}")
+    private String commonSystemCode;
+
+
     @Override
     @Transactional(readOnly = true)
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
@@ -78,20 +82,22 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         if (configRepository.existsByCode(configForm.getCode()))
             throw new UserException(messageAccessor.getMessage("config.code.not.unique"));
 
-        GroupEntity group = null;
-        ApplicationEntity application = applicationRepository.findByCode(configForm.getApplicationCode());
+        ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
 
-        if (configForm.getGroupId() != null)
-            group = groupRepository.findById(configForm.getGroupId())
+        if (configForm.getGroupId() != null) {
+            GroupEntity group = groupRepository.findById(configForm.getGroupId())
                     .orElseThrow(() -> new UserException(messageAccessor.getMessage(
                             "config.group.not.found.by.id", new Object[]{configForm.getGroupId()})));
-
-        ConfigEntity configEntity = ConfigMapper.toConfigEntity(configForm);
-        if (application == null && configForm.getApplicationCode() != null) {
-            application = new ApplicationEntity(configForm.getApplicationCode());
+            configEntity.setGroup(group);
         }
-        configEntity.setApplication(application);
-        configEntity.setGroup(group);
+
+        if (configForm.getApplicationCode() != null) {
+            ApplicationEntity application = applicationRepository.findByCode(configForm.getApplicationCode());
+            if (application == null)
+                throw new UserException(messageAccessor.getMessage(
+                        "application.not.found.by.code", new Object[]{configForm.getApplicationCode()}));
+            configEntity.setApplication(application);
+        }
 
         configRepository.save(configEntity);
         audit(configEntity, EventTypeEnum.CONFIG_CREATE);
@@ -101,32 +107,27 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Transactional
     public void updateConfig(String code, @Valid @NotNull ConfigForm configForm) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
+        configEntity = ConfigMapper.toConfigEntity(configEntity, configForm);
 
         GroupEntity group = null;
         if (configForm.getGroupId() != null)
             group = groupRepository.findById(configForm.getGroupId())
                     .orElseThrow(() -> new UserException(messageAccessor.getMessage(
                             "config.group.not.found.by.id", new Object[]{configForm.getGroupId()})));
+        configEntity.setGroup(group);
 
-        configEntity = ConfigMapper.toConfigEntity(configEntity, configForm);
         if (configForm.getApplicationCode() != null) {
-            configEntity.setApplication(applicationRepository.findByCode(configForm.getApplicationCode()));
+            ApplicationEntity application = applicationRepository.findByCode(configForm.getApplicationCode());
+            if (application == null)
+                throw new UserException(messageAccessor.getMessage(
+                        "application.not.found.by.code", new Object[]{configForm.getApplicationCode()}));
+            configEntity.setApplication(application);
         } else if (configEntity.getApplication() != null && configForm.getApplicationCode() == null) {
             configEntity.setApplication(null);
         }
-        configEntity.setGroup(group);
-        configRepository.save(configEntity);
 
-        if (configEntity.getApplication() != null && configEntity.getApplication().getCode() != null &&
-                !configEntity.getApplication().getCode().equals(configForm.getApplicationCode())) {
-            String value;
-            try {
-                value = configValueService.getValue(configEntity.getApplication().getCode(), code);
-                configValueService.saveValue(configForm.getApplicationCode(), code, value);
-                configValueService.deleteValue(configEntity.getApplication().getCode(), code);
-            } catch (Exception ignored) {
-            }
-        }
+        configRepository.save(configEntity);
+        rewriteConfigValue(configForm, configEntity);
 
         audit(configEntity, EventTypeEnum.CONFIG_UPDATE);
     }
@@ -137,10 +138,36 @@ public class ConfigRestServiceImpl implements ConfigRestService {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
 
         configRepository.deleteByCode(code);
-        if (configEntity.getApplication() != null) {
-            configValueService.deleteValue(configEntity.getApplication().getCode(), code);
-        }
+        String appCode = configEntity.getApplication() != null ? configEntity.getApplication().getCode() : commonSystemCode;
+        configValueService.deleteValue(appCode, code);
+
         audit(configEntity, EventTypeEnum.APPLICATION_CONFIG_DELETE);
+    }
+
+    private void rewriteConfigValue(@Valid @NotNull ConfigForm configForm, ConfigEntity configEntity) {
+        String oldAppCode = null;
+        String newAppCode = null;
+
+        if (configEntity.getApplication() == null && configForm.getApplicationCode() != null) {
+            oldAppCode = commonSystemCode;
+            newAppCode = configForm.getApplicationCode();
+        } else if (configEntity.getApplication() != null && configForm.getApplicationCode() == null) {
+            oldAppCode = configEntity.getApplication().getCode();
+            newAppCode = commonSystemCode;
+        } else if (configEntity.getApplication() != null && configEntity.getApplication().getCode() != null &&
+                !configEntity.getApplication().getCode().equals(configForm.getApplicationCode())) {
+            oldAppCode = configEntity.getApplication().getCode();
+            newAppCode = configForm.getApplicationCode();
+        }
+
+        if (newAppCode != null) {
+            try {
+                String value = configValueService.getValue(oldAppCode, configEntity.getCode());
+                configValueService.saveValue(newAppCode, configEntity.getCode(), value);
+                configValueService.deleteValue(oldAppCode, configEntity.getCode());
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
