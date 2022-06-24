@@ -16,19 +16,18 @@ public class ConfigMapper {
         entity.setDescription(configForm.getDescription());
         entity.setValueType(ValueTypeEnum.valueOf(configForm.getValueType()));
         entity.setDefaultValue(configForm.getDefaultValue());
-        entity.setApplicationCode(configForm.getApplicationCode());
-        entity.setGroupId(configForm.getGroupId());
         return entity;
     }
 
-    public static ConfigResponse toConfigResponse(ConfigEntity configEntity, ApplicationResponse application, GroupForm group) {
+    public static ConfigResponse toConfigResponse(ConfigEntity configEntity, GroupForm group) {
         ConfigResponse configResponse = new ConfigResponse();
         configResponse.setCode(configEntity.getCode());
         configResponse.setName(configEntity.getName());
         configResponse.setDescription(configEntity.getDescription());
         configResponse.setValueType(configEntity.getValueType());
         configResponse.setDefaultValue(configEntity.getDefaultValue());
-        configResponse.setApplication(application);
+        configResponse.setApplication(ApplicationMapper
+                .toApplicationResponse(configEntity.getApplication()));
         configResponse.setGroup(group);
         return configResponse;
     }
@@ -41,7 +40,9 @@ public class ConfigMapper {
         configForm.setValueType(configEntity.getValueType().name());
         configForm.setValue(value);
         configForm.setDefaultValue(configEntity.getDefaultValue());
-        configForm.setApplicationCode(configEntity.getApplicationCode());
+        if (configEntity.getApplication() != null) {
+            configForm.setApplicationCode(configEntity.getApplication().getCode());
+        }
         return configForm;
     }
 }

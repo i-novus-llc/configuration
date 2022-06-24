@@ -8,9 +8,6 @@
     <unique>
         <rest>${config.service.url}/groups/{id}</rest>
     </unique>
-    <list filters="codeLike" result-mapping="#this">
-        <rest>${config.service.url}/groups/byCode/{codeLike}</rest>
-    </list>
 
     <fields>
 
@@ -21,11 +18,16 @@
             </filters>
         </field>
 
+        <field id="configCode" domain="string">
+            <filters>
+                <eq filter-id="configCode">configCode={configCode}</eq>
+            </filters>
+        </field>
+
         <field id="codes" domain="string[]">
             <select/>
             <filters>
                 <eq filter-id="code">code={code}</eq>
-                <like filter-id="codeLike" normalize="#this.get(0)"/>
             </filters>
         </field>
 

@@ -1,6 +1,7 @@
 package ru.i_novus.configuration.config.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "config_group", schema = "configuration")
 public class  GroupEntity {
 
@@ -48,6 +50,9 @@ public class  GroupEntity {
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<GroupCodeEntity> codes = new ArrayList<>();
 
+    public GroupEntity(Integer id) {
+        this.id = id;
+    }
 
     public void setCode(String code) {
         GroupCodeEntity groupCodeEntity = new GroupCodeEntity();

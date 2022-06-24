@@ -1,5 +1,6 @@
 package ru.i_novus.configuration.config.loader;
 
+import net.n2oapp.platform.i18n.UserException;
 import net.n2oapp.platform.loader.server.repository.RepositoryServerLoader;
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
 import org.junit.Test;
@@ -10,8 +11,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.i_novus.TestApp;
 import ru.i_novus.config.api.model.ConfigForm;
+import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.loader.builders.LoaderConfigBuilder;
+import ru.i_novus.configuration.config.repository.ApplicationRepository;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 
 import java.util.Arrays;
@@ -19,8 +22,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Тесты лоадера настроек
@@ -33,6 +35,9 @@ public class ConfigServerLoaderTest {
 
     @Autowired
     private ConfigServerLoader configLoader;
+
+    @Autowired
+    private ApplicationRepository applicationRepository;
 
     @Autowired
     private RepositoryServerLoader<ConfigForm, ConfigEntity, String> repositoryLoader;
@@ -50,12 +55,15 @@ public class ConfigServerLoaderTest {
     @Test
     public void simpleLoader() {
         BiConsumer<List<ConfigForm>, String> loader = configLoader::load;
+        applicationRepository.save(new ApplicationEntity("test-app", "name app"));
         repository.deleteAll();
         case1(loader);
         case2(loader);
         case3(loader);
         case4(loader);
         case5(loader);
+        case6(loader);
+        applicationRepository.deleteAll();
     }
 
     /**
@@ -69,8 +77,8 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(2));
-        configAssertEquals(configForm1, repository.findById("code1").get());
-        configAssertEquals(configForm2, repository.findById("code2").get());
+        configAssertEquals(configForm1, repository.findById("auth.code1").get());
+        configAssertEquals(configForm2, repository.findById("auth.code2").get());
     }
 
     /**
@@ -84,8 +92,8 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(2));
-        configAssertEquals(configForm1, repository.findById("code1").get());
-        configAssertEquals(configForm2, repository.findById("code2").get());
+        configAssertEquals(configForm1, repository.findById("auth.code1").get());
+        configAssertEquals(configForm2, repository.findById("auth.code2").get());
     }
 
     /**
@@ -100,9 +108,9 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(3));
-        configAssertEquals(configForm1, repository.findById("code1").get());
-        configAssertEquals(configForm2, repository.findById("code2").get());
-        configAssertEquals(configForm3, repository.findById("code3").get());
+        configAssertEquals(configForm1, repository.findById("auth.code1").get());
+        configAssertEquals(configForm2, repository.findById("auth.code2").get());
+        configAssertEquals(configForm3, repository.findById("auth.code3").get());
     }
 
     /**
@@ -116,8 +124,8 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(2));
-        configAssertEquals(configForm1, repository.findById("code1").get());
-        configAssertEquals(configForm2, repository.findById("code2").get());
+        configAssertEquals(configForm1, repository.findById("auth.code1").get());
+        configAssertEquals(configForm2, repository.findById("auth.code2").get());
     }
 
     /**
@@ -131,8 +139,19 @@ public class ConfigServerLoaderTest {
         loader.accept(data, "application");
 
         assertThat(repository.findByApplicationCode(null).size(), is(2));
-        configAssertEquals(configForm3, repository.findById("code3").get());
-        configAssertEquals(configForm4, repository.findById("code4").get());
+        configAssertEquals(configForm3, repository.findById("auth.code3").get());
+        configAssertEquals(configForm4, repository.findById("auth.code4").get());
+    }
+
+    /**
+     * Обработка исключения при group = null в ConfigEntity
+     */
+    private void case6(BiConsumer<List<ConfigForm>, String> loader) {
+        ConfigForm configForm = LoaderConfigBuilder.buildConfig4();
+        configForm.setCode("config.without.group");
+        List<ConfigForm> data = Arrays.asList(configForm);
+        UserException userException = assertThrows(UserException.class, () -> loader.accept(data, "test-app"));
+        assertEquals("Группа для настройки config.without.group не найдена", userException.getMessage());
     }
 
 

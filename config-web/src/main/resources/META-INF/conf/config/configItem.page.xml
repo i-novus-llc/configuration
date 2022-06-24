@@ -27,18 +27,16 @@
                 </input-select>
                 <input-text id="code" label="Код настройки" required="true">
                     <dependencies>
-                        <enabling on="isCreateForm">isCreateForm</enabling>
+                        <enabling on="id">return typeof(id) == 'undefined' || id == null;</enabling>
                     </dependencies>
                 </input-text>
-                <hidden id="oldCode"/>
                 <input-text id="name" label="Наименование настройки" required="true"/>
-                <input-select id="group" label="Группа настроек" query-id="config_group">
+                <input-select id="group" label="Группа настроек" query-id="config_group" required="true">
                     <pre-filters>
-                        <like field-id="codes" value="{code}"/>
+                        <eq field-id="configCode" value="{code}"/>
                     </pre-filters>
                     <dependencies>
-                        <enabling on="isCreateForm">isCreateForm</enabling>
-                        <set-value on="code" apply-on-init="false">if (isCreateForm) return null</set-value>
+                        <reset on="code" apply-on-init="false"/>
                     </dependencies>
                 </input-select>
                 <input-select id="valueType" label="Тип значения" required="true">
@@ -50,7 +48,6 @@
                     </options>
                 </input-select>
                 <input-text id="description" label="Описание"/>
-                <hidden id="isCreateForm" default-value="true"/>
             </set>
         </fields>
         <pre-filters>
