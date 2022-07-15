@@ -151,7 +151,7 @@ public class ConfigServerLoaderTest {
         configForm.setCode("config.without.group");
         List<ConfigForm> data = Arrays.asList(configForm);
         UserException userException = assertThrows(UserException.class, () -> loader.accept(data, "test-app"));
-        assertEquals("Группа для настройки config.without.group не найдена", userException.getMessage());
+        assertEquals("Group for config config.without.group is not found", userException.getMessage());
     }
 
 

@@ -56,7 +56,7 @@ public class  GroupEntity {
 
     public void setCode(String code) {
         GroupCodeEntity groupCodeEntity = new GroupCodeEntity();
-        groupCodeEntity.setCode(code);
+        groupCodeEntity.setCode(code.strip());
         groupCodeEntity.setGroup(this);
         codes.add(groupCodeEntity);
     }
