@@ -89,7 +89,7 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
                 !groupEntity.getCodes().stream().allMatch(e -> groupForm.getCodes().contains(e.getCode()))) {
             groupCodeRepository.deleteByGroupId(groupEntity.getId());
             groupEntity.getCodes().clear();
-            groupForm.getCodes().forEach(groupEntity::setCode);
+            groupForm.getCodes().stream().map(String::trim).forEach(groupEntity::setCode);
             groupCodeRepository.saveAll(groupEntity.getCodes());
         }
 
