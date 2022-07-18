@@ -31,6 +31,7 @@
                             </switch>
                         </column>
                         <column text-field-id="commonSystemValue" label="Общесистемное значение"/>
+                        <column text-field-id="defaultValue" label="Значение по умолчанию"/>
                         <column text-field-id="option">
                             <toolbar>
                                 <button id="delete" label="Стереть значение" visible="{isConfig}"

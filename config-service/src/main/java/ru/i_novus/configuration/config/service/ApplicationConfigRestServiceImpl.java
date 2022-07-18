@@ -77,6 +77,7 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
                     config.setValueType((String) data[6]);
                     config.setValue(appConfigValues.get(config.getCode()));
                     config.setCommonSystemValue(commonSystemConfigValues.get(config.getCode()));
+                    config.setDefaultValue((String) data[7]);
                     group.getConfigs().add(config);
                     i++;
                 } while (i < groupedConfigs.size() && application.getCode().equals(groupedConfigs.get(i)[0]) &&

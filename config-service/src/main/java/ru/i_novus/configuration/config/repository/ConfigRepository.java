@@ -16,7 +16,8 @@ public interface ConfigRepository extends JpaRepository<ConfigEntity, String>, J
     @Query(nativeQuery = true, value =
             "SELECT a.code as a_code, a.name as a_name, " +
                     "g.id, g.name as g_name, " +
-                    "c.code as c_code, c.name as c_name, c.value_type as c_type " +
+                    "c.code as c_code, c.name as c_name, c.value_type as c_type, " +
+                    "c.default_value as c_default_value " +
                     "FROM configuration.config c " +
                     "LEFT JOIN configuration.config_group g ON c.group_id = g.id " +
                     "INNER JOIN rdm.application a ON c.application_code = a.code " +

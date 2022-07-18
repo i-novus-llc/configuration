@@ -29,6 +29,10 @@
             <select normalize="false"/>
         </field>
 
+        <field id="defaultValue" domain="string">
+            <select/>
+        </field>
+
         <field id="children" domain="object[]">
             <select mapping="[groups]"
                     normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeApplicationConfig(#this, #data['id'])"/>
