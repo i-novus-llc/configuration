@@ -8,10 +8,7 @@ import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity_;
 import ru.i_novus.configuration.config.entity.GroupEntity_;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 import static org.springframework.util.StringUtils.hasText;
 import static ru.i_novus.configuration.config.specification.SpecificationUtils.toLowerCaseLikeString;
@@ -28,7 +25,12 @@ public class ApplicationConfigSpecification implements Specification<ConfigEntit
     public Predicate toPredicate(Root<ConfigEntity> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         Predicate p = builder.and();
 
-        p = builder.and(p, builder.isNotNull(root.get(ConfigEntity_.application)));
+        Expression exp;
+        if (Boolean.TRUE.equals(criteria.getIsCommonSystem()))
+            exp = builder.isNull(root.get(ConfigEntity_.application));
+        else
+            exp = builder.isNotNull(root.get(ConfigEntity_.application));
+        p = builder.and(p, exp);
 
         if (!CollectionUtils.isEmpty(criteria.getApplicationCodes()))
             p = builder.and(p, root.get(ConfigEntity_.application).get(ApplicationEntity_.code).in(criteria.getApplicationCodes()));

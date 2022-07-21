@@ -23,6 +23,9 @@
 
         <field id="name" domain="string">
             <select/>
+            <filters>
+                <eq filter-id="name">configName={name}</eq>
+            </filters>
         </field>
 
         <field id="isConfig" domain="boolean">
@@ -32,6 +35,24 @@
         <field id="children" domain="object[]">
             <select mapping="[configs]"
                     normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeCommonSystemConfig(#this)"/>
+        </field>
+
+        <field id="isCommonSystem">
+            <filters>
+                <eq filter-id="isCommonSystem" default-value="true">isCommonSystem={isCommonSystem}</eq>
+            </filters>
+        </field>
+
+        <field id="group" domain="string[]">
+            <filters>
+                <eq filter-id="groups*.id">groupId={groups*.id}</eq>
+            </filters>
+        </field>
+
+        <field id="withValue">
+            <filters>
+                <eq filter-id="withValue">withValue={withValue}</eq>
+            </filters>
         </field>
 
     </fields>

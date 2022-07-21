@@ -66,6 +66,14 @@
                                     message-on-success="false"/>
                         </action>
                     </actions>
+                    <filters>
+                        <row>
+                            <input-select id="groups" label="Группа настроек" query-id="config_group"
+                                          placeholder="Все" type="multi" search-field-id="name"/>
+                            <input-text id="name" label="Наименование настройки" domain="string"/>
+                            <checkbox id="withValue" label="Скрывать настройки без значений"/>
+                        </row>
+                    </filters>
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
