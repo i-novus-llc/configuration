@@ -23,6 +23,9 @@
 
         <field id="name" domain="string">
             <select/>
+            <filters>
+                <eq filter-id="name">configName={name}</eq>
+            </filters>
         </field>
 
         <field id="isConfig" domain="boolean">
@@ -38,5 +41,22 @@
                     normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeApplicationConfig(#this, #data['id'])"/>
         </field>
 
+        <field id="application" domain="string[]">
+            <filters>
+                <eq filter-id="applications*.id">applicationCode={applications*.id}</eq>
+            </filters>
+        </field>
+
+        <field id="group" domain="string[]">
+            <filters>
+                <eq filter-id="groups*.id">groupId={groups*.id}</eq>
+            </filters>
+        </field>
+
+        <field id="withValue">
+            <filters>
+                <eq filter-id="withValue">withValue={withValue}</eq>
+            </filters>
+        </field>
     </fields>
 </query>
