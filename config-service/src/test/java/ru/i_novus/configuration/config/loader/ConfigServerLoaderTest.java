@@ -74,12 +74,6 @@ public class ConfigServerLoaderTest {
         ConfigForm configForm2 = LoaderConfigBuilder.buildConfig2();
         List<ConfigForm> data = Arrays.asList(configForm1, configForm2);
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         loader.accept(data, "test-app");
 
         assertThat(repository.findByApplicationCode("test-app").size(), is(2));
