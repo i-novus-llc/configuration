@@ -31,6 +31,9 @@ public class ApplicationConfigCriteria extends AbstractCriteria {
     @ApiParam("С заданным значением")
     private Boolean withValue;
 
+    @QueryParam("isCommonSystem")
+    @ApiParam("Общесистемные настройки")
+    private Boolean isCommonSystem;
 
     @Override
     protected List<Sort.Order> getDefaultOrders() {

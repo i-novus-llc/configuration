@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
@@ -14,12 +15,16 @@ import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
+import ru.i_novus.configuration.config.specification.ApplicationConfigSpecification;
 
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
 
 @Service
 public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRestService {
@@ -40,16 +45,18 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
     @Override
     public List<ConfigGroupResponse> getAllConfigs(ApplicationConfigCriteria criteria) {
         Map<String, String> configValues = configValueService.getKeyValueList(commonSystemCode);
-        List<Object[]> groupedConfigs = configRepository.findGroupedCommonSystemConfigs();
+        criteria.noPagination();
+        ApplicationConfigSpecification specification = new ApplicationConfigSpecification(criteria);
+        List<ConfigEntity> groupedConfigs = configRepository.findAll(specification, criteria).getContent();
 
         List<ConfigGroupResponse> result = new ArrayList<>();
 
         for (int i = 0; i < groupedConfigs.size(); ) {
-            Object[] data = groupedConfigs.get(i);
+            ConfigEntity data = groupedConfigs.get(i);
             ConfigGroupResponse group = new ConfigGroupResponse();
-            if (data[0] != null) {
-                group.setId((int) data[0]);
-                group.setName((String) data[1]);
+            if (data.getGroup() != null) {
+                group.setId(data.getGroup().getId());
+                group.setName(data.getGroup().getName());
             } else {
                 group = new EmptyGroup();
             }
@@ -58,19 +65,20 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
             do {
                 ApplicationConfigResponse config = new ApplicationConfigResponse();
                 data = groupedConfigs.get(i);
-                config.setCode((String) data[2]);
-                config.setName((String) data[3]);
-                config.setValueType((String) data[4]);
+                config.setCode(data.getCode());
+                config.setName(data.getName());
+                config.setValueType(data.getValueType().getName());
                 config.setValue(configValues.get(config.getCode()));
-                group.getConfigs().add(config);
+                if (!(Boolean.TRUE.equals(criteria.getWithValue()) && isNull(config.getValue())))
+                    group.getConfigs().add(config);
                 i++;
             } while (i < groupedConfigs.size() &&
-                    ((groupedConfigs.get(i)[0] != null && (int) groupedConfigs.get(i)[0] == group.getId()) ||
-                            groupedConfigs.get(i)[0] == null && group.getId() == 0));
+                    ((groupedConfigs.get(i).getGroup() != null && groupedConfigs.get(i).getGroup().getId() == group.getId()) ||
+                            groupedConfigs.get(i).getGroup() == null && group.getId() == 0));
             result.add(group);
         }
 
-        return result;
+        return clearEmptyGroups(result);
     }
 
     @Override
@@ -105,6 +113,12 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
         configValueService.deleteValue(commonSystemCode, code);
 
         audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.COMMON_SYSTEM_CONFIG_DELETE);
+    }
+
+    private List<ConfigGroupResponse> clearEmptyGroups(List<ConfigGroupResponse> result) {
+        return result.stream()
+                .filter(g -> !CollectionUtils.isEmpty(g.getConfigs()))
+                .collect(Collectors.toList());
     }
 
     private void audit(ConfigForm configForm, EventTypeEnum eventType) {

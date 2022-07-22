@@ -22,4 +22,6 @@ public class ApplicationConfigResponse {
     @ApiModelProperty("Тип значения настройки")
     private String valueType;
 
+    @ApiModelProperty("Значение по умолчанию")
+    private String defaultValue;
 }
