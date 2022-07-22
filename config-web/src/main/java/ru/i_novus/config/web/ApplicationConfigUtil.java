@@ -43,6 +43,7 @@ public class ApplicationConfigUtil {
                 configDataset.put("name", ((DataSet) config).get("name"));
                 configDataset.put("commonSystemValue", ((DataSet) config).get("commonSystemValue"));
                 configDataset.put("valueType", ((DataSet) config).get("valueType"));
+                configDataset.put("defaultValue", ((DataSet) config).get("defaultValue"));
 
                 if (ValueTypeEnum.BOOLEAN.name().equals(((DataSet) config).get("valueType"))) {
                     boolean result = "true".equals(((DataSet) config).get("value"));

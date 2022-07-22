@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
 import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
@@ -15,9 +16,14 @@ import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
+import ru.i_novus.configuration.config.specification.ApplicationConfigSpecification;
 
 import javax.ws.rs.NotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * Реализация REST сервиса для работы с приложениями
@@ -42,17 +48,19 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
     @Override
     public List<ConfigsApplicationResponse> getAllConfigs(ApplicationConfigCriteria criteria) {
         Map<String, String> commonSystemConfigValues = configValueService.getKeyValueList(commonSystemCode);
-        List<Object[]> groupedConfigs = configRepository.findGroupedApplicationConfigs();
+        criteria.noPagination();
+        ApplicationConfigSpecification specification = new ApplicationConfigSpecification(criteria);
+        List<ConfigEntity> groupedConfigs = configRepository.findAll(specification, criteria).getContent();
 
         List<ConfigsApplicationResponse> result = new ArrayList<>();
 
         // TODO - сделать код менее запутанным
         for (int i = 0; i < groupedConfigs.size(); ) {
-            Object[] data = groupedConfigs.get(i);
+            ConfigEntity data = groupedConfigs.get(i);
 
             ConfigsApplicationResponse application = new ConfigsApplicationResponse();
-            application.setCode((String) data[0]);
-            application.setName((String) data[1]);
+            application.setCode(data.getApplication().getCode());
+            application.setName(data.getApplication().getName());
             application.setGroups(new ArrayList<>());
             result.add(application);
 
@@ -61,9 +69,9 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
             do {
                 data = groupedConfigs.get(i);
                 ConfigGroupResponse group = new ConfigGroupResponse();
-                if (data[2] != null) {
-                    group.setId((int) data[2]);
-                    group.setName((String) data[3]);
+                if (data.getGroup() != null) {
+                    group.setId(data.getGroup().getId());
+                    group.setName(data.getGroup().getName());
                 } else {
                     group = new EmptyGroup();
                 }
@@ -72,21 +80,23 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
                 do {
                     ApplicationConfigResponse config = new ApplicationConfigResponse();
                     data = groupedConfigs.get(i);
-                    config.setCode((String) data[4]);
-                    config.setName((String) data[5]);
-                    config.setValueType((String) data[6]);
+                    config.setCode(data.getCode());
+                    config.setName(data.getName());
+                    config.setValueType(data.getValueType().getName());
                     config.setValue(appConfigValues.get(config.getCode()));
                     config.setCommonSystemValue(commonSystemConfigValues.get(config.getCode()));
-                    group.getConfigs().add(config);
+                    config.setDefaultValue(data.getDefaultValue());
+                    if (!(Boolean.TRUE.equals(criteria.getWithValue()) && isNull(config.getValue())))
+                        group.getConfigs().add(config);
                     i++;
-                } while (i < groupedConfigs.size() && application.getCode().equals(groupedConfigs.get(i)[0]) &&
-                        ((groupedConfigs.get(i)[2] != null && (int) groupedConfigs.get(i)[2] == group.getId()) ||
-                                groupedConfigs.get(i)[2] == null && group.getId() == 0));
+                } while (i < groupedConfigs.size() && application.getCode().equals(groupedConfigs.get(i).getApplication().getCode()) &&
+                        ((groupedConfigs.get(i).getGroup().getId() != null && groupedConfigs.get(i).getGroup().getId() == group.getId()) ||
+                                groupedConfigs.get(i).getGroup().getId() == null && group.getId() == 0));
                 application.getGroups().add(group);
-            } while (i < groupedConfigs.size() && application.getCode().equals(groupedConfigs.get(i)[0]));
+            } while (i < groupedConfigs.size() && application.getCode().equals(groupedConfigs.get(i).getApplication().getCode()));
         }
 
-        return result;
+        return clearEmptyGroups(result);
     }
 
     @Override
@@ -126,6 +136,12 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
         String oldValue = configValueService.getValue(entity.getApplication().getCode(), code);
         configValueService.deleteValue(entity.getApplication().getCode(), code);
         audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.APPLICATION_CONFIG_DELETE);
+    }
+
+    private List<ConfigsApplicationResponse> clearEmptyGroups(List<ConfigsApplicationResponse> result) {
+        return result.stream()
+                .filter(r -> nonNull(r.getGroups()) && r.getGroups().stream().anyMatch(g -> !CollectionUtils.isEmpty(g.getConfigs())))
+                .collect(Collectors.toList());
     }
 
     private void audit(ConfigForm configForm, EventTypeEnum eventType) {

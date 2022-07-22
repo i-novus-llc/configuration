@@ -13,6 +13,18 @@
                                     message-on-success="false"/>
                         </action>
                     </actions>
+                    <filters>
+                        <row>
+                            <input-select id="applications" label="Компонент системы" query-id="config_application"
+                                          placeholder="Все" type="multi" search="false"/>
+                            <input-select id="groups" label="Группа настроек" query-id="config_group"
+                                          placeholder="Все" type="multi" search-field-id="name"/>
+                            <input-text id="name" label="Наименование настройки" domain="string"/>
+                        </row>
+                        <row>
+                            <checkbox id="withValue" label="Скрывать настройки без значений"/>
+                        </row>
+                    </filters>
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
@@ -31,6 +43,7 @@
                             </switch>
                         </column>
                         <column text-field-id="commonSystemValue" label="Общесистемное значение"/>
+                        <column text-field-id="defaultValue" label="Значение по умолчанию"/>
                         <column text-field-id="option">
                             <toolbar>
                                 <button id="delete" label="Стереть значение" visible="{isConfig}"
@@ -53,6 +66,14 @@
                                     message-on-success="false"/>
                         </action>
                     </actions>
+                    <filters>
+                        <row>
+                            <input-select id="groups" label="Группа настроек" query-id="config_group"
+                                          placeholder="Все" type="multi" search-field-id="name"/>
+                            <input-text id="name" label="Наименование настройки" domain="string"/>
+                            <checkbox id="withValue" label="Скрывать настройки без значений"/>
+                        </row>
+                    </filters>
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
