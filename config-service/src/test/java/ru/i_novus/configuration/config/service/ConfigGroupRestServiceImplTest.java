@@ -46,7 +46,7 @@ public class ConfigGroupRestServiceImplTest {
 
         List<GroupForm> groupForms = groupRestService.getAllGroup(new GroupCriteria()).getContent();
 
-        assertEquals(3, groupForms.size());
+        assertEquals(4, groupForms.size());
         groupAssertEquals(groupForm, groupForms.get(0));
         groupAssertEquals(groupForm2, groupForms.get(1));
         groupAssertEquals(groupForm3, groupForms.get(2));
@@ -96,12 +96,12 @@ public class ConfigGroupRestServiceImplTest {
         GroupForm groupForm3 = GroupFormBuilder.buildGroupForm3();
 
         GroupCriteria criteria = new GroupCriteria();
-        criteria.setPageSize(2);
+        criteria.setPageSize(3);
         List<GroupForm> groupForms = groupRestService.getAllGroup(criteria).getContent();
 
-        assertEquals(2, groupForms.size());
-        groupAssertEquals(groupForm, groupForms.get(0));
-        groupAssertEquals(groupForm2, groupForms.get(1));
+        assertEquals(3, groupForms.size());
+        groupAssertEquals(groupForm, groupForms.get(1));
+        groupAssertEquals(groupForm2, groupForms.get(2));
 
         criteria.setPageNumber(1);
         groupForms = groupRestService.getAllGroup(criteria).getContent();
