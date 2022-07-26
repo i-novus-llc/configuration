@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: V21_update_config_table
+      author: anigmatullin
+      dbms: postgresql
+      changes:
+        - sqlFile:
+            path: db/sql/V21_update_config_table.sql

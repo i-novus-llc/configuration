@@ -30,4 +30,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/V19_update_config_table.yml
   - include:
-      file: db/changelog/V20_add_constraint_config_value_column.yaml
+      file: db/changelog/V21_update_config_table.yaml
