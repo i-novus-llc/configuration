@@ -60,20 +60,14 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Transactional(readOnly = true)
     public Page<ConfigResponse> getAllConfig(ConfigCriteria criteria) {
         ConfigSpecification specification = new ConfigSpecification(criteria);
-        return configRepository.findAll(specification, criteria)
-                .map(e -> {
-                            GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(e.getCode());
-                            return ConfigMapper.toConfigResponse(e, GroupMapper.toGroupForm(groupEntity));
-                        }
-                );
+        return configRepository.findAll(specification, criteria).map(e -> ConfigMapper.toConfigResponse(e, GroupMapper.toGroupForm(e.getGroup())));
     }
 
     @Override
     @Transactional(readOnly = true)
     public ConfigResponse getConfig(String code) {
         ConfigEntity configEntity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-        GroupEntity groupEntity = groupRepository.findOneGroupByConfigCodeStarts(configEntity.getCode());
-        return ConfigMapper.toConfigResponse(configEntity, GroupMapper.toGroupForm(groupEntity));
+        return ConfigMapper.toConfigResponse(configEntity, GroupMapper.toGroupForm(configEntity.getGroup()));
     }
 
     @Override
