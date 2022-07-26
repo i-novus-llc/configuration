@@ -6,7 +6,7 @@ INSERT INTO configuration.config_group(name)
     ON CONFLICT(name) DO NOTHING;
 
 INSERT INTO configuration.config_group_code(code, group_id)
-    VALUES ('unknown', (SELECT id FROM configuration.config_group WHERE config_group.name = 'Группа по умолчанию'))
+    VALUES ('default', (SELECT id FROM configuration.config_group WHERE config_group.name = 'Группа по умолчанию'))
     ON CONFLICT(code) DO NOTHING;
 
 UPDATE configuration.config c
