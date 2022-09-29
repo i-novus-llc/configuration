@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.service.ConfigValueService;
@@ -20,7 +19,6 @@ import java.util.*;
 /**
  * Реализация сервиса для работы со значениями настроек, хранящихся в Consul в формате yaml
  */
-@Service
 @Slf4j
 public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
 
@@ -78,7 +76,7 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
     @Override
     public void deleteValue(String appCode, String code) {
         ObjectNode node = loadYaml(appCode);
-        if (node == null) node = yamlMapper.createObjectNode();
+        if (node == null) return;
         deleteNodeValue(node, code);
         deleteEmptyNodes(node);
 

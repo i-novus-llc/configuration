@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.service.ConfigValueService;
@@ -14,7 +13,6 @@ import java.util.*;
 /**
  * Реализация сервиса для работы со значениями настроек, хранящихся в Consul
  */
-//@Service
 public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Value("${config.consul.url}")
