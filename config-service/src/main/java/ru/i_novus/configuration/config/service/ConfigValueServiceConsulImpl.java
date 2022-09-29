@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Реализация сервиса для работы со значениями настроек, хранящихся в Consul
  */
-@Service
+//@Service
 public class ConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Value("${config.consul.url}")
