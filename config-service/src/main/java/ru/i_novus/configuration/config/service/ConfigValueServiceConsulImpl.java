@@ -21,7 +21,11 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
     @Value("${spring.cloud.consul.config.prefix}")
     private String prefix;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public ConfigValueServiceConsulImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
 
     @Override

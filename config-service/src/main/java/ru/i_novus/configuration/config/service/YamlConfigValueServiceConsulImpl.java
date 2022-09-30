@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -28,9 +29,18 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
     @Value("${spring.cloud.consul.config.data-key:data}")
     private String dataKey;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
-    private final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+    private final ObjectMapper yamlMapper;
+
+    public YamlConfigValueServiceConsulImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+        YAMLFactory factory = new YAMLFactory();
+        factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+        factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+        yamlMapper = new ObjectMapper(factory);
+        yamlMapper.findAndRegisterModules();
+    }
 
     @Override
     public String getValue(String appCode, String code) {
@@ -184,7 +194,6 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         try {
             String yaml = yamlMapper.writeValueAsString(node);
-            yaml = yaml.replace("\"", "").replace("---\n","");
             HttpEntity<String> httpEntity = new HttpEntity<>(yaml, headers);
             restTemplate.put(url + appCode + "/" + dataKey, httpEntity);
         } catch (JsonProcessingException e) {
