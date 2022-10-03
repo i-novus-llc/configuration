@@ -18,7 +18,7 @@ public class ConfigValueServiceConsulImpl implements ConfigValueService {
     @Value("${config.consul.url}")
     private String url;
 
-    @Value("${spring.cloud.consul.config.prefix}")
+    @Value("${spring.cloud.consul.config.prefix:config}")
     private String prefix;
 
     private final RestTemplate restTemplate;
