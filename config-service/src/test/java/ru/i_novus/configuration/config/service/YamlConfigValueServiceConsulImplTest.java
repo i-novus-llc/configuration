@@ -1,11 +1,15 @@
 package ru.i_novus.configuration.config.service;
 
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.TestApp;
@@ -19,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 
 @RunWith(SpringRunner.class)
@@ -31,18 +36,25 @@ public class YamlConfigValueServiceConsulImplTest {
     @MockBean(name = "restTemplate")
     private RestTemplate restTemplate;
 
+    private YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul;
+    private String path;
+
+    @Before
+    public void setUp() {
+        yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
+        path = any() + "myApplication" + "/" + any() + "?raw=1";
+    }
+
     @Test
     public void getKeyValueEmptyMapListTest() {
-        YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
-        Mockito.when(restTemplate.getForObject(getPath(), String.class)).thenReturn("");
+        when(restTemplate.getForObject(path, String.class)).thenReturn("");
         Map<String, String> keyValueMap = yamlConfigValueServiceConsul.getKeyValueList("myApplication");
         assertTrue(keyValueMap.isEmpty());
     }
 
     @Test
     public void getKeyValueMapListTest() throws IOException {
-        YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
-        Mockito.when(restTemplate.getForObject(getPath(), String.class)).thenReturn(readFile("/test_file.yml"));
+        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
         Map<String, String> keyValueMap = yamlConfigValueServiceConsul.getKeyValueList("myApplication");
 
         assertTrue(keyValueMap.containsKey("server.port"));
@@ -72,25 +84,86 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void getValueTest() throws IOException {
-        YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
-        Mockito.when(restTemplate.getForObject(getPath(), String.class)).thenReturn(readFile("/test_file.yml"));
+        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
         String serverPortValue = yamlConfigValueServiceConsul.getValue("myApplication", "server.port");
-
         assertNotNull(serverPortValue);
         assertEquals(serverPortValue, "8080");
     }
 
     @Test
     public void getNotExistValueTest() throws IOException {
-        YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
-        Mockito.when(restTemplate.getForObject(getPath(), String.class)).thenReturn(readFile("/test_file.yml"));
+        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
         String swaggerResourcePackageValue = yamlConfigValueServiceConsul.getValue("myApplication", "jaxrs.swagger.resource-package");
-
         assertNull(swaggerResourcePackageValue);
     }
 
-    private String getPath() {
-        return any() + "myApplication" + "/" + any() + "?raw=1";
+    @Test
+    public void saveRootValueTest() throws IOException {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+        yamlConfigValueServiceConsul.saveValue("myApplication", "egisz.fnsi.url", "https://nsi.rosminzdrav.ru");
+
+        //Проверка
+        ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(restTemplate).put(stringArgumentCaptor.capture(), httpEntityArgumentCaptor.capture());
+        HttpEntity<String> actualHttpEntityArgumentCaptor = httpEntityArgumentCaptor.getValue();
+        String actualHttpEntityArgumentCaptorBody = actualHttpEntityArgumentCaptor.getBody();
+
+        assertNotNull(actualHttpEntityArgumentCaptor);
+        assertNotNull(actualHttpEntityArgumentCaptorBody);
+
+        assertTrue(actualHttpEntityArgumentCaptorBody.contains("egisz.fnsi.url: https://nsi.rosminzdrav.ru"));
+    }
+
+    // TODO: 04.10.2022 Возникли некоторые сложности
+    @Test
+    @Ignore
+    public void saveValueTest() throws IOException {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+        yamlConfigValueServiceConsul.saveValue("myApplication", "spring.data.cassandra.contact-points", "127.0.0.1");
+
+        //Проверка
+        ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(restTemplate).put(stringArgumentCaptor.capture(), httpEntityArgumentCaptor.capture());
+        HttpEntity<String> actualHttpEntityArgumentCaptor = httpEntityArgumentCaptor.getValue();
+        String actualHttpEntityArgumentCaptorBody = actualHttpEntityArgumentCaptor.getBody();
+
+        assertNotNull(actualHttpEntityArgumentCaptor);
+        assertNotNull(actualHttpEntityArgumentCaptorBody);
+    }
+
+    @Test
+    public void deleteValueTest() throws IOException {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+        yamlConfigValueServiceConsul.deleteValue("myApplication", "cron-expressions.employee-data-trigger");
+
+        //Проверка
+        ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(restTemplate).put(stringArgumentCaptor.capture(), httpEntityArgumentCaptor.capture());
+        HttpEntity<String> actualHttpEntityArgumentCaptor = httpEntityArgumentCaptor.getValue();
+        String actualHttpEntityArgumentCaptorBody = actualHttpEntityArgumentCaptor.getBody();
+
+        assertNotNull(actualHttpEntityArgumentCaptor);
+        assertNotNull(actualHttpEntityArgumentCaptorBody);
+
+        assertFalse(actualHttpEntityArgumentCaptorBody.contains("employee-data-trigger: 0 30 */2 * * ?"));
+    }
+
+//    @Test
+    public void deleteAllValuesTest() {
+
+    }
+
+    //@Test
+    public void saveAllValuesUpdatedDataTest() {
+
+    }
+
+    // Test
+    public void saveAllValuesDeletedDataTest() {
+
     }
 
     private String readFile(String fileName) throws IOException {
