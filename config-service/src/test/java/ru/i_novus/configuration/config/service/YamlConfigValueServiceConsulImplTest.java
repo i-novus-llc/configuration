@@ -34,7 +34,7 @@ public class YamlConfigValueServiceConsulImplTest {
     @Test
     public void getKeyValueEmptyMapListTest() {
         YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
-        Mockito.when(restTemplate.getForObject(getPath(), String.class)).thenReturn(null);
+        Mockito.when(restTemplate.getForObject(getPath(), String.class)).thenReturn("");
         Map<String, String> keyValueMap = yamlConfigValueServiceConsul.getKeyValueList("myApplication");
         assertTrue(keyValueMap.isEmpty());
     }
