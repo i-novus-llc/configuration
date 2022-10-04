@@ -11,11 +11,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.service.ConfigValueService;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Реализация сервиса для работы со значениями настроек, хранящихся в Consul в формате yaml
@@ -101,8 +104,12 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
     private ObjectNode loadYaml(String appCode) {
         try {
             String rawValue = restTemplate.getForObject(url + appCode + "/" + dataKey + "?raw=1", String.class);
-            JsonNode node = yamlMapper.readTree(rawValue);
-            return (ObjectNode) node;
+
+            if (StringUtils.hasText(rawValue)) {
+                JsonNode node = yamlMapper.readTree(rawValue);
+                return (ObjectNode) node;
+            }
+            return null;
         } catch (HttpClientErrorException.NotFound | JsonProcessingException e) {
             log.info(e.getMessage());
             return null;
