@@ -118,6 +118,22 @@ public class YamlConfigValueServiceConsulImplTest {
     }
 
     @Test
+    public void updateValueTest() {
+        String importWorklogsTriggerCronExpressionValue = yamlConfigValueServiceConsul.getValue("myApplication", "cron-expressions.import-worklogs-trigger");
+        assertNotNull(importWorklogsTriggerCronExpressionValue);
+        assertEquals(importWorklogsTriggerCronExpressionValue, "0 5 * * * ?");
+
+        //Изменение значения имеющейся настройке в yml файле
+        yamlConfigValueServiceConsul.saveValue("myApplication", "cron-expressions.import-worklogs-trigger", "0 30 */2 * * ?");
+
+        //Проверка
+        String resultYaml = getSavedResult(restTemplate);
+
+        assertTrue(resultYaml.contains("cron-expressions:\n"));
+        assertTrue(resultYaml.contains("  import-worklogs-trigger: 0 30 */2 * * ?\n"));
+    }
+
+    @Test
     public void deleteValueTest() {
         yamlConfigValueServiceConsul.deleteValue("myApplication", "cron-expressions.employee-data-trigger");
 
