@@ -128,21 +128,6 @@ public class YamlConfigValueServiceConsulImplTest {
         assertFalse(resultYaml.contains("employee-data-trigger:"));
     }
 
-    //    @Test
-    public void deleteAllValuesTest() {
-
-    }
-
-    //@Test
-    public void saveAllValuesUpdatedDataTest() {
-
-    }
-
-    // Test
-    public void saveAllValuesDeletedDataTest() {
-
-    }
-
     @SuppressWarnings("unchecked")
     private String getSavedResult(RestTemplate restTemplate) {
         ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
