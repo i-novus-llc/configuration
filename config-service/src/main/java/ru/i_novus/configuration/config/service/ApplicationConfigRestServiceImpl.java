@@ -41,7 +41,7 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
     @Autowired
     private AuditService auditService;
 
-    @Value("${spring.cloud.consul.config.defaultContext}")
+    @Value("${spring.cloud.consul.config.defaultContext:application}")
     private String commonSystemCode;
 
 

@@ -38,7 +38,7 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
     @Autowired
     private AuditService auditService;
 
-    @Value("${spring.cloud.consul.config.defaultContext}")
+    @Value("${spring.cloud.consul.config.defaultContext:application}")
     private String commonSystemCode;
 
 
