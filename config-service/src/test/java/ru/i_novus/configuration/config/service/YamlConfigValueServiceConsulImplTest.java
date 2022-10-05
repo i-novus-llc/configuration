@@ -2,11 +2,9 @@ package ru.i_novus.configuration.config.service;
 
 import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpEntity;
@@ -23,7 +21,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(SpringRunner.class)
@@ -40,9 +39,10 @@ public class YamlConfigValueServiceConsulImplTest {
     private String path;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
         path = any() + "myApplication" + "/" + any() + "?raw=1";
+        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
     }
 
     @Test
@@ -53,8 +53,7 @@ public class YamlConfigValueServiceConsulImplTest {
     }
 
     @Test
-    public void getKeyValueMapListTest() throws IOException {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+    public void getKeyValueMapListTest() {
         Map<String, String> keyValueMap = yamlConfigValueServiceConsul.getKeyValueList("myApplication");
 
         assertTrue(keyValueMap.containsKey("server.port"));
@@ -83,23 +82,20 @@ public class YamlConfigValueServiceConsulImplTest {
     }
 
     @Test
-    public void getValueTest() throws IOException {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+    public void getValueTest() {
         String serverPortValue = yamlConfigValueServiceConsul.getValue("myApplication", "server.port");
         assertNotNull(serverPortValue);
         assertEquals(serverPortValue, "8080");
     }
 
     @Test
-    public void getNotExistValueTest() throws IOException {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+    public void getNotExistValueTest() {
         String swaggerResourcePackageValue = yamlConfigValueServiceConsul.getValue("myApplication", "jaxrs.swagger.resource-package");
         assertNull(swaggerResourcePackageValue);
     }
 
     @Test
-    public void saveRootValueTest() throws IOException {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+    public void saveRootValueTest() {
         yamlConfigValueServiceConsul.saveValue("myApplication", "egisz.fnsi.url", "https://nsi.rosminzdrav.ru");
 
         //Проверка
@@ -109,8 +105,7 @@ public class YamlConfigValueServiceConsulImplTest {
     }
 
     @Test
-    public void saveValueTest() throws IOException {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+    public void saveValueTest() {
         yamlConfigValueServiceConsul.saveValue("myApplication", "spring.data.cassandra.contact-points", "127.0.0.1");
 
         //Проверка
@@ -123,8 +118,7 @@ public class YamlConfigValueServiceConsulImplTest {
     }
 
     @Test
-    public void deleteValueTest() throws IOException {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+    public void deleteValueTest() {
         yamlConfigValueServiceConsul.deleteValue("myApplication", "cron-expressions.employee-data-trigger");
 
         //Проверка
@@ -134,7 +128,7 @@ public class YamlConfigValueServiceConsulImplTest {
         assertFalse(resultYaml.contains("employee-data-trigger:"));
     }
 
-//    @Test
+    //    @Test
     public void deleteAllValuesTest() {
 
     }
@@ -149,6 +143,7 @@ public class YamlConfigValueServiceConsulImplTest {
 
     }
 
+    @SuppressWarnings("unchecked")
     private String getSavedResult(RestTemplate restTemplate) {
         ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
         ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
@@ -159,7 +154,6 @@ public class YamlConfigValueServiceConsulImplTest {
         assertNotNull(result);
         return result;
     }
-
 
     private String readFile(String fileName) throws IOException {
         try (InputStream inputStream = getClass().getResourceAsStream(fileName)) {
