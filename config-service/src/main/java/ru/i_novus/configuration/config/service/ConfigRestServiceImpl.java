@@ -52,7 +52,7 @@ public class ConfigRestServiceImpl implements ConfigRestService {
     @Autowired
     private MessageSourceAccessor messageAccessor;
 
-    @Value("${spring.cloud.consul.config.defaultContext}")
+    @Value("${spring.cloud.consul.config.defaultContext:application}")
     private String commonSystemCode;
 
 
