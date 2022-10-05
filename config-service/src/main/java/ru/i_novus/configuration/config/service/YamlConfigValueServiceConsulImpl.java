@@ -148,7 +148,7 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
                     setValue((ObjectNode) field.getValue(), code.substring(li + 1), value);
                     return;
                 }
-                if (field.getKey().startsWith(hd)) {
+                if (field.getKey().startsWith(hd + '.')) {
                     ObjectNode newRoot = root.objectNode();
                     root.set(hd, newRoot);
                     newRoot.set(field.getKey().substring(hd.length() + 1), field.getValue());

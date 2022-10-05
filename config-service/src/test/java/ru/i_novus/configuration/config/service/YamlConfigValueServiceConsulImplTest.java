@@ -103,34 +103,23 @@ public class YamlConfigValueServiceConsulImplTest {
         yamlConfigValueServiceConsul.saveValue("myApplication", "egisz.fnsi.url", "https://nsi.rosminzdrav.ru");
 
         //Проверка
-        ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
-        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(restTemplate).put(stringArgumentCaptor.capture(), httpEntityArgumentCaptor.capture());
-        HttpEntity<String> actualHttpEntityArgumentCaptor = httpEntityArgumentCaptor.getValue();
-        String actualHttpEntityArgumentCaptorBody = actualHttpEntityArgumentCaptor.getBody();
+        String resultYaml = getSavedResult(restTemplate);
 
-        assertNotNull(actualHttpEntityArgumentCaptor);
-        assertNotNull(actualHttpEntityArgumentCaptorBody);
-
-        assertTrue(actualHttpEntityArgumentCaptorBody.contains("egisz.fnsi.url: https://nsi.rosminzdrav.ru"));
+        assertTrue(resultYaml.contains("egisz.fnsi.url: https://nsi.rosminzdrav.ru"));
     }
 
-    // TODO: 04.10.2022 Возникли некоторые сложности
     @Test
-    @Ignore
     public void saveValueTest() throws IOException {
         when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
         yamlConfigValueServiceConsul.saveValue("myApplication", "spring.data.cassandra.contact-points", "127.0.0.1");
 
         //Проверка
-        ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
-        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(restTemplate).put(stringArgumentCaptor.capture(), httpEntityArgumentCaptor.capture());
-        HttpEntity<String> actualHttpEntityArgumentCaptor = httpEntityArgumentCaptor.getValue();
-        String actualHttpEntityArgumentCaptorBody = actualHttpEntityArgumentCaptor.getBody();
+        String resultYaml = getSavedResult(restTemplate);
 
-        assertNotNull(actualHttpEntityArgumentCaptor);
-        assertNotNull(actualHttpEntityArgumentCaptorBody);
+        assertTrue(resultYaml.contains("  datasource:\n"));
+        assertTrue(resultYaml.contains("    url: jdbc:postgresql://localhost:5432/audit\n"));
+        assertTrue(resultYaml.contains("    url: jdbc:postgresql://localhost:5432/audit\n"));
+        assertTrue(resultYaml.contains("  data.cassandra.contact-points: 127.0.0.1\n"));
     }
 
     @Test
@@ -139,16 +128,10 @@ public class YamlConfigValueServiceConsulImplTest {
         yamlConfigValueServiceConsul.deleteValue("myApplication", "cron-expressions.employee-data-trigger");
 
         //Проверка
-        ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
-        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(restTemplate).put(stringArgumentCaptor.capture(), httpEntityArgumentCaptor.capture());
-        HttpEntity<String> actualHttpEntityArgumentCaptor = httpEntityArgumentCaptor.getValue();
-        String actualHttpEntityArgumentCaptorBody = actualHttpEntityArgumentCaptor.getBody();
+        String resultYaml = getSavedResult(restTemplate);
 
-        assertNotNull(actualHttpEntityArgumentCaptor);
-        assertNotNull(actualHttpEntityArgumentCaptorBody);
-
-        assertFalse(actualHttpEntityArgumentCaptorBody.contains("employee-data-trigger: 0 30 */2 * * ?"));
+        assertTrue(resultYaml.contains("\ncron-expressions:\n"));
+        assertFalse(resultYaml.contains("employee-data-trigger:"));
     }
 
 //    @Test
@@ -165,6 +148,18 @@ public class YamlConfigValueServiceConsulImplTest {
     public void saveAllValuesDeletedDataTest() {
 
     }
+
+    private String getSavedResult(RestTemplate restTemplate) {
+        ArgumentCaptor<HttpEntity<String>> httpEntityArgumentCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(restTemplate).put(stringArgumentCaptor.capture(), httpEntityArgumentCaptor.capture());
+        HttpEntity<String> actualHttpEntityArgumentCaptor = httpEntityArgumentCaptor.getValue();
+        assertNotNull(actualHttpEntityArgumentCaptor);
+        String result = actualHttpEntityArgumentCaptor.getBody();
+        assertNotNull(result);
+        return result;
+    }
+
 
     private String readFile(String fileName) throws IOException {
         try (InputStream inputStream = getClass().getResourceAsStream(fileName)) {
