@@ -36,26 +36,23 @@ public class YamlConfigValueServiceConsulImplTest {
     private RestTemplate restTemplate;
 
     private YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul;
-    private String path;
-    private String testYamlFile;
 
     @Before
     public void setUp() {
         yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
-        path = any() + "myApplication" + "/" + any() + "?raw=1";
-        testYamlFile = readFile("/test_file.yml");
+        when(restTemplate.getForObject(any() + "myApplication" + "/" + any() + "?raw=1", String.class))
+                .thenReturn(readFile("/test_file.yml"));
     }
 
     @Test
     public void getKeyValueEmptyMapListTest() {
-        when(restTemplate.getForObject(path, String.class)).thenReturn("");
+        when(restTemplate.getForObject(any() + "myApplication" + "/" + any() + "?raw=1", String.class)).thenReturn("");
         Map<String, String> keyValueMap = yamlConfigValueServiceConsul.getKeyValueList("myApplication");
         assertTrue(keyValueMap.isEmpty());
     }
 
     @Test
     public void getKeyValueMapListTest() {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         Map<String, String> keyValueMap = yamlConfigValueServiceConsul.getKeyValueList("myApplication");
 
         assertTrue(keyValueMap.containsKey("server.port"));
@@ -85,7 +82,6 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void getValueTest() {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         String serverPortValue = yamlConfigValueServiceConsul.getValue("myApplication", "server.port");
         assertNotNull(serverPortValue);
         assertEquals(serverPortValue, "8080");
@@ -93,14 +89,12 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void getNotExistValueTest() {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         String swaggerResourcePackageValue = yamlConfigValueServiceConsul.getValue("myApplication", "jaxrs.swagger.resource-package");
         assertNull(swaggerResourcePackageValue);
     }
 
     @Test
     public void saveRootValueTest() {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         yamlConfigValueServiceConsul.saveValue("myApplication", "egisz.fnsi.url", "https://nsi.rosminzdrav.ru");
 
         //Проверка
@@ -111,7 +105,6 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void saveValueTest() {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         yamlConfigValueServiceConsul.saveValue("myApplication", "spring.data.cassandra.contact-points", "127.0.0.1");
 
         //Проверка
@@ -125,7 +118,6 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void updateValueTest() {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         String importWorklogsTriggerCronExpressionValue = yamlConfigValueServiceConsul.getValue("myApplication", "cron-expressions.import-worklogs-trigger");
         assertNotNull(importWorklogsTriggerCronExpressionValue);
         assertEquals(importWorklogsTriggerCronExpressionValue, "0 5 * * * ?");
@@ -142,7 +134,6 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void deleteValueTest() {
-        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         yamlConfigValueServiceConsul.deleteValue("myApplication", "cron-expressions.employee-data-trigger");
 
         //Проверка
