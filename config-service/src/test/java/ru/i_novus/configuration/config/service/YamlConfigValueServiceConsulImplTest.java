@@ -37,12 +37,13 @@ public class YamlConfigValueServiceConsulImplTest {
 
     private YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul;
     private String path;
+    private String testYamlFile;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
         path = any() + "myApplication" + "/" + any() + "?raw=1";
-        when(restTemplate.getForObject(path, String.class)).thenReturn(readFile("/test_file.yml"));
+        testYamlFile = readFile("/test_file.yml");
     }
 
     @Test
@@ -54,6 +55,7 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void getKeyValueMapListTest() {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         Map<String, String> keyValueMap = yamlConfigValueServiceConsul.getKeyValueList("myApplication");
 
         assertTrue(keyValueMap.containsKey("server.port"));
@@ -83,6 +85,7 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void getValueTest() {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         String serverPortValue = yamlConfigValueServiceConsul.getValue("myApplication", "server.port");
         assertNotNull(serverPortValue);
         assertEquals(serverPortValue, "8080");
@@ -90,12 +93,14 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void getNotExistValueTest() {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         String swaggerResourcePackageValue = yamlConfigValueServiceConsul.getValue("myApplication", "jaxrs.swagger.resource-package");
         assertNull(swaggerResourcePackageValue);
     }
 
     @Test
     public void saveRootValueTest() {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         yamlConfigValueServiceConsul.saveValue("myApplication", "egisz.fnsi.url", "https://nsi.rosminzdrav.ru");
 
         //Проверка
@@ -106,6 +111,7 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void saveValueTest() {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         yamlConfigValueServiceConsul.saveValue("myApplication", "spring.data.cassandra.contact-points", "127.0.0.1");
 
         //Проверка
@@ -119,6 +125,7 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void updateValueTest() {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         String importWorklogsTriggerCronExpressionValue = yamlConfigValueServiceConsul.getValue("myApplication", "cron-expressions.import-worklogs-trigger");
         assertNotNull(importWorklogsTriggerCronExpressionValue);
         assertEquals(importWorklogsTriggerCronExpressionValue, "0 5 * * * ?");
@@ -135,6 +142,7 @@ public class YamlConfigValueServiceConsulImplTest {
 
     @Test
     public void deleteValueTest() {
+        when(restTemplate.getForObject(path, String.class)).thenReturn(testYamlFile);
         yamlConfigValueServiceConsul.deleteValue("myApplication", "cron-expressions.employee-data-trigger");
 
         //Проверка
@@ -156,13 +164,15 @@ public class YamlConfigValueServiceConsulImplTest {
         return result;
     }
 
-    private String readFile(String fileName) throws IOException {
+    private String readFile(String fileName) {
         try (InputStream inputStream = getClass().getResourceAsStream(fileName)) {
             assert inputStream != null;
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                 return reader.lines()
                         .collect(Collectors.joining(System.lineSeparator()));
             }
+        } catch (IOException e) {
+            return "";
         }
     }
 
