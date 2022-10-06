@@ -6,6 +6,5 @@ spring:
       host: consul-agent.local
       port: 8500
       config:
-        prefix: config
-        defaultContext: application
+        format: yaml
         enabled: ${config.server.enable}

@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  liquibase:
+    change-log: classpath:/db/changelog-master.xml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/audit
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+
+cxf:
+  path: /api
+  jaxrs:
+    component-scan: true
+  servlet:
+    init:
+      service-list-path: /info
+
+cron-expressions:
+  employee-data-trigger: 0 30 */2 * * ?
+  import-worklogs-trigger: 0 5 * * * ?
+  export-worklogs-trigger: 0 30 */2 * * ?
+  worktime-trigger: 0 50 */4 * * ?
+  worklog-notify-trigger: 0 0 8 * * ?
