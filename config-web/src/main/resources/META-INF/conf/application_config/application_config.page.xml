@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
+<page xmlns="http://n2oapp.net/framework/config/schema/page-4.0"
       name="Настройки приложений">
     <regions>
         <tabs>
             <tab name="Настройки приложения">
-                <table id="application_configs" children="expand"
-                       query-id="application_config" object-id="application_config">
+                <table id="application_configs">
+                    <datasource query-id="application_config" object-id="application_config"/>
                     <actions>
                         <action id="updateConfig">
                             <invoke operation-id="updateConfig"
@@ -27,17 +27,19 @@
                     </filters>
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
-                        <column text-field-id="value" label="Значение">
+                        <!-- todo !!!!!!!-->
+                        <column text-field-id="configValue" label="Значение">
+                            <!-- todo !!!!!!!-->
                             <switch value-field-id="valueType">
-                                <case value="BOOLEAN">
-                                    <checkbox id="value" enabled="true">
+                                <case value="Чекбокс">
+                                    <checkbox id="configValue" enabled="true">
                                         <invoke operation-id="updateConfig" message-on-success="false">
                                         </invoke>
                                     </checkbox>
                                 </case>
                                 <default>
                                     <edit action-id="updateConfig" visible="{isConfig}">
-                                        <input-text id="value"/>
+                                        <input-text id="configValue"/>
                                     </edit>
                                 </default>
                             </switch>
@@ -46,7 +48,7 @@
                         <column text-field-id="defaultValue" label="Значение по умолчанию"/>
                         <column text-field-id="option">
                             <toolbar>
-                                <button id="delete" label="Стереть значение" visible="{isConfig}"
+                                <button id="applicationConfigsDelete" label="Стереть значение" visible="{isConfig}"
                                         icon="fa fa-eraser" type="icon">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
@@ -57,10 +59,10 @@
                 </table>
             </tab>
             <tab name="Общесистемные настройки">
-                <table id="common_system_configs" children="expand"
-                       query-id="common_system_config" object-id="common_system_config">
+                <table id="common_system_configs" children="expand">
+                    <datasource query-id="common_system_config" object-id="common_system_config"/>
                     <actions>
-                        <action id="updateConfig">
+                        <action id="updateConfigValue">
                             <invoke operation-id="updateConfig"
                                     refresh-on-submit="false"
                                     message-on-success="false"/>
@@ -78,14 +80,12 @@
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
                             <switch value-field-id="valueType">
-                                <case value="BOOLEAN">
-                                    <checkbox id="value" enabled="true">
-                                        <invoke operation-id="updateConfig" message-on-success="false">
-                                        </invoke>
-                                    </checkbox>
+                                <!-- todo !!!!!!!-->
+                                <case value="Чекбокс">
+                                    <checkbox id="value" enabled="true" action-id="updateConfigValue"/>
                                 </case>
                                 <default>
-                                    <edit action-id="updateConfig" visible="{isConfig}">
+                                    <edit action-id="updateConfigValue" visible="{isConfig}">
                                         <input-text id="value"/>
                                     </edit>
                                 </default>
@@ -93,7 +93,7 @@
                         </column>
                         <column text-field-id="option">
                             <toolbar>
-                                <button id="delete" label="Стереть значение" visible="{isConfig}"
+                                <button id="commonSystemConfigsDelete" label="Стереть значение" visible="{isConfig}"
                                         icon="fa fa-eraser" type="icon">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>

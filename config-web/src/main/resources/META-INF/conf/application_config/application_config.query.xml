@@ -21,6 +21,11 @@
             <select/>
         </field>
 
+        <!-- todo !!!!!!! -->
+        <field id="configValue">
+            <select mapping="['value']"/>
+        </field>
+
         <field id="name" domain="string">
             <select/>
             <filters>
