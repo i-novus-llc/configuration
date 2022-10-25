@@ -20,11 +20,6 @@
         <field id="code" domain="string">
             <select/>
         </field>
-        <!-- todo !!!!!!!-->
-        <field id="value">
-<!--                        <select/>-->
-            <select normalize="#this == null ? null : (#this.equals('false') ? false : #this.equals('true') ? true : #this)"/>
-        </field>
 
         <field id="name" domain="string">
             <select/>

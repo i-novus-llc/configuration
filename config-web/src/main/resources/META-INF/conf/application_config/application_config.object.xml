@@ -7,7 +7,7 @@
             </invocation>
             <in>
                 <field id="configCode" mapping="[code]"/>
-                <field id="configValue" mapping="[value]"/>
+                <field id="value"/>
             </in>
         </operation>
 

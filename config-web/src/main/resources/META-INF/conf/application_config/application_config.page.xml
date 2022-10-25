@@ -4,7 +4,7 @@
     <regions>
         <tabs>
             <tab name="Настройки приложения">
-                <table id="application_configs">
+                <table id="application_configs" children="expand">
                     <datasource query-id="application_config" object-id="application_config"/>
                     <actions>
                         <action id="updateConfig">
@@ -27,19 +27,17 @@
                     </filters>
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
-                        <!-- todo !!!!!!!-->
-                        <column text-field-id="configValue" label="Значение">
-                            <!-- todo !!!!!!!-->
+                        <column text-field-id="value" label="Значение">
                             <switch value-field-id="valueType">
                                 <case value="Чекбокс">
-                                    <checkbox id="configValue" enabled="true">
+                                    <checkbox id="value" enabled="true">
                                         <invoke operation-id="updateConfig" message-on-success="false">
                                         </invoke>
                                     </checkbox>
                                 </case>
                                 <default>
                                     <edit action-id="updateConfig" visible="{isConfig}">
-                                        <input-text id="configValue"/>
+                                        <input-text id="value"/>
                                     </edit>
                                 </default>
                             </switch>
@@ -61,13 +59,6 @@
             <tab name="Общесистемные настройки">
                 <table id="common_system_configs" children="expand">
                     <datasource query-id="common_system_config" object-id="common_system_config"/>
-                    <actions>
-                        <action id="updateConfigValue">
-                            <invoke operation-id="updateConfig"
-                                    refresh-on-submit="false"
-                                    message-on-success="false"/>
-                        </action>
-                    </actions>
                     <filters>
                         <row>
                             <input-select id="groups" label="Группа настроек" query-id="config_group"
@@ -76,11 +67,17 @@
                             <checkbox id="withValue" label="Скрывать настройки без значений"/>
                         </row>
                     </filters>
+                    <actions>
+                        <action id="updateConfigValue">
+                            <invoke operation-id="updateConfig"
+                                    refresh-on-submit="false"
+                                    message-on-success="false"/>
+                        </action>
+                    </actions>
                     <columns>
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
                             <switch value-field-id="valueType">
-                                <!-- todo !!!!!!!-->
                                 <case value="Чекбокс">
                                     <checkbox id="value" enabled="true" action-id="updateConfigValue"/>
                                 </case>
