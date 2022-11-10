@@ -29,11 +29,8 @@
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
                             <switch value-field-id="valueType">
-                                <case value="BOOLEAN">
-                                    <checkbox id="value" enabled="true">
-                                        <invoke operation-id="updateConfig" message-on-success="false">
-                                        </invoke>
-                                    </checkbox>
+                                <case value="Чекбокс">
+                                    <checkbox id="value" enabled="true" action-id="updateConfig"/>
                                 </case>
                                 <default>
                                     <edit action-id="updateConfig" visible="{isConfig}">
@@ -46,7 +43,7 @@
                         <column text-field-id="defaultValue" label="Значение по умолчанию"/>
                         <column text-field-id="option">
                             <toolbar>
-                                <button id="delete" label="Стереть значение" visible="{isConfig}"
+                                <button id="applicationConfigsDelete" label="Стереть значение" visible="{isConfig}"
                                         icon="fa fa-eraser" type="icon">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
@@ -60,7 +57,7 @@
                 <table id="common_system_configs" children="expand"
                        query-id="common_system_config" object-id="common_system_config">
                     <actions>
-                        <action id="updateConfig">
+                        <action id="updateConfigValue">
                             <invoke operation-id="updateConfig"
                                     refresh-on-submit="false"
                                     message-on-success="false"/>
@@ -78,14 +75,11 @@
                         <column text-field-id="name" label="Настройка"/>
                         <column text-field-id="value" label="Значение">
                             <switch value-field-id="valueType">
-                                <case value="BOOLEAN">
-                                    <checkbox id="value" enabled="true">
-                                        <invoke operation-id="updateConfig" message-on-success="false">
-                                        </invoke>
-                                    </checkbox>
+                                <case value="Чекбокс">
+                                    <checkbox id="value" enabled="true" action-id="updateConfigValue"/>
                                 </case>
                                 <default>
-                                    <edit action-id="updateConfig" visible="{isConfig}">
+                                    <edit action-id="updateConfigValue" visible="{isConfig}">
                                         <input-text id="value"/>
                                     </edit>
                                 </default>
@@ -93,7 +87,7 @@
                         </column>
                         <column text-field-id="option">
                             <toolbar>
-                                <button id="delete" label="Стереть значение" visible="{isConfig}"
+                                <button id="commonSystemConfigsDelete" label="Стереть значение" visible="{isConfig}"
                                         icon="fa fa-eraser" type="icon">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
