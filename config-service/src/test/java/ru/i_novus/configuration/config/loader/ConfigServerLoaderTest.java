@@ -2,7 +2,7 @@ package ru.i_novus.configuration.config.loader;
 
 import net.n2oapp.platform.i18n.UserException;
 import net.n2oapp.platform.loader.server.repository.RepositoryServerLoader;
-import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
+import net.n2oapp.platform.test.autoconfigure.pg.EnableEmbeddedPg;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
