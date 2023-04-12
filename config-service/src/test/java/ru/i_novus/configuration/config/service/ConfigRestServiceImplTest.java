@@ -1,7 +1,7 @@
 package ru.i_novus.configuration.config.service;
 
 import net.n2oapp.platform.i18n.UserException;
-import net.n2oapp.platform.test.autoconfigure.EnableEmbeddedPg;
+import net.n2oapp.platform.test.autoconfigure.pg.EnableEmbeddedPg;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
