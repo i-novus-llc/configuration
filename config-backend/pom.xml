@@ -12,6 +12,7 @@
     </parent>
 
     <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
         <audit.version>2.4.15</audit.version>
         <rdm.version>1.130</rdm.version>
     </properties>
