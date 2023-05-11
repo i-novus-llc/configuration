@@ -16,7 +16,8 @@
     <properties>
         <config.server.enable>false</config.server.enable>
         <n2o.version>7.23.72</n2o.version>
-        <liquibase.version>4.21.1</liquibase.version>
+        <liquibase.version>4.19.1</liquibase.version>
+        <snakeyaml.version>1.33</snakeyaml.version>
     </properties>
 
     <modules>
