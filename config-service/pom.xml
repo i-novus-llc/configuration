@@ -35,8 +35,9 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.i-novus.components</groupId>
+            <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
         </dependency>
 
 
