@@ -17,9 +17,9 @@
                 <column text-field-id="name" label="Наименование группы"/>
                 <column text-field-id="description" label="Описание"/>
 
-                <column text-field-id="option">
+                <column text-field-id="option" label="">
                     <toolbar>
-                        <button id="delete" label="Удалить" icon="fa fa-trash" type="icon"
+                        <button id="delete" description="Удалить" icon="fa fa-trash" type="icon"
                                 confirm="true" confirm-title="Удалить группу настроек"
                                 confirm-text="Вы уверены, что хотите удалить группу настроек?">
                             <invoke operation-id="delete" message-on-success="false"/>
