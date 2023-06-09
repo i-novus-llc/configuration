@@ -1,13 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-3.0">
-    <form id="config" query-id="config" object-id="config">
+<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-4.0">
+    <form id="config">
+        <datasource query-id="config" object-id="config">
+            <filters>
+                <eq field-id="id" param="config_id"/>
+            </filters>
+        </datasource>
         <toolbar place="topLeft">
             <group>
                 <button id="config_update" label="Сохранить" color="primary" visible="{id != null}">
                     <invoke operation-id="update" message-on-success="false" close-on-success="true"/>
                 </button>
                 <button id="config_close" label="Закрыть" color="secondary" disable-on-empty-model="false"
-                        visible="{id != null}">
+                        visible="{id != null}" validate="false">
                     <close/>
                 </button>
             </group>
@@ -32,9 +37,9 @@
                 </input-text>
                 <input-text id="name" label="Наименование настройки" required="true"/>
                 <input-select id="group" label="Группа настроек" query-id="config_group" required="true">
-                    <pre-filters>
+                    <filters>
                         <eq field-id="configCode" value="{code}"/>
-                    </pre-filters>
+                    </filters>
                     <dependencies>
                         <reset on="code" apply-on-init="false"/>
                     </dependencies>
@@ -50,8 +55,5 @@
                 <input-text id="description" label="Описание"/>
             </set>
         </fields>
-        <pre-filters>
-            <eq field-id="id" param="config_id"/>
-        </pre-filters>
     </form>
 </simple-page>

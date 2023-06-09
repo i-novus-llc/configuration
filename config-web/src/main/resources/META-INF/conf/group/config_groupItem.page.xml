@@ -1,13 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-3.0">
-    <form id="group_item" query-id="config_group" object-id="config_group">
+<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-4.0">
+    <form id="group_item">
+        <datasource query-id="config_group" object-id="config_group">
+            <filters>
+                <eq field-id="id" param="config_group_id"/>
+            </filters>
+        </datasource>
         <toolbar place="topLeft">
             <group>
                 <button id="group_update" label="Сохранить" color="primary" visible="{id != null}">
                     <invoke operation-id="update" close-on-success="true" message-on-success="false"/>
                 </button>
                 <button id="group_close" label="Закрыть" color="secondary"
-                        disable-on-empty-model="false" visible="{id != null}">
+                        disable-on-empty-model="false" visible="{id != null}" validate="false">
                     <close/>
                 </button>
             </group>
@@ -21,8 +26,5 @@
                 <input-text id="priority" label="Приоритет" domain="integer" min="0"/>
             </set>
         </fields>
-        <pre-filters>
-            <eq field-id="id" param="config_group_id"/>
-        </pre-filters>
     </form>
 </simple-page>
