@@ -32,9 +32,9 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
     @Value("${spring.cloud.consul.config.data-key:data}")
     private String dataKey;
 
-    private final RestTemplate restTemplate;
+    protected final RestTemplate restTemplate;
 
-    private final ObjectMapper yamlMapper;
+    protected final ObjectMapper yamlMapper;
 
     public YamlConfigValueServiceConsulImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -101,7 +101,7 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
         restTemplate.delete(url + appCode + "/" + dataKey);
     }
 
-    private ObjectNode loadYaml(String appCode) {
+    protected ObjectNode loadYaml(String appCode) {
         try {
             String rawValue = restTemplate.getForObject(url + appCode + "/" + dataKey + "?raw=1", String.class);
 
@@ -113,6 +113,19 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
         } catch (HttpClientErrorException.NotFound | JsonProcessingException e) {
             log.info(e.getMessage());
             return null;
+        }
+    }
+
+    protected void saveYaml(String appCode, JsonNode node) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        try {
+            String yaml = yamlMapper.writeValueAsString(node);
+            HttpEntity<String> httpEntity = new HttpEntity<>(yaml, headers);
+            //todo
+            restTemplate.put(url + appCode + "/" + dataKey, httpEntity);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
         }
     }
 
@@ -195,17 +208,4 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
         }
         return result;
     }
-
-    private void saveYaml(String appCode, JsonNode node) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        try {
-            String yaml = yamlMapper.writeValueAsString(node);
-            HttpEntity<String> httpEntity = new HttpEntity<>(yaml, headers);
-            restTemplate.put(url + appCode + "/" + dataKey, httpEntity);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-        }
-    }
-
 }
