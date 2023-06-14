@@ -10,7 +10,6 @@ import ru.i_novus.config.api.service.ConfigValueService;
 /**
  * Реализация сервиса для работы со значениями настроек, хранящихся в Consul в формате FILES
  */
-@Slf4j
 public class FileConfigValueServiceConsulImpl extends YamlConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Value("${config.consul.url}")
@@ -25,7 +24,7 @@ public class FileConfigValueServiceConsulImpl extends YamlConfigValueServiceCons
 
     @Override
     public void deleteAllValues(String appCode) {
-        restTemplate.delete(url + appCode + keySuffix);
+        deleteFromConsul(url + appCode + keySuffix);
     }
 
     @Override

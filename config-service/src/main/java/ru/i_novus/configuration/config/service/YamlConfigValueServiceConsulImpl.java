@@ -32,9 +32,9 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
     @Value("${spring.cloud.consul.config.data-key:data}")
     private String dataKey;
 
-    protected final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    protected final ObjectMapper yamlMapper;
+    private final ObjectMapper yamlMapper;
 
     public YamlConfigValueServiceConsulImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -98,7 +98,11 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Override
     public void deleteAllValues(String appCode) {
-        restTemplate.delete(url + appCode + "/" + dataKey);
+        deleteFromConsul(url + appCode + "/" + dataKey);
+    }
+
+    protected void deleteFromConsul(String url) {
+        restTemplate.delete(url);
     }
 
     protected ObjectNode loadYaml(String appCode) {
