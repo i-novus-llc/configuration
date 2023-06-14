@@ -102,8 +102,12 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
     }
 
     protected ObjectNode loadYaml(String appCode) {
+        return getFromConsul(url + appCode + "/" + dataKey);
+    }
+
+    protected ObjectNode getFromConsul(String url) {
         try {
-            String rawValue = restTemplate.getForObject(url + appCode + "/" + dataKey + "?raw=1", String.class);
+            String rawValue = restTemplate.getForObject(url + "?raw=1", String.class);
 
             if (StringUtils.hasText(rawValue)) {
                 JsonNode node = yamlMapper.readTree(rawValue);
@@ -117,13 +121,16 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
     }
 
     protected void saveYaml(String appCode, JsonNode node) {
+        putToConsul(url + appCode + "/" + dataKey, node);
+    }
+
+    protected void putToConsul(String url, JsonNode node) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         try {
             String yaml = yamlMapper.writeValueAsString(node);
             HttpEntity<String> httpEntity = new HttpEntity<>(yaml, headers);
-            //todo
-            restTemplate.put(url + appCode + "/" + dataKey, httpEntity);
+            restTemplate.put(url, httpEntity);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
         }
