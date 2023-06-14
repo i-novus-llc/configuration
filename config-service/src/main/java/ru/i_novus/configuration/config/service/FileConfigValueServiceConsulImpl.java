@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.config.api.service.ConfigValueService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Реализация сервиса для работы со значениями настроек, хранящихся в Consul в формате FILES
  */
@@ -19,6 +22,21 @@ public class FileConfigValueServiceConsulImpl extends YamlConfigValueServiceCons
 
     public FileConfigValueServiceConsulImpl(RestTemplate restTemplate) {
         super(restTemplate);
+    }
+
+    @Override
+    public Map<String, String> getKeyValueList(String appCode) {
+        Map<String, String> keyValues = new HashMap<>();
+
+        //Property values from default key "{spring.application.name}.yaml"
+        ObjectNode defaultConsulNode = getFromConsul(url + appCode + ".yaml");
+        if (defaultConsulNode != null) floatNode(keyValues, "", defaultConsulNode);
+
+        //Property values from profile key "{spring.application.name}-{spring.profiles.active}.yaml" overwrite value if exists
+        ObjectNode profileConsulNode = loadYaml(appCode);
+        if (profileConsulNode != null) floatNode(keyValues, "", profileConsulNode);
+
+        return keyValues;
     }
 
     @Override
