@@ -95,8 +95,7 @@
                         </column>
                         <column text-field-id="option" label="">
                             <toolbar>
-                                <button id="commonSystemConfigsDelete" description="Стереть значение"
-                                        visible="{isConfig}"
+                                <button id="commonSystemConfigsDelete" description="Стереть значение" visible="{isConfig}"
                                         icon="fa fa-eraser" type="icon">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
