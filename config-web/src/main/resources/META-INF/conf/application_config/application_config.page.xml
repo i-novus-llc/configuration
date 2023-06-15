@@ -41,14 +41,6 @@
                         </column>
                         <column text-field-id="commonSystemValue" label="Общесистемное значение"/>
                         <column text-field-id="defaultValue" label="Значение по умолчанию"/>
-                        <column text-field-id="option" label="">
-                            <toolbar>
-                                <button id="applicationConfigsDelete" description="Стереть значение" visible="{isConfig}"
-                                        icon="fa fa-eraser" type="icon">
-                                    <invoke operation-id="deleteConfigValue" message-on-success="false"/>
-                                </button>
-                            </toolbar>
-                        </column>
                     </columns>
                     <pagination show-count="false"/>
                 </table>
@@ -84,14 +76,6 @@
                                     </edit>
                                 </default>
                             </switch>
-                        </column>
-                        <column text-field-id="option" label="">
-                            <toolbar>
-                                <button id="commonSystemConfigsDelete" description="Стереть значение" visible="{isConfig}"
-                                        icon="fa fa-eraser" type="icon">
-                                    <invoke operation-id="deleteConfigValue" message-on-success="false"/>
-                                </button>
-                            </toolbar>
                         </column>
                     </columns>
                     <pagination show-count="false"/>
