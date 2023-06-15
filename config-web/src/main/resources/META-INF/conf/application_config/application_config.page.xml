@@ -2,6 +2,11 @@
 <page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
       name="Настройки приложений">
     <regions>
+        <form id="consulProperties">
+            <fields>
+                <hidden id="format" default-value="${spring.cloud.consul.config.format}"/>
+            </fields>
+        </form>
         <tabs>
             <tab name="Настройки приложения">
                 <table id="application_configs" children="expand"
@@ -41,6 +46,17 @@
                         </column>
                         <column text-field-id="commonSystemValue" label="Общесистемное значение"/>
                         <column text-field-id="defaultValue" label="Значение по умолчанию"/>
+                        <column text-field-id="option" label="">
+                            <toolbar>
+                                <button id="applicationConfigsDelete" description="Стереть значение" visible="{isConfig}"
+                                        icon="fa fa-eraser" type="icon">
+                                    <invoke operation-id="deleteConfigValue" message-on-success="false"/>
+                                </button>
+                            </toolbar>
+                            <dependencies>
+                                <visibility ref-model="resolve" ref-widget-id="consulProperties">return format!='files' &amp;&amp; format!='FILES';</visibility>
+                            </dependencies>
+                        </column>
                     </columns>
                     <pagination show-count="false"/>
                 </table>
@@ -76,6 +92,18 @@
                                     </edit>
                                 </default>
                             </switch>
+                        </column>
+                        <column text-field-id="option" label="">
+                            <toolbar>
+                                <button id="commonSystemConfigsDelete" description="Стереть значение"
+                                        visible="{isConfig}"
+                                        icon="fa fa-eraser" type="icon">
+                                    <invoke operation-id="deleteConfigValue" message-on-success="false"/>
+                                </button>
+                            </toolbar>
+                            <dependencies>
+                                <visibility ref-model="resolve" ref-widget-id="consulProperties">return format!='files' &amp;&amp; format!='FILES';</visibility>
+                            </dependencies>
                         </column>
                     </columns>
                     <pagination show-count="false"/>
