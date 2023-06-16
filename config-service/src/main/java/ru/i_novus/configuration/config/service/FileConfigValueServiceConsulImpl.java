@@ -17,8 +17,11 @@ public class FileConfigValueServiceConsulImpl extends YamlConfigValueServiceCons
     @Value("${config.consul.url}")
     private String url;
 
-    @Value("${config.consul.key-suffix}")
-    private String keySuffix;
+    @Value("${config.consul.files.key.suffix.profile}")
+    private String profileKeySuffix;
+
+    @Value("${config.consul.files.key.suffix.default}")
+    private String defaultKeySuffix;
 
     public FileConfigValueServiceConsulImpl(RestTemplate restTemplate) {
         super(restTemplate);
@@ -28,11 +31,11 @@ public class FileConfigValueServiceConsulImpl extends YamlConfigValueServiceCons
     public Map<String, String> getKeyValueList(String appCode) {
         Map<String, String> keyValues = new HashMap<>();
 
-        //Property values from default key "{spring.application.name}.yaml"
-        ObjectNode defaultConsulNode = getFromConsul(url + appCode + ".yaml");
+        //Property values from default key
+        ObjectNode defaultConsulNode = getFromConsul(url + appCode + defaultKeySuffix);
         if (defaultConsulNode != null) floatNode(keyValues, "", defaultConsulNode);
 
-        //Property values from profile key "{spring.application.name}-{spring.profiles.active}.yaml" overwrite value if exists
+        //Property values from profile key overwrite value if exists
         ObjectNode profileConsulNode = loadYaml(appCode);
         if (profileConsulNode != null) floatNode(keyValues, "", profileConsulNode);
 
@@ -41,16 +44,16 @@ public class FileConfigValueServiceConsulImpl extends YamlConfigValueServiceCons
 
     @Override
     public void deleteAllValues(String appCode) {
-        deleteFromConsul(url + appCode + keySuffix);
+        deleteFromConsul(url + appCode + profileKeySuffix);
     }
 
     @Override
     protected ObjectNode loadYaml(String appCode) {
-        return getFromConsul(url + appCode + keySuffix);
+        return getFromConsul(url + appCode + profileKeySuffix);
     }
 
     @Override
     protected void saveYaml(String appCode, JsonNode node) {
-        putToConsul(url + appCode + keySuffix, node);
+        putToConsul(url + appCode + profileKeySuffix, node);
     }
 }
