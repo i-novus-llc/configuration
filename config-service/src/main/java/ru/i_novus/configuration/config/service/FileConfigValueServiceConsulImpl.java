@@ -17,11 +17,8 @@ public class FileConfigValueServiceConsulImpl extends YamlConfigValueServiceCons
     @Value("${config.consul.url}")
     private String url;
 
-    @Value("${config.consul.files.key.suffix.profile}")
+    @Value("#{'-'.concat('${config.consul.files.key.suffix.profile}').concat('.yaml')}")
     private String profileKeySuffix;
-
-    @Value("${config.consul.files.key.suffix.default}")
-    private String defaultKeySuffix;
 
     public FileConfigValueServiceConsulImpl(RestTemplate restTemplate) {
         super(restTemplate);
@@ -32,7 +29,7 @@ public class FileConfigValueServiceConsulImpl extends YamlConfigValueServiceCons
         Map<String, String> keyValues = new HashMap<>();
 
         //Property values from default key
-        ObjectNode defaultConsulNode = getFromConsul(url + appCode + defaultKeySuffix);
+        ObjectNode defaultConsulNode = getFromConsul(url + appCode + ".yaml");
         if (defaultConsulNode != null) floatNode(keyValues, "", defaultConsulNode);
 
         //Property values from profile key overwrite value if exists
