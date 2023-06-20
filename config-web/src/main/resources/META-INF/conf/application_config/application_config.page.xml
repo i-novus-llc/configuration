@@ -2,6 +2,11 @@
 <page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
       name="Настройки приложений">
     <regions>
+        <form id="consulProperties">
+            <fields>
+                <hidden id="format" default-value="${spring.cloud.consul.config.format}"/>
+            </fields>
+        </form>
         <tabs>
             <tab name="Настройки приложения">
                 <table id="application_configs" children="expand"
@@ -48,6 +53,9 @@
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
                             </toolbar>
+                            <dependencies>
+                                <visibility ref-model="resolve" ref-widget-id="consulProperties">return format!='files' &amp;&amp; format!='FILES';</visibility>
+                            </dependencies>
                         </column>
                     </columns>
                     <pagination show-count="false"/>
@@ -92,6 +100,9 @@
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
                             </toolbar>
+                            <dependencies>
+                                <visibility ref-model="resolve" ref-widget-id="consulProperties">return format!='files' &amp;&amp; format!='FILES';</visibility>
+                            </dependencies>
                         </column>
                     </columns>
                     <pagination show-count="false"/>

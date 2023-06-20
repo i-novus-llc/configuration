@@ -98,12 +98,20 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
 
     @Override
     public void deleteAllValues(String appCode) {
-        restTemplate.delete(url + appCode + "/" + dataKey);
+        deleteFromConsul(url + appCode + "/" + dataKey);
     }
 
-    private ObjectNode loadYaml(String appCode) {
+    protected void deleteFromConsul(String url) {
+        restTemplate.delete(url);
+    }
+
+    protected ObjectNode loadYaml(String appCode) {
+        return getFromConsul(url + appCode + "/" + dataKey);
+    }
+
+    protected ObjectNode getFromConsul(String url) {
         try {
-            String rawValue = restTemplate.getForObject(url + appCode + "/" + dataKey + "?raw=1", String.class);
+            String rawValue = restTemplate.getForObject(url + "?raw=1", String.class);
 
             if (StringUtils.hasText(rawValue)) {
                 JsonNode node = yamlMapper.readTree(rawValue);
@@ -116,7 +124,23 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
         }
     }
 
-    private void floatNode(Map<String, String> keyValues, String prefix, JsonNode node) {
+    protected void saveYaml(String appCode, JsonNode node) {
+        putToConsul(url + appCode + "/" + dataKey, node);
+    }
+
+    protected void putToConsul(String url, JsonNode node) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        try {
+            String yaml = yamlMapper.writeValueAsString(node);
+            HttpEntity<String> httpEntity = new HttpEntity<>(yaml, headers);
+            restTemplate.put(url, httpEntity);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    protected void floatNode(Map<String, String> keyValues, String prefix, JsonNode node) {
         if (node.isValueNode()) {
             keyValues.put(prefix, node.asText());
         } else {
@@ -195,17 +219,4 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
         }
         return result;
     }
-
-    private void saveYaml(String appCode, JsonNode node) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        try {
-            String yaml = yamlMapper.writeValueAsString(node);
-            HttpEntity<String> httpEntity = new HttpEntity<>(yaml, headers);
-            restTemplate.put(url + appCode + "/" + dataKey, httpEntity);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-        }
-    }
-
 }
