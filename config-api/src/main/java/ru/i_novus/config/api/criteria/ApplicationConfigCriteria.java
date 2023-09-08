@@ -37,6 +37,6 @@ public class ApplicationConfigCriteria extends AbstractCriteria {
 
     @Override
     protected List<Sort.Order> getDefaultOrders() {
-        return Arrays.asList(new Sort.Order(Sort.Direction.ASC, "group_id"), new Sort.Order(Sort.Direction.ASC, "code"));
+        return Arrays.asList(new Sort.Order(Sort.Direction.ASC, "application_code"), new Sort.Order(Sort.Direction.ASC, "group_id"), new Sort.Order(Sort.Direction.ASC, "code"));
     }
 }
