@@ -7,7 +7,7 @@
     <parent>
         <artifactId>config</artifactId>
         <groupId>ru.i-novus.config</groupId>
-        <version>1.8.0</version>
+        <version>1.8.1-SNAPSHOT</version>
     </parent>
 
     <properties>
