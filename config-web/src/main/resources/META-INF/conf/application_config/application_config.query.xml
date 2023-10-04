@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0">
+<query xmlns="http://n2oapp.net/framework/config/schema/query-5.0">
 
     <list count-mapping="#this.size()" result-mapping="#this">
         <rest filters-separator="&amp;">${config.service.url}/application_configs/?{filters}&amp;page={page}&amp;size={limit}</rest>
@@ -9,54 +9,25 @@
         <rest>${config.service.url}/application_configs/{id}</rest>
     </unique>
 
+    <filters>
+        <eq field-id="id" filter-id="id">code={id}</eq>
+        <eq field-id="name" filter-id="name">configName={name}</eq>
+        <eq field-id="application" filter-id="applications*.id">applicationCode={applications*.id}</eq>
+        <eq field-id="group" filter-id="groups*.id">groupId={groups*.id}</eq>
+        <eq field-id="withValue" filter-id="withValue">withValue={withValue}</eq>
+    </filters>
+
     <fields>
-        <field id="id" domain="string">
-            <select mapping="[code]"/>
-            <filters>
-                <eq filter-id="id">code={id}</eq>
-            </filters>
-        </field>
+        <field id="id" domain="string" mapping="[code]"/>
+        <field id="code" domain="string"/>
+        <field id="name" domain="string"/>
+        <field id="isConfig" domain="boolean" normalize="false"/>
+        <field id="defaultValue" domain="string"/>
+        <field id="children" domain="object[]" mapping="[groups]"
+               normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeApplicationConfig(#this, #data['id'])"/>
 
-        <field id="code" domain="string">
-            <select/>
-        </field>
-
-        <field id="name" domain="string">
-            <select/>
-            <filters>
-                <eq filter-id="name">configName={name}</eq>
-            </filters>
-        </field>
-
-        <field id="isConfig" domain="boolean">
-            <select normalize="false"/>
-        </field>
-
-        <field id="defaultValue" domain="string">
-            <select/>
-        </field>
-
-        <field id="children" domain="object[]">
-            <select mapping="[groups]"
-                    normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeApplicationConfig(#this, #data['id'])"/>
-        </field>
-
-        <field id="application" domain="string[]">
-            <filters>
-                <eq filter-id="applications*.id">applicationCode={applications*.id}</eq>
-            </filters>
-        </field>
-
-        <field id="group" domain="string[]">
-            <filters>
-                <eq filter-id="groups*.id">groupId={groups*.id}</eq>
-            </filters>
-        </field>
-
-        <field id="withValue">
-            <filters>
-                <eq filter-id="withValue">withValue={withValue}</eq>
-            </filters>
-        </field>
+        <field id="application" domain="string[]" select="false"/>
+        <field id="group" domain="string[]" select="false"/>
+        <field id="withValue" select="false"/>
     </fields>
 </query>

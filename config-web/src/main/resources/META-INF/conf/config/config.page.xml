@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
+<page xmlns="http://n2oapp.net/framework/config/schema/page-4.0"
       name="Управление настройками" object-id="config">
     <regions>
-        <table id="config_table" query-id="config" route="/systems">
+        <table id="config_table">
+            <datasource query-id="config" route="/systems"/>
             <filters>
                 <row>
                     <input-text id="name" label="Наименование настройки" domain="string"/>
@@ -38,15 +39,36 @@
             <rows>
                 <click>
                     <open-page page-id="configItem" route="/:config_id/view" page-name="Просмотр параметров настройки">
-                        <path-param name="config_id" value="{id}"/>
+                        <datasources>
+                            <datasource id="config" query-id="config" object-id="config">
+                                <filters>
+                                    <eq field-id="id" param="config_id"/>
+                                </filters>
+                            </datasource>
+                        </datasources>
+                        <params>
+                            <path-param name="config_id" value="{id}"/>
+                        </params>
                     </open-page>
                 </click>
             </rows>
             <toolbar>
                 <button id="create" label="Создать" color="primary" disable-on-empty-model="false">
-                    <show-modal page-id="configItem" submit-operation-id="create"
-                                route="/create"
-                                page-name="Создать настройку" upload="defaults"/>
+                    <show-modal page-id="configItem" route="/create"
+                                page-name="Создать настройку">
+                        <toolbars>
+                            <toolbar>
+                                <button label="Сохранить" color="primary" enabled="true">
+                                    <invoke operation-id="create" object-id="config"/>
+                                    <close/>
+                                    <refresh datasource="config_table"/>
+                                </button>
+                                <button label="Закрыть" enabled="true" validate="false">
+                                    <close/>
+                                </button>
+                            </toolbar>
+                        </toolbars>
+                    </show-modal>
                 </button>
             </toolbar>
         </table>

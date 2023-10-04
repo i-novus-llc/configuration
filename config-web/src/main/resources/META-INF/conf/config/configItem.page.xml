@@ -1,59 +1,65 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-4.0">
-    <form id="config">
-        <datasource query-id="config" object-id="config">
-            <filters>
-                <eq field-id="id" param="config_id"/>
-            </filters>
-        </datasource>
-        <toolbar place="topLeft">
-            <group>
-                <button id="config_update" label="Сохранить" color="primary" visible="{id != null}">
-                    <invoke operation-id="update" message-on-success="false" close-on-success="true"/>
-                </button>
-                <button id="config_close" label="Закрыть" color="secondary" disable-on-empty-model="false"
-                        visible="{id != null}" validate="false">
-                    <close/>
-                </button>
-            </group>
-        </toolbar>
-        <fields>
-            <set field-label-location="left" field-label-align="left" field-label-width="220px">
-                <checkbox id="isCommonSystemConfig" label="Общесистемная настройка"/>
-                <input-select id="applicationName" label="Компонент системы"
-                              query-id="config_application" search-field-id="name">
-                    <dependencies>
-                        <enabling on="isCommonSystemConfig">
-                            return typeof(isCommonSystemConfig) == 'undefined' || isCommonSystemConfig == null ||
-                            isCommonSystemConfig == false;
-                        </enabling>
-                        <set-value on="isCommonSystemConfig" apply-on-init="false">if (isCommonSystemConfig) return null</set-value>
-                    </dependencies>
-                </input-select>
-                <input-text id="code" label="Код настройки" required="true">
-                    <dependencies>
-                        <enabling on="id">return typeof(id) == 'undefined' || id == null;</enabling>
-                    </dependencies>
-                </input-text>
-                <input-text id="name" label="Наименование настройки" required="true"/>
-                <input-select id="group" label="Группа настроек" query-id="config_group" required="true">
-                    <filters>
-                        <eq field-id="configCode" value="{code}"/>
-                    </filters>
-                    <dependencies>
-                        <reset on="code" apply-on-init="false"/>
-                    </dependencies>
-                </input-select>
-                <input-select id="valueType" label="Тип значения" required="true">
-                    <default-value id="STRING" name="Строка"/>
-                    <options>
-                        <option id="STRING" name="Строка"/>
-                        <option id="NUMBER" name="Число"/>
-                        <option id="BOOLEAN" name="Чекбокс"/>
-                    </options>
-                </input-select>
-                <input-text id="description" label="Описание"/>
-            </set>
-        </fields>
-    </form>
-</simple-page>
+<page xmlns="http://n2oapp.net/framework/config/schema/page-4.0">
+    <datasources>
+        <datasource id="config"/>
+    </datasources>
+
+    <regions>
+        <form datasource="config">
+            <toolbar place="topLeft">
+                <group>
+                    <button id="config_update" label="Сохранить" color="primary" visible="{id != null}">
+                        <invoke operation-id="update" message-on-success="false" close-on-success="true"
+                                object-id="config"/>
+                    </button>
+                    <button id="config_close" label="Закрыть" color="secondary" disable-on-empty-model="false"
+                            visible="{id != null}" validate="false">
+                        <close/>
+                    </button>
+                </group>
+            </toolbar>
+            <fields>
+                <set field-label-location="left" field-label-align="left" field-label-width="220px">
+                    <checkbox id="isCommonSystemConfig" label="Общесистемная настройка"/>
+                    <input-select id="applicationName" label="Компонент системы"
+                                  query-id="config_application" search-field-id="name">
+                        <dependencies>
+                            <enabling on="isCommonSystemConfig">
+                                return typeof(isCommonSystemConfig) == 'undefined' || isCommonSystemConfig == null ||
+                                isCommonSystemConfig == false;
+                            </enabling>
+                            <set-value on="isCommonSystemConfig" apply-on-init="false">
+                                if (isCommonSystemConfig) return null
+                            </set-value>
+                        </dependencies>
+                    </input-select>
+                    <input-text id="code" label="Код настройки" required="true">
+                        <dependencies>
+                            <enabling on="id">
+                                return typeof(id) == 'undefined' || id == null;
+                            </enabling>
+                        </dependencies>
+                    </input-text>
+                    <input-text id="name" label="Наименование настройки" required="true"/>
+                    <input-select id="group" label="Группа настроек" query-id="config_group" required="true">
+                        <filters>
+                            <eq field-id="configCode" value="{code}"/>
+                        </filters>
+                        <dependencies>
+                            <reset on="code" apply-on-init="false"/>
+                        </dependencies>
+                    </input-select>
+                    <input-select id="valueType" label="Тип значения" required="true">
+                        <default-value id="STRING" name="Строка"/>
+                        <options>
+                            <option id="STRING" name="Строка"/>
+                            <option id="NUMBER" name="Число"/>
+                            <option id="BOOLEAN" name="Чекбокс"/>
+                        </options>
+                    </input-select>
+                    <input-text id="description" label="Описание"/>
+                </set>
+            </fields>
+        </form>
+    </regions>
+</page>
