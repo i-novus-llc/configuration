@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+<query xmlns="http://n2oapp.net/framework/config/schema/query-5.0"
        object-id="config">
 
     <list count-mapping="[totalElements]" result-mapping="[content]">
@@ -9,99 +9,39 @@
         <rest>${config.service.url}/{id}</rest>
     </unique>
 
+    <filters>
+        <eq field-id="id" filter-id="id">code={id}</eq>
+        <eq field-id="application" filter-id="applications*.id">applicationCode={applications*.id}</eq>
+        <eq field-id="application.id" filter-id="application.id">application.code={application.id}</eq>
+        <eq field-id="system.code" filter-id="systems*.code">systemCode={systems*.code}</eq>
+        <eq field-id="group" filter-id="groups*.id">groupId={groups*.id}</eq>
+        <eq field-id="code" filter-id="code">code={code}</eq>
+        <eq field-id="name" filter-id="name">name={name}</eq>
+        <eq field-id="isCommonSystemConfig" filter-id="isCommonSystemConfig">isCommonSystemConfig={isCommonSystemConfig}</eq>
+    </filters>
+
     <fields>
-        <field id="id" domain="string">
-            <select mapping="[code]"/>
-            <filters>
-                <eq filter-id="id">code={id}</eq>
-            </filters>
-        </field>
-
-        <field id="application" domain="string[]">
-            <select mapping="[application]"/>
-            <filters>
-                <eq filter-id="applications*.id">applicationCode={applications*.id}</eq>
-            </filters>
-        </field>
-
-        <field id="application.id" domain="string">
-            <select mapping="['application.code']"/>
-            <filters>
-                <eq filter-id="application.id">application.code={application.id}</eq>
-            </filters>
-        </field>
-
-        <field id="system.code" domain="string[]">
-            <select/>
-            <filters>
-                <eq filter-id="systems*.code">systemCode={systems*.code}</eq>
-            </filters>
-        </field>
-
-        <field id="systemName.id" domain="string">
-            <select mapping="['application.system.code']"/>
-        </field>
-        <field id="systemName.name" domain="string">
-            <select mapping="['application.system.name']"/>
-        </field>
-
-        <field id="applicationName.id" domain="string">
-            <select mapping="['application.code']"/>
-        </field>
-        <field id="applicationName.name" domain="string">
-            <select mapping="['application.name']"/>
-        </field>
-
-        <field id="applicationDisplayName" domain="string">
-            <select mapping="['application.name']" normalize="#this != null ? #this : 'Общесистемные'"/>
-            <sorting mapping="['applicationDisplayName.nameDirection']">sort=application.name,{applicationDisplayName.nameDirection}</sorting>
-        </field>
-
-        <field id="group" domain="string[]">
-            <select/>
-            <filters>
-                <eq filter-id="groups*.id">groupId={groups*.id}</eq>
-            </filters>
-        </field>
-
-        <field id="code" domain="string">
-            <select/>
-            <filters>
-                <eq filter-id="code">code={code}</eq>
-            </filters>
-            <sorting mapping="['codeDirection']">sort=code,{codeDirection}</sorting>
-        </field>
-
-        <field id="name" domain="string">
-            <select/>
-            <filters>
-                <eq filter-id="name">name={name}</eq>
-            </filters>
-        </field>
-
-        <field id="valueType" domain="string">
-            <select mapping="[valueType]"/>
-        </field>
-
-        <field id="defaultValue" domain="string">
-            <select mapping="[defaultValue]"/>
-        </field>
-
-        <field id="description" domain="string">
-            <select/>
-        </field>
-
-        <field id="isCommonSystemConfig">
-            <select mapping="['application.name']" normalize="#this == null"/>
-            <filters>
-                <eq filter-id="isCommonSystemConfig">isCommonSystemConfig={isCommonSystemConfig}</eq>
-            </filters>
-        </field>
-
-        <field id="group.name">
-            <select mapping="['group.name']"/>
-            <sorting mapping="['group.nameDirection']">sort=group.name,{group.nameDirection}</sorting>
-        </field>
-
+        <field id="id" domain="string" mapping="[code]"/>
+        <field id="application" domain="string[]" mapping="[application]"/>
+        <field id="application.id" domain="string" mapping="['application.code']"/>
+        <field id="system.code" domain="string[]"/>
+        <field id="systemName.id" domain="string" mapping="['application.system.code']"/>
+        <field id="systemName.name" domain="string" mapping="['application.system.name']"/>
+        <field id="applicationName.id" domain="string" mapping="['application.code']"/>
+        <field id="applicationName.name" domain="string" mapping="['application.name']"/>
+        <field id="applicationDisplayName" domain="string" mapping="['application.name']"
+               normalize="#this != null ? #this : 'Общесистемные'"
+               sorting-mapping="['applicationDisplayName.nameDirection']"
+               sorting-expression="sort=application.name,{applicationDisplayName.nameDirection}"/>
+        <field id="group" domain="string[]"/>
+        <field id="code" domain="string" sorting-mapping="['codeDirection']"
+               sorting-expression="sort=code,{codeDirection}"/>
+        <field id="name" domain="string"/>
+        <field id="valueType" domain="string" mapping="[valueType]"/>
+        <field id="defaultValue" domain="string" mapping="[defaultValue]"/>
+        <field id="description" domain="string"/>
+        <field id="isCommonSystemConfig" mapping="['application.name']" normalize="#this == null"/>
+        <field id="group.name" mapping="['group.name']" sorting-mapping="['group.nameDirection']"
+               sorting-expression="sort=group.name,{group.nameDirection}"/>
     </fields>
 </query>

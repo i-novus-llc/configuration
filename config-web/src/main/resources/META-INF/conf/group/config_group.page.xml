@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
+<page xmlns="http://n2oapp.net/framework/config/schema/page-4.0"
       name="Группы настроек" object-id="config_group">
     <regions>
-        <table id="group_table" query-id="config_group">
+        <table id="group_table">
+            <datasource query-id="config_group"/>
             <filters>
                 <row>
                     <input-text id="code" label="Код группы" domain="string"/>
@@ -27,21 +28,43 @@
                     </toolbar>
                 </column>
             </columns>
-
             <rows>
                 <click>
                     <open-page page-id="config_groupItem" object-id="config_group"
                                route="/:config_group_id/update" page-name="Изменить группу настроек">
-                        <path-param name="config_group_id" value="{id}"/>
+                        <params>
+                            <path-param name="config_group_id" value="{id}"/>
+                        </params>
+                        <datasources>
+                            <datasource id="group_item" query-id="config_group" object-id="config_group">
+                                <filters>
+                                    <eq field-id="id" param="config_group_id"/>
+                                </filters>
+                            </datasource>
+                        </datasources>
                     </open-page>
                 </click>
             </rows>
 
             <toolbar>
                 <button id="create" label="Создать" color="primary" model="filter">
-                    <show-modal page-id="config_groupItem" submit-operation-id="create" object-id="config_group"
-                                route="/create"
-                                page-name="Создать группу настроек" upload="defaults"/>
+                    <show-modal page-id="config_groupItem" page-name="Создать группу настроек">
+                        <datasources>
+                            <datasource id="group_item"/>
+                        </datasources>
+                        <toolbars>
+                            <toolbar>
+                                <button label="Сохранить" color="primary" enabled="true">
+                                    <invoke operation-id="create" object-id="config_group"/>
+                                    <close/>
+                                    <refresh datasource="group_table"/>
+                                </button>
+                                <button label="Закрыть" enabled="true" validate="false">
+                                    <close/>
+                                </button>
+                            </toolbar>
+                        </toolbars>
+                    </show-modal>
                 </button>
             </toolbar>
         </table>

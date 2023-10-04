@@ -10,12 +10,12 @@
     <parent>
         <groupId>net.n2oapp.platform</groupId>
         <artifactId>n2o-boot-platform-parent</artifactId>
-        <version>5.1.1</version>
+        <version>5.2.0</version>
     </parent>
 
     <properties>
         <config.server.enable>false</config.server.enable>
-        <n2o.version>7.23.72</n2o.version>
+        <n2o.version>7.25.5</n2o.version>
         <liquibase.version>4.21.1</liquibase.version>
     </properties>
 

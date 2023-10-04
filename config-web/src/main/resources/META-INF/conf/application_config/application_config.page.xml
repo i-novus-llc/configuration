@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
+<page xmlns="http://n2oapp.net/framework/config/schema/page-4.0"
       name="Настройки приложений">
+    <datasources>
+        <datasource id="consulProperties"/>
+    </datasources>
+
     <regions>
-        <form id="consulProperties">
+        <form datasource="consulProperties">
             <fields>
                 <hidden id="format" default-value="${spring.cloud.consul.config.format}"/>
             </fields>
         </form>
+
         <tabs>
             <tab name="Настройки приложения">
-                <table id="application_configs" children="expand"
-                       query-id="application_config" object-id="application_config">
+                <table id="application_configs" children="expand">
+                    <datasource query-id="application_config" object-id="application_config"/>
                     <actions>
                         <action id="updateConfig">
                             <invoke operation-id="updateConfig"
@@ -48,22 +53,25 @@
                         <column text-field-id="defaultValue" label="Значение по умолчанию"/>
                         <column text-field-id="option" label="">
                             <toolbar>
-                                <button id="applicationConfigsDelete" description="Стереть значение" visible="{isConfig}"
-                                        icon="fa fa-eraser" type="icon">
+                                <button id="applicationConfigsDelete" description="Стереть значение"
+                                        visible="{isConfig}" icon="fa fa-eraser" type="icon">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
                             </toolbar>
                             <dependencies>
-                                <visibility ref-model="resolve" ref-widget-id="consulProperties">return format!='files' &amp;&amp; format!='FILES';</visibility>
+                                <visibility model="resolve" datasource="consulProperties">
+                                    return format!='files' &amp;&amp; format!='FILES';
+                                </visibility>
                             </dependencies>
                         </column>
                     </columns>
-                    <pagination show-count="false"/>
+                    <pagination show-count="never"/>
                 </table>
             </tab>
+
             <tab name="Общесистемные настройки">
-                <table id="common_system_configs" children="expand"
-                       query-id="common_system_config" object-id="common_system_config">
+                <table id="common_system_configs" children="expand">
+                    <datasource query-id="common_system_config" object-id="common_system_config"/>
                     <actions>
                         <action id="updateConfigValue">
                             <invoke operation-id="updateConfig"
@@ -95,17 +103,19 @@
                         </column>
                         <column text-field-id="option" label="">
                             <toolbar>
-                                <button id="commonSystemConfigsDelete" description="Стереть значение" visible="{isConfig}"
-                                        icon="fa fa-eraser" type="icon">
+                                <button id="commonSystemConfigsDelete" description="Стереть значение"
+                                        visible="{isConfig}" icon="fa fa-eraser" type="icon">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
                             </toolbar>
                             <dependencies>
-                                <visibility ref-model="resolve" ref-widget-id="consulProperties">return format!='files' &amp;&amp; format!='FILES';</visibility>
+                                <visibility model="resolve" datasource="consulProperties">
+                                    return format!='files' &amp;&amp; format!='FILES';
+                                </visibility>
                             </dependencies>
                         </column>
                     </columns>
-                    <pagination show-count="false"/>
+                    <pagination show-count="never"/>
                 </table>
             </tab>
         </tabs>
