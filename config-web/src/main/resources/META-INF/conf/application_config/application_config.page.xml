@@ -54,7 +54,7 @@
                         <column text-field-id="option" label="">
                             <toolbar>
                                 <button id="applicationConfigsDelete" description="Стереть значение"
-                                        visible="{isConfig}" icon="fa fa-eraser" type="icon">
+                                        visible="{isConfig}" icon="fa fa-eraser">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
                             </toolbar>
@@ -104,7 +104,7 @@
                         <column text-field-id="option" label="">
                             <toolbar>
                                 <button id="commonSystemConfigsDelete" description="Стереть значение"
-                                        visible="{isConfig}" icon="fa fa-eraser" type="icon">
+                                        visible="{isConfig}" icon="fa fa-eraser">
                                     <invoke operation-id="deleteConfigValue" message-on-success="false"/>
                                 </button>
                             </toolbar>

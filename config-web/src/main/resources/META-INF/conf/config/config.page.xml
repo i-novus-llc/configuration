@@ -28,9 +28,9 @@
                 <column text-field-id="name" label="Наименование настройки"/>
                 <column text-field-id="option" label="">
                     <toolbar>
-                        <button id="delete" description="Удалить" icon="fa fa-trash" type="icon"
-                                confirm="true" confirm-title="Удалить настройку"
-                                confirm-text="Вы уверены, что хотите удалить настройку?">
+                        <button id="delete" description="Удалить" icon="fa fa-trash">
+                            <confirm title="Удалить настройку"
+                                     text="Вы уверены, что хотите удалить настройку?"/>
                             <invoke operation-id="delete"/>
                         </button>
                     </toolbar>
