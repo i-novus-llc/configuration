@@ -142,7 +142,7 @@ public class YamlConfigValueServiceConsulImpl implements ConfigValueService {
 
     protected void floatNode(Map<String, String> keyValues, String prefix, JsonNode node) {
         if (node.isValueNode()) {
-            keyValues.put(prefix, node.asText());
+            keyValues.put(prefix, node.isNull() ? null : node.asText());
         } else {
             Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
             while (fields.hasNext()) {
