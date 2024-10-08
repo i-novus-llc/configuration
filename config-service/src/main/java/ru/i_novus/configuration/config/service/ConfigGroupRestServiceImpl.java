@@ -1,7 +1,10 @@
 package ru.i_novus.configuration.config.service;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import net.n2oapp.platform.i18n.UserException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -11,31 +14,23 @@ import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
-import ru.i_novus.config.api.util.AuditService;
+import ru.i_novus.configuration.config.utils.LogUtils;
 import ru.i_novus.configuration.config.entity.GroupEntity;
 import ru.i_novus.configuration.config.mapper.GroupMapper;
 import ru.i_novus.configuration.config.repository.GroupCodeRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
 import ru.i_novus.configuration.config.specification.ConfigGroupSpecification;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
-
 /**
  * Реализация REST сервиса для работы с группами настроек
  */
 @Service
+@RequiredArgsConstructor
 public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
-    @Autowired
-    private GroupRepository groupRepository;
-    @Autowired
-    private GroupCodeRepository groupCodeRepository;
-    @Autowired
-    private AuditService auditService;
-    @Autowired
-    private MessageSourceAccessor messageAccessor;
+    private final GroupRepository groupRepository;
+    private final GroupCodeRepository groupCodeRepository;
+    private final MessageSourceAccessor messageAccessor;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,8 +60,8 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
 
         GroupEntity savedGroupEntity = groupRepository.save(groupEntity);
         groupCodeRepository.saveAll(groupEntity.getCodes());
-        audit(groupForm, EventTypeEnum.CONFIG_GROUP_CREATE);
 
+        LogUtils.log(EventTypeEnum.CONFIG_GROUP_CREATE.getTitle(), String.valueOf(groupForm.getId()), ObjectTypeEnum.CONFIG_GROUP.getTitle());
         return savedGroupEntity.getId();
     }
 
@@ -93,19 +88,15 @@ public class ConfigGroupRestServiceImpl implements ConfigGroupRestService {
             groupCodeRepository.saveAll(groupEntity.getCodes());
         }
 
+        LogUtils.log(EventTypeEnum.CONFIG_GROUP_UPDATE.getTitle(), String.valueOf(groupForm.getId()), ObjectTypeEnum.CONFIG_GROUP.getTitle());
         groupRepository.save(groupEntity);
-        audit(groupForm, EventTypeEnum.CONFIG_GROUP_UPDATE);
     }
 
     @Override
     @Transactional
     public void deleteGroup(Integer groupId) {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(NotFoundException::new);
+        LogUtils.log(EventTypeEnum.CONFIG_GROUP_DELETE.getTitle(), String.valueOf(groupId), ObjectTypeEnum.CONFIG_GROUP.getTitle());
         groupRepository.deleteById(groupEntity.getId());
-        audit(GroupMapper.toGroupForm(groupEntity), EventTypeEnum.CONFIG_GROUP_DELETE);
-    }
-
-    private void audit(GroupForm groupForm, EventTypeEnum eventType) {
-        auditService.audit(eventType.getTitle(), groupForm, String.valueOf(groupForm.getId()), ObjectTypeEnum.CONFIG_GROUP.getTitle());
     }
 }

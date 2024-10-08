@@ -5,9 +5,9 @@ import org.springframework.data.domain.Page;
 import ru.i_novus.config.api.criteria.ApplicationCriteria;
 import ru.i_novus.config.api.model.ApplicationResponse;
 
-import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 
 /**

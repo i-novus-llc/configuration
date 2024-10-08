@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @ApiModel("Выходные данные настройки")

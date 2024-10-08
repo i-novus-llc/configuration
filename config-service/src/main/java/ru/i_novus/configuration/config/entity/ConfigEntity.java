@@ -4,7 +4,7 @@ package ru.i_novus.configuration.config.entity;
 import lombok.Data;
 import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Сущность Метаданные настройки

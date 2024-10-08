@@ -1,13 +1,13 @@
 package ru.i_novus.configuration.config.loader;
 
-import net.n2oapp.platform.test.autoconfigure.pg.EnableEmbeddedPg;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import net.n2oapp.platform.test.autoconfigure.pg.EnableTestcontainersPg;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.i_novus.TestApp;
 import ru.i_novus.config.api.model.ApplicationResponse;
 import ru.i_novus.configuration.config.entity.ApplicationEntity;
@@ -25,10 +25,10 @@ import static org.junit.Assert.assertThat;
 /**
  * Тесты лоадера систем
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TestApp.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableEmbeddedPg
+@EnableTestcontainersPg
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ApplicationServerLoaderTest {
 

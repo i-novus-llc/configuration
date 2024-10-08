@@ -1,6 +1,5 @@
 package ru.i_novus.configuration;
 
-import brave.propagation.B3Propagation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.consul.config.ConsulConfigProperties;
 import org.springframework.context.annotation.Bean;
@@ -16,15 +15,12 @@ public class ConfigServiceConfiguration {
 
     @Bean
     public ConfigValueService configValueService(@Value("${spring.cloud.consul.config.format}")
-                                                         ConsulConfigProperties.Format format) {
+                                                 ConsulConfigProperties.Format format) {
         final RestTemplate restTemplate = new RestTemplate();
-        switch (format) {
-            case YAML:
-                return new YamlConfigValueServiceConsulImpl(restTemplate);
-            case FILES:
-                return new FileConfigValueServiceConsulImpl(restTemplate);
-            default:
-                return new ConfigValueServiceConsulImpl(restTemplate);
-        }
+        return switch (format) {
+            case YAML -> new YamlConfigValueServiceConsulImpl(restTemplate);
+            case FILES -> new FileConfigValueServiceConsulImpl(restTemplate);
+            default -> new ConfigValueServiceConsulImpl(restTemplate);
+        };
     }
 }

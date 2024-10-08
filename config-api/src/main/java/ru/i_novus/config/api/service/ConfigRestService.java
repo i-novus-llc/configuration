@@ -6,10 +6,10 @@ import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Интерфейс REST API для работы с настройками

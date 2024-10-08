@@ -9,7 +9,7 @@ import ru.i_novus.configuration.config.entity.GroupEntity_;
 import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.configuration.config.entity.ApplicationEntity_;
 
-import javax.persistence.criteria.*;
+import jakarta.persistence.criteria.*;
 import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;

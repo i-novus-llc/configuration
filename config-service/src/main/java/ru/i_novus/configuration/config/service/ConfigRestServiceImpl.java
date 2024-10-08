@@ -1,7 +1,10 @@
 package ru.i_novus.configuration.config.service;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import net.n2oapp.platform.i18n.UserException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Page;
@@ -12,10 +15,9 @@ import ru.i_novus.config.api.model.ConfigForm;
 import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
-import ru.i_novus.config.api.service.ApplicationRestService;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.config.api.util.AuditService;
+import ru.i_novus.configuration.config.utils.LogUtils;
 import ru.i_novus.configuration.config.entity.ApplicationEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.entity.GroupEntity;
@@ -26,35 +28,23 @@ import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.repository.GroupRepository;
 import ru.i_novus.configuration.config.specification.ConfigSpecification;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 
 /**
  * Реализация REST сервиса для работы с настройками
  */
 @Service
+@RequiredArgsConstructor
 public class ConfigRestServiceImpl implements ConfigRestService {
 
-    @Autowired
-    private ConfigValueService configValueService;
-    @Autowired
-    private ApplicationRestService applicationRestService;
-    @Autowired
-    private ConfigRepository configRepository;
-    @Autowired
-    private GroupRepository groupRepository;
-    @Autowired
-    private ApplicationRepository applicationRepository;
-    @Autowired
-    private AuditService auditService;
-    @Autowired
-    private MessageSourceAccessor messageAccessor;
+    private final ConfigValueService configValueService;
+    private final ConfigRepository configRepository;
+    private final GroupRepository groupRepository;
+    private final ApplicationRepository applicationRepository;
+    private final MessageSourceAccessor messageAccessor;
 
     @Value("${spring.cloud.consul.config.defaultContext:application}")
     private String commonSystemCode;
-
 
     @Override
     @Transactional(readOnly = true)
@@ -93,8 +83,8 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             configEntity.setApplication(application);
         }
 
+        LogUtils.log(EventTypeEnum.CONFIG_CREATE.getTitle(), configEntity.getCode(), ObjectTypeEnum.CONFIG.getTitle());
         configRepository.save(configEntity);
-        audit(configEntity, EventTypeEnum.CONFIG_CREATE);
     }
 
     @Override
@@ -120,10 +110,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             configEntity.setApplication(null);
         }
 
+        LogUtils.log(EventTypeEnum.CONFIG_UPDATE.getTitle(), configEntity.getCode(), ObjectTypeEnum.CONFIG.getTitle());
         configRepository.save(configEntity);
         rewriteConfigValue(configForm, configEntity);
-
-        audit(configEntity, EventTypeEnum.CONFIG_UPDATE);
     }
 
     @Override
@@ -133,9 +122,9 @@ public class ConfigRestServiceImpl implements ConfigRestService {
 
         configRepository.deleteByCode(code);
         String appCode = configEntity.getApplication() != null ? configEntity.getApplication().getCode() : commonSystemCode;
-        configValueService.deleteValue(appCode, code);
 
-        audit(configEntity, EventTypeEnum.APPLICATION_CONFIG_DELETE);
+        LogUtils.log(EventTypeEnum.CONFIG_DELETE.getTitle(), configEntity.getCode(), ObjectTypeEnum.CONFIG.getTitle());
+        configValueService.deleteValue(appCode, code);
     }
 
     private void rewriteConfigValue(@Valid @NotNull ConfigForm configForm, ConfigEntity configEntity) {
@@ -162,9 +151,5 @@ public class ConfigRestServiceImpl implements ConfigRestService {
             } catch (Exception ignored) {
             }
         }
-    }
-
-    private void audit(ConfigEntity configEntity, EventTypeEnum eventType) {
-        auditService.audit(eventType.getTitle(), configEntity, configEntity.getCode(), ObjectTypeEnum.CONFIG.getTitle());
     }
 }

@@ -8,7 +8,7 @@ import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.entity.ConfigEntity_;
 import ru.i_novus.configuration.config.entity.GroupEntity_;
 
-import javax.persistence.criteria.*;
+import jakarta.persistence.criteria.*;
 
 import static org.springframework.util.StringUtils.hasText;
 import static ru.i_novus.configuration.config.specification.SpecificationUtils.toLowerCaseLikeString;

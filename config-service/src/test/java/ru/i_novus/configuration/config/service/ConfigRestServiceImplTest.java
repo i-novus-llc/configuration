@@ -1,14 +1,15 @@
 package ru.i_novus.configuration.config.service;
 
+import jakarta.ws.rs.NotFoundException;
 import net.n2oapp.platform.i18n.UserException;
-import net.n2oapp.platform.test.autoconfigure.pg.EnableEmbeddedPg;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import net.n2oapp.platform.test.autoconfigure.pg.EnableTestcontainersPg;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.i_novus.TestApp;
 import ru.i_novus.config.api.criteria.ConfigCriteria;
 import ru.i_novus.config.api.model.ConfigForm;
@@ -16,24 +17,23 @@ import ru.i_novus.config.api.model.ConfigResponse;
 import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.service.builders.ConfigFormBuilder;
 
-import javax.ws.rs.NotFoundException;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
         classes = TestApp.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableEmbeddedPg
+@EnableTestcontainersPg
 public class ConfigRestServiceImplTest {
 
     @Autowired
@@ -42,10 +42,7 @@ public class ConfigRestServiceImplTest {
     @MockBean
     private ConfigValueService configValueService;
 
-    @MockBean
-    private AuditService auditService;
-
-    @Before
+    @BeforeEach
     public void setUp() {
         when(configValueService.getValue(any(), any())).thenReturn("test-value");
         doNothing().when(configValueService).saveValue(any(), any(), any());
@@ -170,9 +167,9 @@ public class ConfigRestServiceImplTest {
     /**
      * Проверка, что получение настройки по несуществующему коду приводит к NotFoundException
      */
-    @Test(expected = NotFoundException.class)
+    @Test
     public void getConfigByNotExistsCodeTest() {
-        configRestService.getConfig("bad-code");
+        assertThrows(NotFoundException.class, () -> configRestService.getConfig("bad-code"));
     }
 
     /**
@@ -193,11 +190,11 @@ public class ConfigRestServiceImplTest {
     /**
      * Проверка, что сохранение настройки с уже существующим кодом приводит к UserException
      */
-    @Test(expected = UserException.class)
+    @Test
     public void saveAlreadyExistsConfigTest() {
         ConfigForm configForm = ConfigFormBuilder.buildConfigForm1();
 
-        configRestService.saveConfig(configForm);
+        assertThrows(UserException.class, () -> configRestService.saveConfig(configForm));
     }
 
     /**
@@ -225,32 +222,32 @@ public class ConfigRestServiceImplTest {
     /**
      * Проверка, что обновление настройки по несуществующему коду приводит к NotFoundException
      */
-    @Test(expected = NotFoundException.class)
+    @Test
     public void updateConfigByNotExistsCodeTest() {
         ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
         configForm.setCode("bad-code");
-        configRestService.updateConfig(configForm.getCode(), configForm);
+        assertThrows(NotFoundException.class, () -> configRestService.updateConfig(configForm.getCode(), configForm));
     }
 
     /**
      * Проверка, что удаление настройки по коду происходит корректно
      */
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteConfigTest() {
         ConfigForm configForm = ConfigFormBuilder.buildTestConfigForm();
 
         configRestService.saveConfig(configForm);
         configRestService.deleteConfig(configForm.getCode());
 
-        configRestService.getConfig(configForm.getCode());
+        assertThrows(NotFoundException.class, () -> configRestService.getConfig(configForm.getCode()));
     }
 
     /**
      * Проверка, что удаление настройки по несуществующему коду приводит к NotFoundException
      */
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteConfigByNotExistsCodeTest() {
-        configRestService.deleteConfig("bad-code");
+        assertThrows(NotFoundException.class, () -> configRestService.deleteConfig("bad-code"));
     }
 
     private void configAssertEquals(ConfigForm configForm, ConfigResponse configResponse) {
