@@ -12,8 +12,6 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <audit.version>2.4.15</audit.version>
-        <rdm.version>1.130</rdm.version>
     </properties>
 
     <dependencies>
@@ -21,18 +19,6 @@
             <groupId>ru.i-novus.config</groupId>
             <artifactId>config-service</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.i-novus.ms.audit</groupId>
-            <artifactId>audit-client-spring-boot-starter</artifactId>
-            <version>${audit.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.inovus.ms.rdm</groupId>
-            <artifactId>rdm-sync-spring-boot-starter</artifactId>
-            <version>${rdm.version}</version>
         </dependency>
 
         <dependency>

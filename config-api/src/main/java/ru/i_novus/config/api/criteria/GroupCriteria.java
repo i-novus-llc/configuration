@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Sort;
 
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.QueryParam;
 import java.util.Arrays;
 import java.util.List;
 

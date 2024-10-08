@@ -1,39 +1,35 @@
 package ru.i_novus.configuration.config.service;
 
+import jakarta.ws.rs.NotFoundException;
 import net.n2oapp.platform.i18n.UserException;
-import net.n2oapp.platform.test.autoconfigure.pg.EnableEmbeddedPg;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import net.n2oapp.platform.test.autoconfigure.pg.EnableTestcontainersPg;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.i_novus.TestApp;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.config.api.model.GroupForm;
 import ru.i_novus.config.api.service.ConfigGroupRestService;
-import ru.i_novus.config.api.util.AuditService;
 import ru.i_novus.configuration.config.service.builders.GroupFormBuilder;
 
-import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
         classes = TestApp.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableEmbeddedPg
+@EnableTestcontainersPg
 public class ConfigGroupRestServiceImplTest {
 
     @Autowired
     private ConfigGroupRestService groupRestService;
-
-    @MockBean
-    private AuditService auditService;
 
     /**
      * Проверка, что список групп настроек возвращается корректно
@@ -123,9 +119,9 @@ public class ConfigGroupRestServiceImplTest {
     /**
      * Проверка, что получение группы настроек по несуществующему идентификатору приводит к NotFoundException
      */
-    @Test(expected = NotFoundException.class)
+    @Test
     public void getGroupByNotExistsCodeTest() {
-        groupRestService.getGroup(999);
+        assertThrows(NotFoundException.class, () -> groupRestService.getGroup(999));
     }
 
     /**
@@ -146,25 +142,25 @@ public class ConfigGroupRestServiceImplTest {
     /**
      * Проверка, что сохранение группы настроек с неуникальным именем приводит к UserException
      */
-    @Test(expected = UserException.class)
+    @Test
     public void saveGroupWithAlreadyExistsNameTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
         testGroupForm.setName(groupForm.getName());
 
-        groupRestService.saveGroup(testGroupForm);
+        assertThrows(UserException.class, () -> groupRestService.saveGroup(testGroupForm));
     }
 
     /**
      * Проверка, что сохранение группы настроек с неуникальными кодами приводит к UserException
      */
-    @Test(expected = UserException.class)
+    @Test
     public void saveGroupWithNotUniqueCodesTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
         testGroupForm.setCodes(groupForm.getCodes());
 
-        groupRestService.saveGroup(testGroupForm);
+        assertThrows(UserException.class, () -> groupRestService.saveGroup(testGroupForm));
     }
 
     /**
@@ -189,17 +185,17 @@ public class ConfigGroupRestServiceImplTest {
     /**
      * Проверка, что обновление группы настроек с несуществующим идентификатором приводит к NotFoundException
      */
-    @Test(expected = NotFoundException.class)
+    @Test
     public void updateNotExistsGroupTest() {
         GroupForm groupForm = GroupFormBuilder.buildTestGroupForm();
         groupForm.setId(999);
-        groupRestService.updateGroup(groupForm.getId(), groupForm);
+        assertThrows(NotFoundException.class, () -> groupRestService.updateGroup(groupForm.getId(), groupForm));
     }
 
     /**
      * Проверка, что обновление группы настроек с уже существующем именем приводит к UserException
      */
-    @Test(expected = UserException.class)
+    @Test
     public void updateGroupWithNotUniqueNameTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
@@ -208,7 +204,7 @@ public class ConfigGroupRestServiceImplTest {
         testGroupForm.setName(groupForm.getName());
 
         try {
-            groupRestService.updateGroup(groupId, testGroupForm);
+            assertThrows(UserException.class, () -> groupRestService.updateGroup(groupId, testGroupForm));
         } finally {
             groupRestService.deleteGroup(groupId);
         }
@@ -217,7 +213,7 @@ public class ConfigGroupRestServiceImplTest {
     /**
      * Проверка, что обновление группы настроек с уже существующими кодами приводит к UserException
      */
-    @Test(expected = UserException.class)
+    @Test
     public void updateGroupWithNotUniqueCodesTest() {
         GroupForm groupForm = GroupFormBuilder.buildGroupForm1();
         GroupForm testGroupForm = GroupFormBuilder.buildTestGroupForm();
@@ -226,7 +222,7 @@ public class ConfigGroupRestServiceImplTest {
         testGroupForm.setCodes(groupForm.getCodes());
 
         try {
-            groupRestService.updateGroup(groupId, testGroupForm);
+            assertThrows(UserException.class, () -> groupRestService.updateGroup(groupId, testGroupForm));
         } finally {
             groupRestService.deleteGroup(groupId);
         }
@@ -235,22 +231,22 @@ public class ConfigGroupRestServiceImplTest {
     /**
      * Проверка, что удаление группы настроек по идентификатору происходит корректно
      */
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteGroupTest() {
         GroupForm groupForm = GroupFormBuilder.buildTestGroupForm();
         Integer groupId = groupRestService.saveGroup(groupForm);
 
         groupRestService.deleteGroup(groupId);
 
-        groupRestService.getGroup(groupId);
+        assertThrows(NotFoundException.class, () -> groupRestService.getGroup(groupId));
     }
 
     /**
      * Проверка, что удаление группы настроек по несуществующему идентификатору приводит к NotFoundException
      */
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteGroupByNotExistsCodeTest() {
-        groupRestService.deleteGroup(999);
+        assertThrows(NotFoundException.class, () -> groupRestService.deleteGroup(999));
     }
 
     private void groupAssertEquals(GroupForm expected, GroupForm actual) {

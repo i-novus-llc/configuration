@@ -1,7 +1,5 @@
 package ru.i_novus.configuration.config.repository;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -18,14 +16,15 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Integer>, Jp
             "FROM GroupEntity g WHERE g.name = :name AND g.id != :groupId")
     Boolean existsByName(@Param("name") String name, @Param("groupId") Integer groupId);
 
-    @Query(value = "SELECT g FROM GroupEntity g INNER JOIN GroupCodeEntity gc " +
-            "ON g.id = gc.group.id WHERE gc.code = :code OR " +
-            "strpos(:code, gc.code || '.') = 1 " +
-            "GROUP BY g.id ORDER BY length(MAX(gc.code)) DESC")
-    List<GroupEntity> findGroupsByConfigCodeStarts(@Param("code") String code, Pageable pageable);
+    @Query("""
+            SELECT g FROM GroupEntity g
+            INNER JOIN GroupCodeEntity gc ON gc.group = g
+            WHERE gc.code = :code OR cast(strpos(:code, gc.code || '.') as INTEGER)  = 1
+            GROUP BY g.id ORDER BY length(MAX(gc.code)) DESC""")
+    List<GroupEntity> findGroupsByConfigCodeStarts(@Param("code") String code);
 
     default GroupEntity findOneGroupByConfigCodeStarts(String code) {
-        List<GroupEntity> groupEntities = findGroupsByConfigCodeStarts(code, PageRequest.of(0, 1));
+        List<GroupEntity> groupEntities = findGroupsByConfigCodeStarts(code);
         return groupEntities.isEmpty() ? null : groupEntities.get(0);
     }
 

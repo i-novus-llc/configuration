@@ -1,20 +1,15 @@
 # Требования
-- OpenJDK 14
+- OpenJDK 17
 - PostgreSQL 11
-- Consul 
-- N2O Security Admin 4
-- N2O Audit 2
+- Consul
 
 # Cтек технологий
-- Java 14
+- Java 17
 - JDBC
-- JPA 2
 - JAX-RS
-- Spring Boot 2.1
-- Spring Cloud Greenwich
-- Liquibase 3.6.2
-- N2O Platform 4
-- N2O UI Framework 7
+- Spring Boot 3.2
+- N2O Platform 6.1
+- N2O UI Framework 7.28
 
 # Структура проекта
 - `config-api` - общие интерфейсы и модели

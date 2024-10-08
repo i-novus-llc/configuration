@@ -1,23 +1,25 @@
 package ru.i_novus.configuration.config.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.ws.rs.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
-import ru.i_novus.config.api.model.*;
+import ru.i_novus.config.api.model.ApplicationConfigResponse;
+import ru.i_novus.config.api.model.ConfigGroupResponse;
+import ru.i_novus.config.api.model.ConfigValue;
+import ru.i_novus.config.api.model.EmptyGroup;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.CommonSystemConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.config.api.util.AuditService;
+import ru.i_novus.configuration.config.utils.LogUtils;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
-import ru.i_novus.configuration.config.mapper.ConfigMapper;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.specification.ApplicationConfigSpecification;
 
-import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,20 +29,14 @@ import java.util.stream.Collectors;
 import static java.util.Objects.isNull;
 
 @Service
+@RequiredArgsConstructor
 public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRestService {
 
-    @Autowired
-    ConfigRepository configRepository;
-
-    @Autowired
-    ConfigValueService configValueService;
-
-    @Autowired
-    private AuditService auditService;
+    private final ConfigRepository configRepository;
+    private final ConfigValueService configValueService;
 
     @Value("${spring.cloud.consul.config.defaultContext:application}")
     private String commonSystemCode;
-
 
     @Override
     public List<ConfigGroupResponse> getAllConfigs(ApplicationConfigCriteria criteria) {
@@ -98,30 +94,21 @@ public class CommonSystemConfigRestServiceImpl implements CommonSystemConfigRest
     @Override
     @Transactional
     public void saveConfigValue(String code, ConfigValue configValue) {
-        ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         String value = configValue.getValue();
-
         configValueService.saveValue(commonSystemCode, code, value);
-        audit(ConfigMapper.toConfigForm(entity, value), EventTypeEnum.COMMON_SYSTEM_CONFIG_UPDATE);
+        LogUtils.log(EventTypeEnum.COMMON_SYSTEM_CONFIG_UPDATE.getTitle(), code, ObjectTypeEnum.CONFIG_GROUP.getTitle());
     }
 
     @Override
     @Transactional
     public void deleteConfigValue(String code) {
-        ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
-        String oldValue = configValueService.getValue(commonSystemCode, code);
         configValueService.deleteValue(commonSystemCode, code);
-
-        audit(ConfigMapper.toConfigForm(entity, oldValue), EventTypeEnum.COMMON_SYSTEM_CONFIG_DELETE);
+        LogUtils.log(EventTypeEnum.COMMON_SYSTEM_CONFIG_DELETE.getTitle(), code, ObjectTypeEnum.CONFIG_GROUP.getTitle());
     }
 
     private List<ConfigGroupResponse> clearEmptyGroups(List<ConfigGroupResponse> result) {
         return result.stream()
                 .filter(g -> !CollectionUtils.isEmpty(g.getConfigs()))
                 .collect(Collectors.toList());
-    }
-
-    private void audit(ConfigForm configForm, EventTypeEnum eventType) {
-        auditService.audit(eventType.getTitle(), configForm, configForm.getCode(), ObjectTypeEnum.COMMON_SYSTEM_CONFIG.getTitle());
     }
 }

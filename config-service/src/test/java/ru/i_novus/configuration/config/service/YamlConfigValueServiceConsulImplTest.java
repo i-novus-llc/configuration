@@ -1,14 +1,14 @@
 package ru.i_novus.configuration.config.service;
 
-import net.n2oapp.platform.test.autoconfigure.pg.EnableEmbeddedPg;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import net.n2oapp.platform.test.autoconfigure.pg.EnableTestcontainersPg;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 import ru.i_novus.TestApp;
 
@@ -25,11 +25,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(
         classes = TestApp.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableEmbeddedPg
+@EnableTestcontainersPg
 public class YamlConfigValueServiceConsulImplTest {
 
     @MockBean(name = "restTemplate")
@@ -37,7 +37,7 @@ public class YamlConfigValueServiceConsulImplTest {
 
     private YamlConfigValueServiceConsulImpl yamlConfigValueServiceConsul;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         yamlConfigValueServiceConsul = new YamlConfigValueServiceConsulImpl(restTemplate);
         when(restTemplate.getForObject(any() + "myApplication" + "/" + any() + "?raw=1", String.class))

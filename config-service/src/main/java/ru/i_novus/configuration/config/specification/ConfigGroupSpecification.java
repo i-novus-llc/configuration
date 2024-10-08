@@ -1,15 +1,12 @@
 package ru.i_novus.configuration.config.specification;
 
-import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
-import org.hibernate.query.criteria.internal.expression.LiteralExpression;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import ru.i_novus.config.api.criteria.GroupCriteria;
 import ru.i_novus.configuration.config.entity.GroupCodeEntity;
 import ru.i_novus.configuration.config.entity.GroupCodeEntity_;
 import ru.i_novus.configuration.config.entity.GroupEntity;
 import ru.i_novus.configuration.config.entity.GroupEntity_;
-
-import javax.persistence.criteria.*;
 
 import static org.springframework.util.StringUtils.hasText;
 import static ru.i_novus.configuration.config.specification.SpecificationUtils.toLowerCaseLikeString;
@@ -44,10 +41,13 @@ public class ConfigGroupSpecification implements Specification<GroupEntity> {
         if (hasText(criteria.getConfigCode())) {
             Join<GroupEntity, GroupCodeEntity> join = root.join("codes", JoinType.LEFT);
 
-            p = builder.and(p, builder.like(new LiteralExpression<>((CriteriaBuilderImpl) builder, criteria.getConfigCode()),
-                    builder.concat(join.get(GroupCodeEntity_.code).as(String.class), ".%")));
+            p = builder.and(p, builder.like(builder.lower(join.get(GroupCodeEntity_.code).as(String.class)), wildcard(criteria.getConfigCode())));
         }
 
         return p;
+    }
+
+    private static String wildcard(String s) {
+        return "%" + s.strip().toLowerCase() + "%";
     }
 }

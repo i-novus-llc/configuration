@@ -17,11 +17,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
         <!-- Database support -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,7 +35,6 @@
             <version>${liquibase.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-ms</artifactId>
@@ -53,24 +47,8 @@
 
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
-            <artifactId>n2o-platform-starter-jaxrs-client</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.n2oapp.platform</groupId>
-            <artifactId>n2o-platform-starter-quartz</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-loader-server</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -84,14 +62,21 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
         <!-- Test -->
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

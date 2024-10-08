@@ -6,9 +6,9 @@ import ru.i_novus.config.api.model.ApplicationConfigResponse;
 import ru.i_novus.config.api.model.ConfigValue;
 import ru.i_novus.config.api.model.ConfigsApplicationResponse;
 
-import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 
 
