@@ -8,19 +8,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.i_novus.config.api.criteria.ApplicationConfigCriteria;
-import ru.i_novus.config.api.model.*;
+import ru.i_novus.config.api.model.ApplicationConfigResponse;
+import ru.i_novus.config.api.model.ConfigGroupResponse;
+import ru.i_novus.config.api.model.ConfigValue;
+import ru.i_novus.config.api.model.ConfigsApplicationResponse;
+import ru.i_novus.config.api.model.EmptyGroup;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ApplicationConfigRestService;
 import ru.i_novus.config.api.service.ConfigValueService;
-import ru.i_novus.configuration.config.utils.LogUtils;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
 import ru.i_novus.configuration.config.repository.ConfigRepository;
 import ru.i_novus.configuration.config.specification.ApplicationConfigSpecification;
+import ru.i_novus.configuration.config.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,8 +61,10 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
             ConfigEntity data = groupedConfigs.get(i);
 
             ConfigsApplicationResponse application = new ConfigsApplicationResponse();
-            application.setCode(data.getApplication().getCode());
-            application.setName(data.getApplication().getName());
+            if (data.getApplication() != null) {
+                application.setCode(data.getApplication().getCode());
+                application.setName(data.getApplication().getName());
+            }
             application.setGroups(new ArrayList<>());
             result.add(application);
 
@@ -86,11 +93,30 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
                     if (!(Boolean.TRUE.equals(criteria.getWithValue()) && isNull(config.getValue())))
                         group.getConfigs().add(config);
                     i++;
-                } while (i < groupedConfigs.size() && application.getCode().equals(groupedConfigs.get(i).getApplication().getCode()) &&
-                        ((groupedConfigs.get(i).getGroup().getId() != null && groupedConfigs.get(i).getGroup().getId() == group.getId()) ||
-                                groupedConfigs.get(i).getGroup().getId() == null && group.getId() == 0));
+                } while (
+                        i < groupedConfigs.size()
+                        && Objects.equals(
+                                application.getCode(),
+                                groupedConfigs.get(i).getApplication() == null
+                                ? null
+                                : groupedConfigs.get(i).getApplication().getCode()
+                        )
+                        && (
+                            groupedConfigs.get(i).getGroup().getId() != null
+                            && Objects.equals(groupedConfigs.get(i).getGroup().getId(), group.getId())
+                            || groupedConfigs.get(i).getGroup().getId() == null && group.getId() == 0
+                        )
+                );
                 application.getGroups().add(group);
-            } while (i < groupedConfigs.size() && application.getCode().equals(groupedConfigs.get(i).getApplication().getCode()));
+            } while (
+                    i < groupedConfigs.size()
+                    && Objects.equals(
+                            application.getCode(),
+                            groupedConfigs.get(i).getApplication() == null
+                            ? null
+                            : groupedConfigs.get(i).getApplication().getCode()
+                    )
+            );
         }
 
         return clearEmptyGroups(result);
