@@ -1,0 +1,54 @@
+package ru.i_novus.configuration.config.service;
+
+import jakarta.ws.rs.BadRequestException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.stereotype.Service;
+import ru.i_novus.config.api.model.enums.ValueTypeEnum;
+import ru.i_novus.config.api.service.ConfigValidationService;
+import ru.i_novus.configuration.config.validators.value.ConfigValueValidator;
+
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Реализация сервиса валидации значений настроек
+ */
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class ConfigValidationServiceImpl implements ConfigValidationService {
+
+    private static final String NOT_FOUND_VALIDATOR_MSG = "config.value.validation.not.found.validator";
+    private static final String IS_BLANK_MSG = "config.value.validation.is.blank";
+    private static final String INVALID_TYPE_MSG = "config.value.validation.invalid.type";
+
+    private final MessageSourceAccessor messageAccessor;
+    private final Map<ValueTypeEnum, ConfigValueValidator> configValueValidators;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validateConfigValue(String value, ValueTypeEnum valueType) {
+        if (configValueValidators.isEmpty()) {
+            return;
+        }
+
+        var validator = configValueValidators.get(valueType);
+        if (Objects.nonNull(validator)) {
+            var tmpValue = StringUtils.trimToNull(value);
+            if (StringUtils.isBlank(tmpValue)) {
+                throw new BadRequestException(messageAccessor.getMessage(IS_BLANK_MSG));
+            }
+            if (!validator.validate(tmpValue)) {
+                throw new BadRequestException(messageAccessor.getMessage(INVALID_TYPE_MSG, new String[]{value, valueType.getId()}));
+            }
+        } else {
+            log.warn(messageAccessor.getMessage(NOT_FOUND_VALIDATOR_MSG, new String[]{valueType.getId()}));
+        }
+    }
+
+}
