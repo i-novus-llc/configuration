@@ -13,9 +13,12 @@ import lombok.Getter;
 public enum ValueTypeEnum {
     NUMBER("Число"),
     STRING("Строка"),
-    BOOLEAN("Чекбокс");
+    BOOLEAN("Чекбокс"),
+    DATE("Дата"),
+    TIME("Время"),
+    DATETIME("Дата и время");
 
-    private String name;
+    private final String name;
 
     public String getId() {
         return name();
