@@ -12,6 +12,7 @@ import ru.i_novus.config.api.model.*;
 import ru.i_novus.config.api.model.enums.EventTypeEnum;
 import ru.i_novus.config.api.model.enums.ObjectTypeEnum;
 import ru.i_novus.config.api.service.ApplicationConfigRestService;
+import ru.i_novus.config.api.service.ConfigValidationService;
 import ru.i_novus.config.api.service.ConfigValueService;
 import ru.i_novus.configuration.config.utils.LogUtils;
 import ru.i_novus.configuration.config.entity.ConfigEntity;
@@ -37,10 +38,10 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
 
     private final ConfigRepository configRepository;
     private final ConfigValueService configValueService;
+    private final ConfigValidationService configValidationService;
 
     @Value("${spring.cloud.consul.config.defaultContext:application}")
     private String commonSystemCode;
-
 
     @Override
     public List<ConfigsApplicationResponse> getAllConfigs(ApplicationConfigCriteria criteria) {
@@ -119,6 +120,7 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
     public void saveConfigValue(String code, ConfigValue configValue) {
         ConfigEntity entity = Optional.ofNullable(configRepository.findByCode(code)).orElseThrow(NotFoundException::new);
         String value = configValue.getValue();
+        configValidationService.validateConfigValue(value, entity.getValueType());
 
         if (entity.getApplication() != null) {
             configValueService.saveValue(entity.getApplication().getCode(), code, value);
