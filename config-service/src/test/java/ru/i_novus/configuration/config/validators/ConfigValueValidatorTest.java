@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.i_novus.TestApp;
+import ru.i_novus.config.api.exception.ConfigValidationUserException;
 import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigValidationService;
 
@@ -74,7 +75,7 @@ class ConfigValueValidatorTest {
     @ParameterizedTest
     @MethodSource("argumentIncorrectValues")
     void testValidateIncorrectConfigValue(ValueTypeEnum valueType, String value) {
-        assertThrows(BadRequestException.class, () -> configValidationService.validateConfigValue(value, valueType));
+        assertThrows(ConfigValidationUserException.class, () -> configValidationService.validateConfigValue(value, valueType));
     }
 
     private static Stream<Arguments> argumentIncorrectValues() {
