@@ -1,11 +1,11 @@
 package ru.i_novus.configuration.config.service;
 
-import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
+import ru.i_novus.config.api.exception.ConfigValidationUserException;
 import ru.i_novus.config.api.model.enums.ValueTypeEnum;
 import ru.i_novus.config.api.service.ConfigValidationService;
 import ru.i_novus.configuration.config.validators.value.ConfigValueValidator;
@@ -40,10 +40,10 @@ public class ConfigValidationServiceImpl implements ConfigValidationService {
         if (nonNull(validator)) {
             var tmpValue = StringUtils.trimToNull(value);
             if (StringUtils.isBlank(tmpValue)) {
-                throw new BadRequestException(messageAccessor.getMessage(IS_BLANK_MSG));
+                throw new ConfigValidationUserException(IS_BLANK_MSG);
             }
             if (!validator.validate(tmpValue)) {
-                throw new BadRequestException(messageAccessor.getMessage(validator.getErrorMessageCode(), validator.getArgs(value)));
+                throw new ConfigValidationUserException(validator.getErrorMessageCode(), validator.getArgs(value));
             }
         } else {
             log.warn(messageAccessor.getMessage(NOT_FOUND_VALIDATOR_MSG, new String[]{valueType.getId()}));
