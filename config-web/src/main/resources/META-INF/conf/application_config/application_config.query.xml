@@ -26,7 +26,7 @@
         <field id="children" domain="object[]" mapping="[groups]"
                normalize="T(ru.i_novus.config.web.ApplicationConfigUtil).normalizeApplicationConfig(#this, #data['id'])"/>
 
-        <field id="application" domain="string[]" select="false"/>
+        <field id="application" select="false"/>
         <field id="group" domain="string[]" select="false"/>
         <field id="withValue" select="false"/>
     </fields>
