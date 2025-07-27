@@ -12,8 +12,6 @@
     <filters>
         <eq field-id="id" filter-id="id">code={id}</eq>
         <eq field-id="application" filter-id="applications*.id">applicationCode={applications*.id}</eq>
-        <eq field-id="application.id" filter-id="application.id">application.code={application.id}</eq>
-        <eq field-id="system.code" filter-id="systems*.code">systemCode={systems*.code}</eq>
         <eq field-id="group" filter-id="groups*.id">groupId={groups*.id}</eq>
         <eq field-id="code" filter-id="code">code={code}</eq>
         <eq field-id="name" filter-id="name">name={name}</eq>
@@ -22,11 +20,7 @@
 
     <fields>
         <field id="id" domain="string" mapping="[code]"/>
-        <field id="application" domain="string[]" mapping="[application]"/>
-        <field id="application.id" domain="string" mapping="['application.code']"/>
-        <field id="system.code" domain="string[]"/>
-        <field id="systemName.id" domain="string" mapping="['application.system.code']"/>
-        <field id="systemName.name" domain="string" mapping="['application.system.name']"/>
+        <field id="application" mapping="[application]"/>
         <field id="applicationName.id" domain="string" mapping="['application.code']"/>
         <field id="applicationName.name" domain="string" mapping="['application.name']"/>
         <field id="applicationDisplayName" domain="string" mapping="['application.name']"
