@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.i_novus.TestApp;
@@ -32,6 +34,9 @@ import static org.junit.Assert.*;
 @EnableTestcontainersPg
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConfigServerLoaderTest {
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     private ConfigServerLoader configLoader;
@@ -144,7 +149,8 @@ public class ConfigServerLoaderTest {
         configForm.setCode("config.without.group");
         List<ConfigForm> data = Arrays.asList(configForm);
         UserException userException = assertThrows(UserException.class, () -> loader.accept(data, "test-app"));
-        assertEquals("Group for config config.without.group is not found", userException.getMessage());
+        String expectedMessage = messageSource.getMessage("config.group.not.found", new Object[]{configForm.getCode()}, LocaleContextHolder.getLocale());
+        assertEquals(expectedMessage, userException.getMessage());
     }
 
 
