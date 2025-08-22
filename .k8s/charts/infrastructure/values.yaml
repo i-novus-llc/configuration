@@ -1,0 +1,22 @@
+# list of all generic services with specific values for each
+genericServices:
+  configuration-db:
+    port: 5432
+    imageName: /config/db
+    imageTag: ${docker.image.tag}
+    imagePullPolicy: IfNotPresent
+    storageClassName: 'nfs-retain'
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: 300m
+    replicaCount: 1
+    volumes:
+      - name: configuration-db-data
+        persistentVolumeClaim:
+          claimName: configuration-db-data
+    volumeMounts:
+      - mountPath: /pg/14
+        name: configuration-db-data
+    env:
+      POSTGRES_PASSWORD: postgres

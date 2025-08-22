@@ -1,0 +1,36 @@
+## Global values for parent chart and subcharts.
+global:
+  spring:
+    ## Use default consul address `consul-agent.local` or use pod host IP.
+    useDefaultConsul: false
+    dbUrl: "jdbc:postgresql://configuration-db:5432/"
+    dbUsername: "postgres"
+    dbPassword: "postgres"
+
+config:
+  config-backend:
+    resources:
+      limits:
+        memory: 600Mi
+        cpu: 300m
+    enabled: true
+  config-web:
+    resources:
+      limits:
+        memory: 600Mi
+        cpu: 300m
+    enabled: true
+
+
+infrastructure:
+  genericServices:
+    configuration-db:
+      storageClassName: 'nfs-retain'
+      volumes:
+        - name: configuration-db-data
+          persistentVolumeClaim:
+            claimName: configuration-db-data
+      volumeMounts:
+        - name: configuration-db-data
+          mountPath: /pg/14
+      enabled: true

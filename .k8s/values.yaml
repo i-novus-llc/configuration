@@ -1,0 +1,56 @@
+## Global values for parent chart and subcharts.
+global:
+  observability:
+    ## Enable observability data collection.
+    enabled: true
+    ## Override zipkin protocol tracing service address and port.
+    zipkinUrl: http://observability-tempo-distributor.observability:9411
+    ## Override loki push url.
+    lokiUrl: http://observability-loki.observability:3100/loki/api/v1/push
+  ## Current build tag for images of this project.
+  imageTag: "${docker.image.tag}"
+  ## Global values for all spring services.
+  spring:
+    ## Global environment variables injected in every spring service.
+    env:
+      SPRING_CLOUD_CONSUL_CONFIG_PREFIX: "common"
+      SPRING_CLOUD_CONSUL_CONFIG_FORMAT: YAML
+      JAVA_OPTS: "-XX:MaxRAMPercentage=75"
+
+# list of spring boot services using the database with specific values for each
+config:
+  config-web:
+    replicaCount: 1
+    enabled: true
+    imageName: config/config-web
+    actuatorPath: "configs/actuator"
+    resources:
+      requests:
+        memory: 400M
+        cpu: 10m
+    env:
+      SERVER_SERVLET_CONTEXT_PATH: /configs
+      JAVA_OPTS: -Xmx300m
+      CONFIG_BACKEND_URL: http://config-backend:8080/configs/service/api
+
+
+  config-backend:
+    replicaCount: 1
+    enabled: true
+    imageName: config/config-backend
+    actuatorPath: "configs/service/actuator"
+    overrideDbName: "configuration"
+    resources:
+      requests:
+        memory: 400M
+        cpu: 10m
+    env:
+      JAVA_OPTS: -Xmx200m
+      SERVER_SERVLET_CONTEXT_PATH: /configs/service
+
+
+infrastructure:
+  genericServices:
+    configuration-db:
+      enabled: true
+
