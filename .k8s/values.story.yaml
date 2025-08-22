@@ -1,3 +1,9 @@
 global:
   spring:
     useDefaultConsul: false
+
+infrastructure:
+  genericServices:
+    configuration-db:
+      enabled: true
+      storageClassName:	nfs-delete
