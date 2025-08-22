@@ -1,5 +1,8 @@
 global:
   spring:
+    dbUrl: "jdbc:postgresql://configuration-db:5432/"
+    dbUsername: "postgres"
+    dbPassword: "postgres"
     useDefaultConsul: false
 
 infrastructure:
