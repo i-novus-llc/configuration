@@ -1,0 +1,15 @@
+apiVersion: v2
+name: config-consul-app
+version: ${project.version}
+appVersion: ${project.version}
+
+dependencies:
+  # template chart for application spring services
+  - name: spring-app-template
+    version: 1.1.0
+    repository: oci://harbor.i-novus.ru/library/helm/n2o
+    alias: config
+
+
+  - name: infrastructure
+    version: ${project.version}

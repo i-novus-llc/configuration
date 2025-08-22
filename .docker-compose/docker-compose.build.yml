@@ -1,0 +1,28 @@
+services:
+
+  config-backend:
+    image: "${DOCKER_REGISTRY}/config/config-backend:${docker.image.tag}"
+    build:
+      context: ${project.basedir}/config-backend
+      args:
+        JAR_FILE: target/config-backend.jar
+
+  config-web:
+    image: "${DOCKER_REGISTRY}/config/config-web:${docker.image.tag}"
+    build:
+      context: ${project.basedir}/config-webapp
+      args:
+        JAR_FILE: target/config-webapp.jar
+
+  configuration-db:
+    image: "${DOCKER_REGISTRY}/config/db:${docker.image.tag}"
+    build:
+      context: ${project.basedir}/db-init
+      args:
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY}
+    volumes:
+      - configuration-db-data:/pg/14/data
+
+
+volumes:
+  configuration-db-data:

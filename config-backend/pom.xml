@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.n2oapp.platform</groupId>
+            <artifactId>n2o-platform-starter-ms</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>ru.i-novus.config</groupId>
             <artifactId>config-service</artifactId>
             <version>${project.version}</version>
