@@ -5,6 +5,20 @@ global:
     dbPassword: "postgres"
     useDefaultConsul: false
 
+config:
+  config-backend:
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: 300m
+    enabled: true
+  config-web:
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: 300m
+    enabled: true
+
 infrastructure:
   genericServices:
     configuration-db:
