@@ -20,6 +20,12 @@ build and verify:
     NODE_VERSION: 'node22'
     MAVEN_IMAGE_VERSION: 'v6'
 
+build story:
+  variables:
+    JDK_VERSION: 'jdk21'
+    NODE_VERSION: 'node22'
+    MAVEN_IMAGE_VERSION: 'v6'
+
 deploy dev stand:
   variables:
     K8S_NAMESPACE: 'configuration'
