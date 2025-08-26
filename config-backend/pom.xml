@@ -18,6 +18,7 @@
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-ms</artifactId>
+            <type>pom</type>
         </dependency>
 
         <dependency>
