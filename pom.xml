@@ -6,6 +6,7 @@
     <artifactId>config</artifactId>
     <version>1.10.6-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>config</name>
 
     <parent>
         <groupId>net.n2oapp.platform</groupId>
