@@ -32,6 +32,8 @@ config:
       SERVER_SERVLET_CONTEXT_PATH: /configs
       JAVA_OPTS: -Xmx300m
       CONFIG_SERVICE_URL: http://config-backend:8080/configs/service/api
+    ingress:
+      path: /
 
 
   config-backend:
