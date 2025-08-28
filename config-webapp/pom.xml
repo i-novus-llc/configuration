@@ -3,11 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>config-webapp</artifactId>
+    <name>config-webapp</name>
 
     <parent>
         <groupId>ru.i-novus.config</groupId>
         <artifactId>config</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -24,16 +25,19 @@
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-ms</artifactId>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-web</artifactId>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>net.n2oapp.framework</groupId>
             <artifactId>n2o-web</artifactId>
             <version>${n2o.version}</version>
         </dependency>
+
         <dependency>
             <groupId>net.n2oapp.framework</groupId>
             <artifactId>n2o-access</artifactId>

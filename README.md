@@ -1,15 +1,15 @@
 # Требования
-- OpenJDK 17
+- OpenJDK 21
 - PostgreSQL 11
 - Consul
 
 # Cтек технологий
-- Java 17
+- Java 21
 - JDBC
 - JAX-RS
-- Spring Boot 3.2
-- N2O Platform 6.1
-- N2O UI Framework 7.28
+- Spring Boot 3.5.3
+- N2O Platform 7.0.0
+- N2O UI Framework 7.29
 
 # Структура проекта
 - `config-api` - общие интерфейсы и модели

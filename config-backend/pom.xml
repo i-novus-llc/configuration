@@ -3,11 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>config-backend</artifactId>
+    <name>config-backend</name>
 
     <parent>
         <artifactId>config</artifactId>
         <groupId>ru.i-novus.config</groupId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -18,6 +19,7 @@
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-ms</artifactId>
+            <type>pom</type>
         </dependency>
 
         <dependency>

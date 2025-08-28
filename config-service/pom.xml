@@ -3,11 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>config-service</artifactId>
+    <name>config-service</name>
 
     <parent>
         <groupId>ru.i-novus.config</groupId>
         <artifactId>config</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
      <properties>
@@ -36,22 +37,24 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>${liquibase.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-ms</artifactId>
+            <type>pom</type>
         </dependency>
 
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-jaxrs-server</artifactId>
+            <type>pom</type>
         </dependency>
 
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-loader-server</artifactId>
+            <type>pom</type>
         </dependency>
 
         <dependency>
@@ -75,6 +78,7 @@
         <dependency>
             <groupId>net.n2oapp.platform</groupId>
             <artifactId>n2o-platform-starter-test</artifactId>
+            <type>pom</type>
             <scope>test</scope>
         </dependency>
 
