@@ -32,7 +32,7 @@ jobs:
           server-password: SONATYPE_PASSWORD # env variable for token in deploy
 
       - name: Publish to Apache Maven Central
-        run: mvn deploy -DskipTests=true -Prelease,build-all-modules
+        run: mvn deploy -DskipTests=true -Prelease,!build-all-modules
         env:
           SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
