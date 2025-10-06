@@ -8,7 +8,7 @@
     <parent>
         <artifactId>config</artifactId>
         <groupId>ru.i-novus.config</groupId>
-        <version>1.10.4</version>
+        <version>1.10.5</version>
     </parent>
 
     <properties>
