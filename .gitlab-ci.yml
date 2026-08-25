@@ -1,6 +1,6 @@
 include:
   - project: ${PIPELINE_REPOSITORY_PREFIX}devenv/gitlab/pipelines
-    ref: 3.5.0
+    ref: 4.0.3
     file:
       - dev-stand.gitlab-ci.yml
       - merge-request.gitlab-ci.yml
