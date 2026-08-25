@@ -6,6 +6,7 @@ include:
       - merge-request.gitlab-ci.yml
       - jira.gitlab-ci.yml
       - story.gitlab-ci.yml
+      - scheduled-checks.gitlab-ci.yml
 
 build:
   variables:
@@ -40,3 +41,11 @@ deploy mr stand:
 deploy story stand:
   rules:
     - if: $CI_COMMIT_REF_NAME =~ /^story\/.+/ && $CI_PIPELINE_SOURCE == 'web'
+
+defectdojo:
+  variables:
+    DEFECTDOJO_SONARQUBE_PROJECT_KEY: 'ru.i-novus.config:config'
+
+zap dast:
+  variables:
+    DAST_URI: "https://configuration-dev.i-novus.ru/"
