@@ -11,23 +11,10 @@ include:
 build:
   variables:
     MAVEN_GOAL: 'deploy'
-    JDK_VERSION: 'jdk21'
-    NODE_VERSION: 'node22'
-    MAVEN_IMAGE_VERSION: 'v6'
-
-build and verify:
-  variables:
-    JDK_VERSION: 'jdk21'
-    NODE_VERSION: 'node22'
-    MAVEN_IMAGE_VERSION: 'v6'
 
 build story:
   rules:
     - if: $CI_COMMIT_REF_NAME =~ /^story\/.+/ && $CI_PIPELINE_SOURCE == 'web'
-  variables:
-    JDK_VERSION: 'jdk21'
-    NODE_VERSION: 'node22'
-    MAVEN_IMAGE_VERSION: 'v6'
 
 deploy mr stand:
   variables:
