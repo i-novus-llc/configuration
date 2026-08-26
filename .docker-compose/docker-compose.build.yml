@@ -1,13 +1,13 @@
 services:
   config-backend:
-    image: ${DOCKER_REGISTRY}/n2o-components/config/config-backend:${docker.image.tag}"
+    image: ${DOCKER_REGISTRY}/n2o-components/config/backend:${docker.image.tag}"
     build:
       context: ${project.basedir}/config-backend
       args:
         JAR_FILE: target/config-backend.jar
 
   config-web:
-    image: ${DOCKER_REGISTRY}/n2o-components/config/config-web:${docker.image.tag}"
+    image: ${DOCKER_REGISTRY}/n2o-components/config/web:${docker.image.tag}"
     build:
       context: ${project.basedir}/config-webapp
       args:
@@ -21,7 +21,6 @@ services:
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
     volumes:
       - configuration-db-data:/pg/14/data
-
 
 volumes:
   configuration-db-data:
