@@ -13,7 +13,7 @@ import static ru.i_novus.configuration.config.specification.SpecificationUtils.t
 
 public class ConfigGroupSpecification implements Specification<GroupEntity> {
 
-    private final GroupCriteria criteria;
+    private final transient GroupCriteria criteria;
 
     public ConfigGroupSpecification(GroupCriteria criteria) {
         this.criteria = criteria;
