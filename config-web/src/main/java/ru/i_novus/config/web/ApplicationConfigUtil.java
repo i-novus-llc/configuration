@@ -8,22 +8,34 @@ import java.util.List;
 
 public class ApplicationConfigUtil {
 
+    private static final String ID = "id";
+    private static final String CODE = "code";
+    private static final String NAME = "name";
+    private static final String VALUE_TYPE = "valueType";
+    private static final String VALUE = "value";
+    private static final String IS_CONFIG = "isConfig";
+    private static final String CHILDREN = "children";
+    private static final String CONFIGS = "configs";
+    private static final String CONFIG_CODE = "configCode";
+    private static final String COMMON_SYSTEM_VALUE = "commonSystemValue";
+    private static final String DEFAULT_VALUE = "defaultValue";
+
     public static <T extends List> T normalizeCommonSystemConfig(T children) {
         if (children == null || children.isEmpty())
             return null;
         for (Object item : children) {
-            ((DataSet) item).put("id", ((DataSet) item).get("code"));
-            ((DataSet) item).put("name", ((DataSet) item).get("name"));
-            ((DataSet) item).put("valueType", ((DataSet) item).get("valueType"));
+            ((DataSet) item).put(ID, ((DataSet) item).get(CODE));
+            ((DataSet) item).put(NAME, ((DataSet) item).get(NAME));
+            ((DataSet) item).put(VALUE_TYPE, ((DataSet) item).get(VALUE_TYPE));
 
-            if (ValueTypeEnum.BOOLEAN.name().equals(((DataSet) item).get("valueType"))) {
-                boolean result = "true".equals(((DataSet) item).get("value"));
-                ((DataSet) item).put("value", result);
+            if (ValueTypeEnum.BOOLEAN.name().equals(((DataSet) item).get(VALUE_TYPE))) {
+                boolean result = "true".equals(((DataSet) item).get(VALUE));
+                ((DataSet) item).put(VALUE, result);
             } else {
-                ((DataSet) item).put("value", ((DataSet) item).get("value"));
+                ((DataSet) item).put(VALUE, ((DataSet) item).get(VALUE));
             }
 
-            ((DataSet) item).put("isConfig", true);
+            ((DataSet) item).put(IS_CONFIG, true);
         }
         return children;
     }
@@ -32,30 +44,30 @@ public class ApplicationConfigUtil {
         if (children == null || children.isEmpty())
             return null;
         for (Object item : children) {
-            ((DataSet) item).put("id", appCode + "__" + ((DataSet) item).get("id"));
-            ((DataSet) item).put("name", ((DataSet) item).get("name"));
-            ((DataSet) item).put("isConfig", false);
-            ((DataSet) item).put("children", new DataList());
-            for (Object config : ((DataList) ((DataSet) item).get("configs"))) {
+            ((DataSet) item).put(ID, appCode + "__" + ((DataSet) item).get(ID));
+            ((DataSet) item).put(NAME, ((DataSet) item).get(NAME));
+            ((DataSet) item).put(IS_CONFIG, false);
+            ((DataSet) item).put(CHILDREN, new DataList());
+            for (Object config : ((DataList) ((DataSet) item).get(CONFIGS))) {
                 DataSet configDataset = new DataSet();
-                configDataset.put("id", ((DataSet) config).get("code"));
-                configDataset.put("configCode", ((DataSet) config).get("code"));
-                configDataset.put("name", ((DataSet) config).get("name"));
-                configDataset.put("commonSystemValue", ((DataSet) config).get("commonSystemValue"));
-                configDataset.put("valueType", ((DataSet) config).get("valueType"));
-                configDataset.put("defaultValue", ((DataSet) config).get("defaultValue"));
+                configDataset.put(ID, ((DataSet) config).get(CODE));
+                configDataset.put(CONFIG_CODE, ((DataSet) config).get(CODE));
+                configDataset.put(NAME, ((DataSet) config).get(NAME));
+                configDataset.put(COMMON_SYSTEM_VALUE, ((DataSet) config).get(COMMON_SYSTEM_VALUE));
+                configDataset.put(VALUE_TYPE, ((DataSet) config).get(VALUE_TYPE));
+                configDataset.put(DEFAULT_VALUE, ((DataSet) config).get(DEFAULT_VALUE));
 
-                if (ValueTypeEnum.BOOLEAN.getName().equals(((DataSet) config).get("valueType"))) {
-                    boolean result = "true".equals(((DataSet) config).get("value"));
-                    configDataset.put("value", result);
+                if (ValueTypeEnum.BOOLEAN.getName().equals(((DataSet) config).get(VALUE_TYPE))) {
+                    boolean result = "true".equals(((DataSet) config).get(VALUE));
+                    configDataset.put(VALUE, result);
                 } else {
-                    configDataset.put("value", ((DataSet) config).get("value"));
+                    configDataset.put(VALUE, ((DataSet) config).get(VALUE));
                 }
 
-                configDataset.put("isConfig", true);
-                ((DataList) ((DataSet) item).get("children")).add(configDataset);
+                configDataset.put(IS_CONFIG, true);
+                ((DataList) ((DataSet) item).get(CHILDREN)).add(configDataset);
             }
-            ((DataSet) item).remove("configs");
+            ((DataSet) item).remove(CONFIGS);
         }
         return children;
     }
