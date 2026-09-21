@@ -2,15 +2,21 @@
 genericServices:
   configuration-db:
     port: 5432
-    imageName: /config/db
+    imageName: /n2o-components/config/db
     imageTag: ${docker.image.tag}
     imagePullPolicy: IfNotPresent
     storageClassName: 'nfs-retain'
     resources:
+      requests:
+        cpu: 100m
+        memory: 200m
       limits:
         memory: 512Mi
         cpu: 300m
+
     replicaCount: 1
+    strategy:
+      type: Recreate
     volumes:
       - name: configuration-db-data
         persistentVolumeClaim:
@@ -18,5 +24,6 @@ genericServices:
     volumeMounts:
       - mountPath: /pg/14
         name: configuration-db-data
+
     env:
       POSTGRES_PASSWORD: postgres

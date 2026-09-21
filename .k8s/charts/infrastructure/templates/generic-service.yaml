@@ -17,6 +17,9 @@ metadata:
   name: {{ $service }}
 spec:
   replicas: {{ .replicaCount }}
+  {{- if .strategy }}
+  strategy: {{- toYaml .strategy | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       app: {{ $service }}
@@ -52,6 +55,12 @@ spec:
           {{- if .readinessProbe }}
           readinessProbe: {{- toYaml .readinessProbe | nindent 12 }}
           {{- end }}
+          {{- if .lifecycle }}
+          lifecycle: {{- toYaml .lifecycle | nindent 12 }}
+          {{- end }}
+      {{- if .terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
+      {{- end }}
       {{- if .volumes }}
       volumes: {{- toYaml .volumes | nindent 8 }}
       {{- end }}
