@@ -12,7 +12,7 @@ import jakarta.persistence.criteria.Root;
 
 public class ApplicationSpecification implements Specification<ApplicationEntity> {
 
-    private final ApplicationCriteria criteria;
+    private final transient ApplicationCriteria criteria;
 
     public ApplicationSpecification(ApplicationCriteria criteria) {
         this.criteria = criteria;

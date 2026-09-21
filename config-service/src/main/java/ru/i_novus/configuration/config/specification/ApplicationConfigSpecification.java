@@ -15,7 +15,7 @@ import static ru.i_novus.configuration.config.specification.SpecificationUtils.t
 
 public class ApplicationConfigSpecification implements Specification<ConfigEntity> {
 
-    private final ApplicationConfigCriteria criteria;
+    private final transient ApplicationConfigCriteria criteria;
 
     public ApplicationConfigSpecification(ApplicationConfigCriteria criteria) {
         this.criteria = criteria;
