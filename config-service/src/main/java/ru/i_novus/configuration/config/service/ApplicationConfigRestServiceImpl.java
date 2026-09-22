@@ -24,10 +24,11 @@ import ru.i_novus.configuration.config.specification.ApplicationConfigSpecificat
 import ru.i_novus.configuration.config.utils.LogUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -55,72 +56,85 @@ public class ApplicationConfigRestServiceImpl implements ApplicationConfigRestSe
         ApplicationConfigSpecification specification = new ApplicationConfigSpecification(criteria);
         List<ConfigEntity> groupedConfigs = configRepository.findAll(specification, criteria).getContent();
 
-        List<ConfigsApplicationResponse> result = new ArrayList<>();
-
-        // TODO - сделать код менее запутанным
-        for (int i = 0; i < groupedConfigs.size(); ) {
-            ConfigEntity data = groupedConfigs.get(i);
-
-            ConfigsApplicationResponse application = new ConfigsApplicationResponse();
-            if (data.getApplication() != null) {
-                application.setCode(data.getApplication().getCode());
-                application.setName(data.getApplication().getName());
-            }
-            application.setGroups(new ArrayList<>());
-            result.add(application);
-
-            Map<String, String> appConfigValues = configValueService.getKeyValueList(application.getCode());
-
-            do {
-                data = groupedConfigs.get(i);
-                ConfigGroupResponse group = new ConfigGroupResponse();
-                if (data.getGroup() != null) {
-                    group.setId(data.getGroup().getId());
-                    group.setName(data.getGroup().getName());
-                } else {
-                    group = new EmptyGroup();
-                }
-                group.setConfigs(new ArrayList<>());
-
-                do {
-                    ApplicationConfigResponse config = new ApplicationConfigResponse();
-                    data = groupedConfigs.get(i);
-                    config.setCode(data.getCode());
-                    config.setName(data.getName());
-                    config.setValueType(data.getValueType().getName());
-                    config.setValue(appConfigValues.get(config.getCode()));
-                    config.setCommonSystemValue(commonSystemConfigValues.get(config.getCode()));
-                    config.setDefaultValue(data.getDefaultValue());
-                    if (!(Boolean.TRUE.equals(criteria.getWithValue()) && isNull(config.getValue())))
-                        group.getConfigs().add(config);
-                    i++;
-                } while (
-                        i < groupedConfigs.size()
-                        && Objects.equals(
-                                application.getCode(),
-                                groupedConfigs.get(i).getApplication() == null
-                                ? null
-                                : groupedConfigs.get(i).getApplication().getCode()
-                        )
-                        && (
-                            groupedConfigs.get(i).getGroup().getId() != null
-                            && Objects.equals(groupedConfigs.get(i).getGroup().getId(), group.getId())
-                            || groupedConfigs.get(i).getGroup().getId() == null && group.getId() == 0
-                        )
-                );
-                application.getGroups().add(group);
-            } while (
-                    i < groupedConfigs.size()
-                    && Objects.equals(
-                            application.getCode(),
-                            groupedConfigs.get(i).getApplication() == null
-                            ? null
-                            : groupedConfigs.get(i).getApplication().getCode()
-                    )
-            );
-        }
+        List<ConfigsApplicationResponse> result = groupByPreservingOrder(groupedConfigs, this::applicationCode)
+                .values().stream()
+                .map(configs -> toApplicationResponse(configs, criteria, commonSystemConfigValues))
+                .toList();
 
         return clearEmptyGroups(result);
+    }
+
+    private String applicationCode(ConfigEntity config) {
+        return config.getApplication() == null ? null : config.getApplication().getCode();
+    }
+
+    private Integer groupId(ConfigEntity config) {
+        return config.getGroup() == null ? null : config.getGroup().getId();
+    }
+
+    private ConfigsApplicationResponse toApplicationResponse(List<ConfigEntity> configs, ApplicationConfigCriteria criteria,
+                                                               Map<String, String> commonSystemConfigValues) {
+        ConfigEntity first = configs.get(0);
+
+        ConfigsApplicationResponse application = new ConfigsApplicationResponse();
+        if (first.getApplication() != null) {
+            application.setCode(first.getApplication().getCode());
+            application.setName(first.getApplication().getName());
+        }
+
+        Map<String, String> appConfigValues = configValueService.getKeyValueList(application.getCode());
+
+        List<ConfigGroupResponse> groups = groupByPreservingOrder(configs, this::groupId).values().stream()
+                .map(groupConfigs -> toGroupResponse(groupConfigs, criteria, appConfigValues, commonSystemConfigValues))
+                .toList();
+        application.setGroups(groups);
+
+        return application;
+    }
+
+    private ConfigGroupResponse toGroupResponse(List<ConfigEntity> configs, ApplicationConfigCriteria criteria,
+                                                 Map<String, String> appConfigValues, Map<String, String> commonSystemConfigValues) {
+        ConfigEntity first = configs.getFirst();
+
+        ConfigGroupResponse group;
+        if (first.getGroup() != null) {
+            group = new ConfigGroupResponse();
+            group.setId(first.getGroup().getId());
+            group.setName(first.getGroup().getName());
+        } else {
+            group = new EmptyGroup();
+        }
+
+        List<ApplicationConfigResponse> configResponses = configs.stream()
+                .map(data -> toConfigResponse(data, appConfigValues, commonSystemConfigValues))
+                .filter(config -> !(Boolean.TRUE.equals(criteria.getWithValue()) && isNull(config.getValue())))
+                .collect(Collectors.toList());
+        group.setConfigs(configResponses);
+
+        return group;
+    }
+
+    private ApplicationConfigResponse toConfigResponse(ConfigEntity data, Map<String, String> appConfigValues,
+                                                         Map<String, String> commonSystemConfigValues) {
+        ApplicationConfigResponse config = new ApplicationConfigResponse();
+        config.setCode(data.getCode());
+        config.setName(data.getName());
+        config.setValueType(data.getValueType().getName());
+        config.setValue(appConfigValues.get(config.getCode()));
+        config.setCommonSystemValue(commonSystemConfigValues.get(config.getCode()));
+        config.setDefaultValue(data.getDefaultValue());
+        return config;
+    }
+
+    /**
+     * Группирует настройки по ключу с сохранением порядка их следования в списке.
+     */
+    private <K> Map<K, List<ConfigEntity>> groupByPreservingOrder(List<ConfigEntity> configs, Function<ConfigEntity, K> keyFn) {
+        Map<K, List<ConfigEntity>> grouped = new LinkedHashMap<>();
+        for (ConfigEntity config : configs) {
+            grouped.computeIfAbsent(keyFn.apply(config), k -> new ArrayList<>()).add(config);
+        }
+        return grouped;
     }
 
     @Override
