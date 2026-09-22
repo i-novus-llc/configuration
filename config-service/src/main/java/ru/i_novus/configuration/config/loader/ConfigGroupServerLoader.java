@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,59 +43,79 @@ public class ConfigGroupServerLoader implements ServerLoader<GroupForm> {
         Map<String, GroupCodeEntity> deletedGroupCodes = new HashMap<>();
 
         // для оптимизации поиска list преобразуем в map
-        Map<String, GroupEntity> oldGroupEntities = groupRepository.findAll().stream().collect(Collectors.toMap(GroupEntity::getName, Function.identity()));
+        Map<String, GroupEntity> oldGroupEntities = groupRepository.findAll().stream()
+                .collect(Collectors.toMap(GroupEntity::getName, Function.identity()));
 
         for (GroupForm newGroupForm : list) {
             GroupEntity groupEntity = oldGroupEntities.get(newGroupForm.getName());
-            if (groupEntity != null) {
-                GroupForm oldGroupForm = GroupMapper.toGroupForm(groupEntity);
-                newGroupForm.setId(groupEntity.getId());
+            if (groupEntity == null)
+                continue;
 
-                if (!oldGroupForm.equals(newGroupForm)) {
-                    // UPDATE
-                    if (!newGroupForm.getCodes().stream()
-                            .filter(c -> groupCodes.keySet().contains(c) && groupCodes.get(c) != groupEntity.getId())
-                            .findAny().isEmpty()) {
-                        throw new UserException(messageAccessor.getMessage("config.group.codes.not.unique"));
-                    }
+            newGroupForm.setId(groupEntity.getId());
+            insertedGroupForms.remove(newGroupForm);
 
-                    if (newGroupForm.getCodes().size() != groupEntity.getCodes().size() ||
-                            !groupEntity.getCodes().stream().allMatch(gc -> newGroupForm.getCodes().contains(gc.getCode()))) {
-                        groupEntity.getCodes().stream().forEach(gc -> groupCodes.remove(gc.getCode()));
-                        newGroupForm.getCodes().stream().forEach(c -> groupCodes.put(c, groupEntity.getId()));
-                        groupEntity.getCodes().forEach(gc -> deletedGroupCodes.put(gc.getCode(), gc));
-                        groupEntity.getCodes().clear();
-                        newGroupForm.getCodes().forEach(groupEntity::setCode);
-                        groupEntity.getCodes().forEach(gc -> deletedGroupCodes.remove(gc.getCode()));
-                    }
-                    groupEntity.setDescription(newGroupForm.getDescription());
-                    groupEntity.setPriority(newGroupForm.getPriority());
+            if (GroupMapper.toGroupForm(groupEntity).equals(newGroupForm))
+                continue;
 
-                    insertedGroupForms.remove(newGroupForm);
-                    updatedEntities.add(groupEntity);
-                }
-                insertedGroupForms.remove(newGroupForm);
-            }
+            updateGroup(newGroupForm, groupEntity, groupCodes, deletedGroupCodes);
+            updatedEntities.add(groupEntity);
         }
 
         // CREATE
-        for (GroupForm groupForm : insertedGroupForms) {
-            if (groupForm.getCodes().stream().filter(groupCodes.keySet()::contains).findAny().isEmpty()) {
-                groupForm.getCodes().stream().forEach(c -> {
-                    if (deletedGroupCodes.containsKey(c)) deletedGroupCodes.remove(c);
-                    groupCodes.put(c, 0);
-                });
-            } else {
-                throw new UserException(messageAccessor.getMessage("config.group.codes.not.unique"));
-            }
-        }
+        insertedGroupForms.forEach(groupForm -> registerNewGroupCodes(groupForm, groupCodes, deletedGroupCodes));
 
-        List<GroupEntity> savedGroupEntities = insertedGroupForms.stream().map(GroupMapper::toGroupEntity).collect(Collectors.toList());
+        List<GroupEntity> savedGroupEntities = insertedGroupForms.stream()
+                .map(GroupMapper::toGroupEntity).collect(Collectors.toList());
         savedGroupEntities.addAll(updatedEntities);
 
         groupRepository.saveAll(savedGroupEntities);
         groupCodeRepository.deleteAll(deletedGroupCodes.values());
         groupCodeRepository.saveAll(savedGroupEntities.stream().flatMap(x -> x.getCodes().stream()).collect(Collectors.toList()));
+    }
+
+    private void updateGroup(GroupForm newGroupForm, GroupEntity groupEntity,
+                              Map<String, Integer> groupCodes, Map<String, GroupCodeEntity> deletedGroupCodes) {
+        validateCodesUnique(newGroupForm.getCodes(), groupCodes, groupEntity.getId());
+
+        if (codesChanged(newGroupForm, groupEntity)) {
+            replaceGroupCodes(newGroupForm, groupEntity, groupCodes, deletedGroupCodes);
+        }
+        groupEntity.setDescription(newGroupForm.getDescription());
+        groupEntity.setPriority(newGroupForm.getPriority());
+    }
+
+    private void validateCodesUnique(Set<String> codes, Map<String, Integer> groupCodes, Integer ownerGroupId) {
+        boolean hasConflict = codes.stream()
+                .anyMatch(c -> groupCodes.containsKey(c) && !groupCodes.get(c).equals(ownerGroupId));
+        if (hasConflict) {
+            throw new UserException(messageAccessor.getMessage("config.group.codes.not.unique"));
+        }
+    }
+
+    private boolean codesChanged(GroupForm newGroupForm, GroupEntity groupEntity) {
+        return newGroupForm.getCodes().size() != groupEntity.getCodes().size()
+                || !groupEntity.getCodes().stream().allMatch(gc -> newGroupForm.getCodes().contains(gc.getCode()));
+    }
+
+    private void replaceGroupCodes(GroupForm newGroupForm, GroupEntity groupEntity,
+                                    Map<String, Integer> groupCodes, Map<String, GroupCodeEntity> deletedGroupCodes) {
+        groupEntity.getCodes().forEach(gc -> groupCodes.remove(gc.getCode()));
+        newGroupForm.getCodes().forEach(c -> groupCodes.put(c, groupEntity.getId()));
+        groupEntity.getCodes().forEach(gc -> deletedGroupCodes.put(gc.getCode(), gc));
+        groupEntity.getCodes().clear();
+        newGroupForm.getCodes().forEach(groupEntity::setCode);
+        groupEntity.getCodes().forEach(gc -> deletedGroupCodes.remove(gc.getCode()));
+    }
+
+    private void registerNewGroupCodes(GroupForm groupForm, Map<String, Integer> groupCodes,
+                                        Map<String, GroupCodeEntity> deletedGroupCodes) {
+        if (groupForm.getCodes().stream().anyMatch(groupCodes::containsKey)) {
+            throw new UserException(messageAccessor.getMessage("config.group.codes.not.unique"));
+        }
+        groupForm.getCodes().forEach(c -> {
+            deletedGroupCodes.remove(c);
+            groupCodes.put(c, 0);
+        });
     }
 
     @Override
