@@ -55,9 +55,7 @@
                         <toolbars>
                             <toolbar>
                                 <button label="Сохранить" color="primary" enabled="true">
-                                    <invoke operation-id="create" object-id="config_group"/>
-                                    <close/>
-                                    <refresh datasource="group_table"/>
+                                    <invoke operation-id="create" object-id="config_group" refresh-datasources="group_table" close-on-success="true"/>
                                 </button>
                                 <button label="Закрыть" enabled="true" validate="false">
                                     <close/>
