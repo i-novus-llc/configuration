@@ -59,9 +59,7 @@
                         <toolbars>
                             <toolbar>
                                 <button label="Сохранить" color="primary" enabled="true">
-                                    <invoke operation-id="create" object-id="config"/>
-                                    <close/>
-                                    <refresh datasource="config_table"/>
+                                    <invoke operation-id="create" object-id="config" refresh-datasources="config_table" close-on-success="true"/>
                                 </button>
                                 <button label="Закрыть" enabled="true" validate="false">
                                     <close/>
