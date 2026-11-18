@@ -30,7 +30,7 @@ config:
         cpu: 10m
     env:
       SERVER_SERVLET_CONTEXT_PATH: /configs
-      JAVA_OPTS: -Xmx300m
+      JDK_JAVA_OPTIONS: "-Xmx300m"
       CONFIG_SERVICE_URL: http://config-backend:8080/configs/service/api
     ingress:
       path: /
@@ -47,7 +47,7 @@ config:
         memory: 400M
         cpu: 10m
     env:
-      JAVA_OPTS: -Xmx200m
+      JDK_JAVA_OPTIONS: "-Xmx256m"
       SERVER_SERVLET_CONTEXT_PATH: /configs/service
 
 
