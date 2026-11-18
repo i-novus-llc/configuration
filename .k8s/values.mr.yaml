@@ -14,13 +14,13 @@ config:
   config-backend:
     resources:
       limits:
-        memory: 512Mi
+        memory: 700Mi
         cpu: 300m
     enabled: true
   config-web:
     resources:
       limits:
-        memory: 512Mi
+        memory: 600Mi
         cpu: 300m
     enabled: true
 
